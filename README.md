@@ -3,10 +3,10 @@
 ## About Us
 Team Name: BB01
 Team Members: 
-- Shaz Uqaili (Set 1A)
-- Fahua Su (Set 1D)
-- Justin Yu (Set 1D)
-- Hali Imanpanah (Set 1A)
+- Shaz Uqaili
+- Fahua Su
+- Justin Yu
+- Hali Imanpanah
 
 ## More details to come
 TBA
