@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/ffloras/2800-202510-BBY01#readme",
   "dependencies": {
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
+    "fs": "^0.0.1-security",
     "node": "^22.15.0"
   }
 }
