@@ -5,17 +5,17 @@ const port = 3000;
 
 const app = express();
 
-app.use(express.static(__dirname, "/public"));
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
 
+}));
 
-
-
-
-
-app.get("*", (req, res) => {
-    res.status(404).send("Page not found");
-    res.send("Page not found");
+app.get('/', (req, res) => {
+    res.send('Hello World!');
 });
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
