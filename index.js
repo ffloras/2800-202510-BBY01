@@ -17,7 +17,7 @@ app.use(session({
 
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
-app.use("/img", express.static("./public/img"));
+app.use("/imgs", express.static("./public/imgs"));
 app.use("/font", express.static("./public/font"));
 app.use("/html", express.static("./app/html"));
 
