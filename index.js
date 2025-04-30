@@ -11,7 +11,7 @@ const app = express();
 
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
-app.use("/img", express.static("./public/img"));
+app.use("/imgs", express.static("./public/imgs"));
 app.use("/font", express.static("./public/font"));
 app.use("/html", express.static("./app/html"));
 app.use("/snippets", express.static("./public/snippets"));
@@ -61,6 +61,16 @@ app.get("/profile", function(req, res) {
 }
 );
 
+app.post("/login", function(req, res) {
+    const { username, password } = req.body;
+    
+    if (username === 'admin' && password === 'password') {
+        req.session.user = username;
+        res.redirect('/login.html');
+    } else {
+        res.send('Invalid credentials');
+    }
+});
 
 
 app.listen(port, () => {
