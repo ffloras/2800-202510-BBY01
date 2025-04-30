@@ -32,6 +32,17 @@ app.get("/login", function(req, res) {
     res.send(doc);
 });
 
+app.post("/login", function(req, res) {
+    const { username, password } = req.body;
+    
+    if (username === 'admin' && password === 'password') {
+        req.session.user = username;
+        res.redirect('/login.html');
+    } else {
+        res.send('Invalid credentials');
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
