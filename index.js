@@ -22,6 +22,7 @@ const mongodb_user = process.env.MONGODB_USER;
 const mongodb_password = process.env.MONGODB_PASSWORD;
 const mongodb_database = process.env.MONGODB_DATABASE;
 const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
+const node_session_secret = process.env.NODE_SESSION_SECRET;
 
 let {database} = require('./databaseConnection.js');
 
@@ -37,7 +38,7 @@ let mongoStore = MongoStore.create({
 app.use(express.urlencoded({extended: false}));
 
 app.use(session({
-    secret: 'secret-key',
+    secret: node_session_secret,
     store: mongoStore,
     resave: false,
     saveUninitialized: true,
@@ -53,6 +54,13 @@ app.get("/login", function(req, res) {
     let doc = fs.readFileSync("./app/html/login.html", "utf8");
     res.send(doc);
 });
+
+app.get("/profile", function(req, res) {
+    let doc = fs.readFileSync("./app/html/profile.html", "utf8");
+    res.send(doc);
+}
+);
+
 
 
 app.listen(port, () => {
