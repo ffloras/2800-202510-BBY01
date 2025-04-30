@@ -1,0 +1,26 @@
+{
+  "name": "2800-202510-bby01",
+  "version": "1.0.0",
+  "description": "This is BBY01 climate viewer app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ffloras/2800-202510-BBY01.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ffloras/2800-202510-BBY01/issues"
+  },
+  "homepage": "https://github.com/ffloras/2800-202510-BBY01#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "fs": "^0.0.1-security",
+    "node": "^22.15.0"
+  }
+}
