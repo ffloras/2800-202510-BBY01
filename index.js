@@ -20,6 +20,7 @@ app.use("/css", express.static("./public/css"));
 app.use("/img", express.static("./public/img"));
 app.use("/font", express.static("./public/font"));
 app.use("/html", express.static("./app/html"));
+app.use("/snippets", express.static("./public/snippets"));
 
 
 app.get("/", function(req, res) {
