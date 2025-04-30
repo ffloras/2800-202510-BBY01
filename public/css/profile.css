@@ -1,0 +1,83 @@
+/* Scoped styles for profile page */
+#profilePage {
+    font-family: Arial, sans-serif;
+    background-color: #f5f8fa;
+    padding: 40px 20px;
+    min-height: 100vh;
+}
+
+.profile-container {
+    max-width: 500px;
+    margin: auto;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#profilePage h1 {
+    text-align: center;
+    color: #333;
+}
+
+#profilePage .form-group {
+    margin-bottom: 15px;
+}
+
+#profilePage label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+#profilePage input,
+#profilePage select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+#profilePage input:disabled,
+#profilePage select:disabled {
+    background-color: #e9ecef;
+}
+
+#profilePage .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 10px;
+}
+
+#profilePage button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #5689bf;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#profilePage button:hover {
+    background-color: #165da9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+#profilePage button:active {
+    transform: scale(0.98);
+}
+
+#profilePage button.danger {
+    background-color: #dc3545;
+}
+
+#profilePage button.danger:hover {
+    background-color: #b02a37;
+}
