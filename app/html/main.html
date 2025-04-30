@@ -1,13 +1,57 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-</head>
+    <title>Climate Risk Dashboard</title>
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
 
-<body>
+    <template id="riskTemplateShort">
+      <div id="riskShort">
+      </div>
+      <div id="downArrow"></div>
+    </template>
+      
 
-</body>
+    <template id="riskTemplateLong">
+      <div id="riskLong">
+      </div>
+      <div id="upArrow"></div>
+    </template>
+
+    <nav id="navbarPlaceholder"></nav>
+    <main>
+      <form id="searchBar">
+        <input type="search" placeholder="Address">
+        <button type="submit" id="searchButton">
+          <img src="/img/searchButton.png" alt="search" width="40" height="40">
+        </button>
+      </form>
+
+      <div id="save">
+        <img src="/img/saveIconUnchecked.png" alt="save location" width="20" height="20">
+        <span id="saveLocation">Save Location</span>
+      </div>
+
+      <ul id="mapLayers">
+        <li id="heatLayer">Heat Map</li>
+        <li id="floodLayer">Water Level Map</li>
+      </ul>
+
+      <div id="map">
+        Map
+      </div>
+
+      <div id="gradient">Gradient</div>
+
+      <div id="risks">
+        <div id="riskHeading"><strong>Environmental Risks at this Location</strong></div>
+        <div id="riskContent">There is currently no Environmental Risk</div>
+      </div>
+    </main>
+    <footer id="footerPlaceholder"></footer>
+  </body>
 
 </html>

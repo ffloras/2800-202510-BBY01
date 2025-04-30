@@ -11,7 +11,7 @@ const app = express();
 
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
-app.use("/img", express.static("./public/img"));
+app.use("/img", express.static("./public/imgs"));
 app.use("/font", express.static("./public/font"));
 app.use("/html", express.static("./app/html"));
 app.use("/snippets", express.static("./public/snippets"));
@@ -51,6 +51,11 @@ app.get("/", function(req, res) {
 
 app.get("/login", function(req, res) {
     let doc = fs.readFileSync("./app/html/login.html", "utf8");
+    res.send(doc);
+});
+
+app.get("/main", function(req, res) {
+    let doc = fs.readFileSync("./app/html/main.html", "utf8");
     res.send(doc);
 });
 
