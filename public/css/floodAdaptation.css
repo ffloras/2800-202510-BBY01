@@ -1,0 +1,53 @@
+main {
+  padding-top: 20px;
+  margin: 0 auto;
+  width: 50%;
+}
+
+#mainHeading {
+  display: flex;
+  gap: 5%;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+
+#mainHeading p {
+  font-size: 1.4em;
+}
+
+#mainHeading h1 {
+  font-size: 2.2em;
+}
+
+.contentContainer {
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.contentHeading {
+  display: flex;
+  align-items: center;
+  padding: 0 2% 0 2%;
+  justify-content: space-between;
+  cursor: pointer;
+  border: solid 1px gray;
+}
+
+@media (max-width: 1000px) and (min-width: 599px) {
+  main {
+    width: 80%;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    width: 100%;
+    padding-top: 10px;
+    margin: 0;
+  }
+
+  main {
+    width: 100%;
+  }
+
+}

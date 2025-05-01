@@ -16,6 +16,8 @@ app.use("/font", express.static("./public/font"));
 app.use("/html", express.static("./app/html"));
 app.use("/snippets", express.static("./public/snippets"));
 
+app.set('view engine', 'ejs');
+
 //mongodb variables
 const mongodb_host = process.env.MONGODB_HOST;
 const mongodb_user = process.env.MONGODB_USER;
@@ -58,6 +60,38 @@ app.get("/main", function(req, res) {
     let doc = fs.readFileSync("./app/html/main.html", "utf8");
     res.send(doc);
 });
+
+
+
+//for floodAdaptation.html
+app.get("/floodAdaptation", function(req, res) {
+    let doc = fs.readFileSync("./app/html/floodAdaptation.html", "utf8");
+    res.send(doc);
+});
+
+app.get("/flood/:content", function(req,res) {
+    switch (req.params.content) {
+        case "protect":
+            res.render("flood/floodProtect");
+            break;
+        case "plan":
+            res.render("flood/floodPlan");
+            break;
+        case "bag":
+            res.render("flood/floodBag");
+            break;
+        case "insurance":
+            res.render("flood/floodInsurance");
+            break;
+        default:
+            res.status(404);
+            res.send("Content not found");
+    }
+    
+});
+
+
+
 
 
 app.listen(port, () => {
