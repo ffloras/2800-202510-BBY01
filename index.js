@@ -48,9 +48,18 @@ app.get("/", function(req, res) {
     let doc = fs.readFileSync("./app/html/index.html", "utf8");
     res.send(doc);
 });
+app.get("/landing", function(req, res) {
+    let doc = fs.readFileSync("./app/html/landing.html", "utf8");
+    res.send(doc);
+});
 
 app.get("/login", function(req, res) {
     let doc = fs.readFileSync("./app/html/login.html", "utf8");
+    res.send(doc);
+});
+
+app.get("/profile", function(req, res) {
+    let doc = fs.readFileSync("./app/html/profile.html", "utf8");
     res.send(doc);
 });
 
