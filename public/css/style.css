@@ -24,7 +24,70 @@ Copy and paste these into sections as needed */
 
 /* #region  Header */
 
-/* replace with css here*/
+#header-logo {
+    width: 150px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: beige;
+    position: relative;
+}
+
+.header>p {
+    font-size: 2.5rem;
+    margin-left: 20px;
+}
+
+.hamburger-container {
+    padding: 10px;
+    width: 30px;
+    height: 30px;
+    border: solid 2px black;
+    border-radius: 10px;
+    position: absolute;
+    right: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hamburger, .hamburger::after, .hamburger::before {
+    width: 30px;
+    height: 5px;
+    background-color: black;
+    border-radius: 15px;
+}
+
+.hamburger::after {
+    position: relative;
+    top: 5px;
+    content: "";
+    display: block;
+}
+
+.hamburger::before {
+    position: relative;
+    bottom: 10px;
+    content: "";
+    display: block;
+}
+
+.header-navigation > ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-navigation {
+    display: none;
+}
+
+.header-navigation.show {
+    display: block;
+}
 
 /* #endregion */
 
@@ -32,7 +95,25 @@ Copy and paste these into sections as needed */
 
 /* #region Footer */
 
-/* replace with css here*/
+.footer-navigation {
+    display: flex;
+    background-color: beige;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    opacity: 85%;
+    z-index: 999;
+}
+
+.footer-navigation > a {
+    text-decoration: none;
+    padding: 35px 0px;
+    width: 50%;
+    text-align: center;
+    font-size: 1.2rem;
+    border: solid 1px black;
+}
 
 /* #endregion */
 
