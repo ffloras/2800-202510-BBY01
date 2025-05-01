@@ -91,7 +91,7 @@ app.post("/login", async (req, res) => {
         req.session.username = username;
         req.session.cookie.maxAge = expireTime;
 
-        res.redirect("profile.html"); //****change this to something else after user is logged in 
+        res.redirect("/main"); //****change this to something else after user is logged in 
         return;
     }
     else {
