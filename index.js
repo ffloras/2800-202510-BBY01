@@ -40,7 +40,9 @@ let { database } = require('./databaseConnection.js');
 const userCollection = database.db(mongodb_database).collection('users');
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
+// this is the session middleware, that will create a session for the user
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
     crypto: {
@@ -55,17 +57,19 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-
+// this is the home page of the
 app.get("/", function (req, res) {
     let doc = fs.readFileSync("./app/html/index.html", "utf8");
     res.send(doc);
 });
 
+// this is the login page
 app.get("/login", function (req, res) {
     let doc = fs.readFileSync("./app/html/login.html", "utf8");
     res.send(doc);
 });
 
+// this will submit the login data to the database to check if the user exists
 app.post("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -100,13 +104,20 @@ app.post("/login", async (req, res) => {
     }
 });
 
+// this is the signup page
+app.get("/signup", function (req, res) {
+    let doc = fs.readFileSync("./app/html/signup.html", "utf8");
+    res.send(doc);
+});
+
+// this is the post request for the signup page, used to submit user data to the database
 app.post("/signup", async (req, res) => {
     const name = req.body.name;
     const email = req.body.email;
     const username = req.body.username;
     const password = req.body.password;
 
-    //will validate the username using joi (username must be a string with 20 characters max)
+    // used for username validation
     const schema = Joi.string().max(20).required();
     const validationResult = schema.validate(username);
     if (validationResult.error != null) {
@@ -115,7 +126,7 @@ app.post("/signup", async (req, res) => {
         return;
     }
 
-    //will validate the password using joi (password must be a string with 8-30 characters)
+    // used for password validation
     const passwordSchema = Joi.string().min(8).max(30).required();
     const passwordValidation = passwordSchema.validate(password);
     if (passwordValidation.error != null) {
@@ -124,8 +135,8 @@ app.post("/signup", async (req, res) => {
         return;
     }
 
-    //will validate the email using joi (email must be a string with 20 characters max)
-    const emailSchema = Joi.string().max(30).required();
+    // used for email validation
+    const emailSchema = Joi.string().email().max(30).required();
     const emailValidation = emailSchema.validate(email);
     if (emailValidation.error != null) {
         console.log(emailValidation.error);
@@ -133,28 +144,30 @@ app.post("/signup", async (req, res) => {
         return;
     }
 
-    const existinguser = await userCollection.findOne( $or [{ username: username }, {email: email}]);
+    // will check if the username or email already exists in the database
+    const existinguser = await userCollection.findOne({ $or: [{ username: username }, { email: email }] });
     if (existinguser) {
         console.log("User already exists");
-        res.redirect("/signup");
+        res.redirect("/signup?error=User already exists");
         return;
     }
 
+    // hashes the password with bcrypt
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    // this part inserts the user into the database
     const user = {
         name: name,
         email: email,
         username: username,
-        password: hashedPassword
-
+        password: hashedPassword,
     };
 
     await userCollection.insertOne(user);
     res.redirect("/login");
-
 });
 
+// this is the logout page, will be used to destory the session and redirect to the login page
 app.get("/logout", (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -166,16 +179,19 @@ app.get("/logout", (req, res) => {
     });
 });
 
+
 app.get("/index", function (req, res) {
     let doc = fs.readFileSync("./app/html/index.html", "utf8");
     res.send(doc);
 });
 
+//
 app.get("/main", function (req, res) {
     let doc = fs.readFileSync("./app/html/main.html", "utf8");
     res.send(doc);
 });
 
+//this is the profile page, used to display the user profile information
 app.get("/profile", function (req, res) {
     let doc = fs.readFileSync("./app/html/profile.html", "utf8");
     res.send(doc);
