@@ -22,7 +22,8 @@ const app = express();
 
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
-app.use("/imgs", express.static("./public/imgs"));
+app.use("/img", express.static("./public/img"));
+app.use("/text", express.static("./public/text"));
 app.use("/font", express.static("./public/font"));
 app.use("/html", express.static("./app/html"));
 app.use("/snippets", express.static("./public/snippets"));
