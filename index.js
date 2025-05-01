@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require('express');
 
@@ -36,11 +35,11 @@ const mongodb_database = process.env.MONGODB_DATABASE;
 const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 
-let {database} = require('./databaseConnection.js');
+let { database } = require('./databaseConnection.js');
 
 const userCollection = database.db(mongodb_database).collection('users');
 
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -57,12 +56,12 @@ app.use(session({
 }));
 
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
     let doc = fs.readFileSync("./app/html/index.html", "utf8");
     res.send(doc);
 });
 
-app.get("/login", function(req, res) {
+app.get("/login", function (req, res) {
     let doc = fs.readFileSync("./app/html/login.html", "utf8");
     res.send(doc);
 });
@@ -79,14 +78,14 @@ app.post("/login", async (req, res) => {
         return;
     }
 
-    const result = await userCollection.findOne({username: username}).project({username: 1, password: 1, _id: 1}).toArray();
+    const result = await userCollection.findOne({ username: username }, { projection: { username: 1, password: 1, _id: 1 } });
 
     console.log(result);
-    if (result.length != 1) {
+    if (!result) {
         res.redirect("/login");
         return;
     }
-    if (await bcrypt.compare(password, result[0].password)) {
+    if (await bcrypt.compare(password, result.password)) {
         req.session.authenticated = true;
         req.session.username = username;
         req.session.cookie.maxAge = expireTime;
@@ -99,10 +98,85 @@ app.post("/login", async (req, res) => {
         res.redirect("/login");
         return;
     }
-}
-);
+});
 
-app.get("/profile", function(req, res) {
+app.post("/signup", async (req, res) => {
+    const name = req.body.name;
+    const email = req.body.email;
+    const username = req.body.username;
+    const password = req.body.password;
+
+    //will validate the username using joi (username must be a string with 20 characters max)
+    const schema = Joi.string().max(20).required();
+    const validationResult = schema.validate(username);
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/signup");
+        return;
+    }
+
+    //will validate the password using joi (password must be a string with 8-30 characters)
+    const passwordSchema = Joi.string().min(8).max(30).required();
+    const passwordValidation = passwordSchema.validate(password);
+    if (passwordValidation.error != null) {
+        console.log(passwordValidation.error);
+        res.redirect("/signup");
+        return;
+    }
+
+    //will validate the email using joi (email must be a string with 20 characters max)
+    const emailSchema = Joi.string().max(30).required();
+    const emailValidation = emailSchema.validate(email);
+    if (emailValidation.error != null) {
+        console.log(emailValidation.error);
+        res.redirect("/signup");
+        return;
+    }
+
+    const existinguser = await userCollection.findOne( $or [{ username: username }, {email: email}]);
+    if (existinguser) {
+        console.log("User already exists");
+        res.redirect("/signup");
+        return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const user = {
+        name: name,
+        email: email,
+        username: username,
+        password: hashedPassword
+
+    };
+
+    await userCollection.insertOne(user);
+    res.redirect("/login");
+
+});
+
+app.get("/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Error during logout: ", err);
+            res.status(500).send("Internal Server Error");
+        } else {
+            res.redirect("/login");
+        }
+    });
+});
+
+app.get("/index", function (req, res) {
+    let doc = fs.readFileSync("./app/html/index.html", "utf8");
+    res.send(doc);
+});
+
+app.get("/main", function (req, res) {
+    let doc = fs.readFileSync("./app/html/main.html", "utf8");
+    res.send(doc);
+});
+
+app.get("/profile", function (req, res) {
     let doc = fs.readFileSync("./app/html/profile.html", "utf8");
     res.send(doc);
 });

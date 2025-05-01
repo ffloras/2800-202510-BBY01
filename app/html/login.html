@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,7 +33,7 @@
                                         <!-- <h4 class="mt-1 mb-5 pb-1">Welcome to ClimateAction</h4> -->
                                     </div>
 
-                                    <form id="login-form">
+                                    <form id="login-form" action="/login" method="POST">
                                         <p class="text-center">Please login to your account</p>
 
                                         <div data-mdb-input-init class="form-outline mb-4">
@@ -48,7 +49,7 @@
 
                                         <div class="text-center pt-1 mb-5 pb-1">
                                             <button data-mdb-button-init data-mdb-ripple-init
-                                                class="btn btn-outline-primary btn-block fa-lg mb-3" type="button"
+                                                class="btn btn-outline-primary btn-block fa-lg mb-3" type="submit"
                                                 id="login-button">Log in</button>
                                             <div>
                                                 <a class="text-muted" href="#!">Forgot password?</a>
@@ -57,7 +58,7 @@
 
                                         <div class="d-flex align-items-center justify-content-center pb-4">
                                             <p class="mb-0 me-2">Don't have an account?</p>
-                                            <button type="button" data-mdb-button-init data-mdb-ripple-init
+                                            <button id="create-new-button" type="button" data-mdb-button-init data-mdb-ripple-init
                                                 class="btn btn-outline-danger">Create new</button>
                                         </div>
 
@@ -81,6 +82,7 @@
             </div>
         </div>
     </section>
+    <script src="/js/login.js"></script>
 </body>
 
 </html>
