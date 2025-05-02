@@ -30,7 +30,14 @@ main {
   padding: 0 2% 0 2%;
   justify-content: space-between;
   cursor: pointer;
-  border: solid 1px gray;
+  border: solid 1px white;
+  border-radius: 5px;
+  background-color: rgb(85, 176, 167);
+}
+
+.content {
+  width: 95%;
+  margin: 0 auto;
 }
 
 @media (max-width: 1000px) and (min-width: 599px) {
