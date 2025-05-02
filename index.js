@@ -203,14 +203,6 @@ app.get("/profile", function(req, res) {
     res.send(doc);
 });
 
-//this is the landing page, used to display the landing page
-app.get("/landing", function(req, res) {
-    let doc = fs.readFileSync("./app/html/landing.html", "utf8");
-    res.send(doc);
-});
-
-
-
 //for floodAdaptation.html
 app.get("/floodAdaptation", function(req, res) {
     let doc = fs.readFileSync("./app/html/floodAdaptation.html", "utf8");
