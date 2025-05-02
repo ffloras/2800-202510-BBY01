@@ -20,7 +20,10 @@ Copy and paste these into sections as needed */
 
 /* CSS STARTS HERE */
 
-
+body {
+    padding-bottom: 70px;
+    /* for the footer */
+}
 
 /* #region  Header */
 
@@ -42,9 +45,8 @@ Copy and paste these into sections as needed */
 }
 
 .hamburger-container {
-    padding: 10px;
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     border: solid 2px black;
     border-radius: 10px;
     position: absolute;
@@ -108,7 +110,7 @@ Copy and paste these into sections as needed */
 
 .footer-navigation > a {
     text-decoration: none;
-    padding: 35px 0px;
+    padding: 30px 0px;
     width: 50%;
     text-align: center;
     font-size: 1.2rem;
