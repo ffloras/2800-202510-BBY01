@@ -1,0 +1,176 @@
+/* region lets you collapse and separate sections */
+
+
+/* #region  template.html */
+
+/* use this as a template for a new section/page */
+
+/* #endregion */
+
+
+/* Media Queries
+Copy and paste these into sections as needed */
+
+/* @media only screen and (min-width: 600px) {} */
+
+/* @media only screen and (min-width: 1024px) {} */
+
+/* @media only screen and (min-width: 1200px) {} */
+
+
+/* CSS STARTS HERE */
+
+body {
+    padding-bottom: 70px;
+    /* for the footer */
+}
+
+/* #region  Header */
+
+#header-logo {
+    width: 150px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: beige;
+    position: relative;
+}
+
+.header>p {
+    font-size: 2.5rem;
+    margin-left: 20px;
+}
+
+.hamburger-container {
+    width: 50px;
+    height: 50px;
+    border: solid 2px black;
+    border-radius: 10px;
+    position: absolute;
+    right: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hamburger, .hamburger::after, .hamburger::before {
+    width: 30px;
+    height: 5px;
+    background-color: black;
+    border-radius: 15px;
+}
+
+.hamburger::after {
+    position: relative;
+    top: 5px;
+    content: "";
+    display: block;
+}
+
+.hamburger::before {
+    position: relative;
+    bottom: 10px;
+    content: "";
+    display: block;
+}
+
+.header-navigation > ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-navigation {
+    display: none;
+}
+
+.header-navigation.show {
+    display: block;
+}
+
+/* #endregion */
+
+
+
+/* #region Footer */
+
+.footer-navigation {
+    display: flex;
+    background-color: beige;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    opacity: 85%;
+    z-index: 999;
+}
+
+.footer-navigation > a {
+    text-decoration: none;
+    padding: 30px 0px;
+    width: 50%;
+    text-align: center;
+    font-size: 1.2rem;
+    border: solid 1px black;
+}
+
+/* #endregion */
+
+
+
+/* #region  index.html */
+
+/* replace with css here*/
+
+/* #endregion */
+
+
+
+/* #region  login.html */
+
+/* replace with css here*/
+
+/* #endregion */
+
+
+
+/* #region  main.html */
+
+/* replace with css here*/
+
+/* #endregion */
+
+
+
+/* #region  map.html */
+
+/* replace with css here*/
+
+/* #endregion */
+
+
+
+/* #region  tips.html */
+
+/* replace with css here*/
+
+/* #endregion */
+
+
+
+/* #region  story.html */
+
+/* replace with css here*/
+
+/* #endregion */
+
+
+
+/* #region  settings.html */
+
+/* replace with css here*/
+
+/* #endregion */

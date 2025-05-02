@@ -1,0 +1,102 @@
+main {
+  margin: 0 auto;
+  width: 50%;
+}
+
+#searchBar {
+  display: flex;
+  justify-content: center;
+}
+
+[type="search"] {
+  width: 100%;
+  font-size: 1.6em;
+}
+
+#searchButton {
+  background-color: rgb(80, 171, 178);
+  border: none;
+}
+
+#save {
+  padding: 10px 0 10px 0;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+#mapLayers {
+  list-style: none;
+  display: flex;
+  margin: 0 auto;
+  padding: 0;
+  justify-content: space-around;
+}
+
+#mapLayers > li {
+  width: 50%;
+  text-align: center;
+  padding: 10px 0 10px 0;
+  cursor: pointer;
+}
+
+#heatLayer {
+  background-color: rgb(124, 211, 211);
+  border-right: solid 2px white;
+}
+
+#floodLayer {
+  background-color: rgb(124, 211, 211);
+}
+
+#map {
+  height: 45vh;
+  background-color: rgb(111, 111, 177);
+}
+
+#gradient {
+  height: 3vh;
+  background: linear-gradient(to right, beige, rgb(47, 47, 164));
+}
+
+#risks {
+  margin: 0;
+  text-align: center;
+  background-color: rgb(61, 157, 114);
+}
+
+#riskHeading {
+  padding: 10px 0 10px 0;
+  font-size: 1.5em;
+}
+
+#riskContent {
+  padding: 10px 0 10px 0;
+}
+
+
+@media (max-width: 1000px) and (min-width: 599px) {
+  main {
+    width: 80%;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    width: 100%;
+    padding-top: 10px;
+    margin: 0;
+  }
+
+  main {
+    width: 100%;
+  }
+
+  [type="search"] {
+    width: 85%;
+  }
+
+  #save {
+    padding: 10px 0 10px 1.5%;
+  }
+}
