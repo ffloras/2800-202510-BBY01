@@ -63,13 +63,16 @@ app.get("/", function (req, res) {
     let doc = fs.readFileSync("./app/html/index.html", "utf8");
     res.send(doc);
 });
+app.get("/landing", function(req, res) {
+    let doc = fs.readFileSync("./app/html/landing.html", "utf8");
+    res.send(doc);
+});
 
 // this is the login page
 app.get("/login", function (req, res) {
     let doc = fs.readFileSync("./app/html/login.html", "utf8");
     res.send(doc);
 });
-
 // this will submit the login data to the database to check if the user exists
 app.post("/login", async (req, res) => {
     const username = req.body.username;
@@ -193,8 +196,14 @@ app.get("/main", function (req, res) {
 });
 
 //this is the profile page, used to display the user profile information
-app.get("/profile", function (req, res) {
+app.get("/profile", function(req, res) {
     let doc = fs.readFileSync("./app/html/profile.html", "utf8");
+    res.send(doc);
+});
+
+//this is the landing page, used to display the landing page
+app.get("/landing", function(req, res) {
+    let doc = fs.readFileSync("./app/html/landing.html", "utf8");
     res.send(doc);
 });
 
