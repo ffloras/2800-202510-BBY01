@@ -231,6 +231,45 @@ app.get("/flood/:content", function(req,res) {
 });
 
 
+//for heatAdaptation.html
+app.get("/heatAdaptation", function(req, res) {
+    let doc = fs.readFileSync("./app/html/heatAdaptation.html", "utf8");
+    res.send(doc);
+});
+
+app.get("/heat/:content", function(req,res) {
+    switch (req.params.content) {
+        case "atRisk":
+            res.render("heat/heatAtRisk");
+            break;
+        case "buddy":
+            res.render("heat/heatBuddy");
+            break;
+        case "prepare":
+            res.render("heat/heatPrepare");
+            break;
+        case "indoors":
+            res.render("heat/heatIndoors");
+            break;
+        case "outdoors":
+            res.render("heat/heatOutdoors");
+            break;
+        case "overheat":
+            res.render("heat/heatOverheating");
+            break;
+        case "wildfire":
+            res.render("heat/heatWildfire");
+            break;
+        case "drought":
+            res.render("heat/heatDrought");
+            break;
+        default:
+            res.status(404);
+            res.send("Content not found");
+    } 
+});
+
+
 
 
 
