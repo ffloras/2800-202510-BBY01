@@ -81,6 +81,10 @@ body {
     list-style: none;
     display: flex;
     flex-direction: column;
+    position: absolute;
+    background-color: white;
+    padding: 10px;
+    border: solid 1px black;
 }
 
 .header-navigation {
@@ -110,7 +114,7 @@ body {
 
 .footer-navigation > a {
     text-decoration: none;
-    padding: 30px 0px;
+    padding: 15px 0px;
     width: 50%;
     text-align: center;
     font-size: 1.2rem;

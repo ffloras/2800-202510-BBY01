@@ -270,6 +270,11 @@ app.get("/heat/:content", function(req,res) {
 });
 
 
+//
+app.get("/savedLocation", function (req, res) {
+    let doc = fs.readFileSync("./app/html/savedLocation.html", "utf8");
+    res.send(doc);
+});
 
 
 
