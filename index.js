@@ -269,6 +269,11 @@ app.get("/heat/:content", function(req,res) {
     } 
 });
 
+//
+app.get("/stories", function (req, res) {
+    let doc = fs.readFileSync("./app/html/stories.html", "utf8");
+    res.send(doc);
+});
 
 //
 app.get("/savedLocation", function (req, res) {
