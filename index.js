@@ -281,6 +281,10 @@ app.get("/savedLocation", function (req, res) {
     res.send(doc);
 });
 
+app.get("/detailStory", function (req, res) {
+    let doc = fs.readFileSync("./app/html/detailStory.html", "utf8");
+    res.send(doc);
+});
 
 
 app.listen(port, () => {
