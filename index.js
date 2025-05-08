@@ -269,6 +269,10 @@ app.get("/heat/:content", function(req,res) {
     } 
 });
 
+app.get('/mapboxToken', function(req, res) {
+    res.send({token: process.env.MAPBOX_ACCESS_TOKEN});
+});
+
 //
 app.get("/stories", function (req, res) {
     let doc = fs.readFileSync("./app/html/stories.html", "utf8");
