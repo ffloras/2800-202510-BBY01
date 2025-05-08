@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('postStory script is loaded')
   const form = document.getElementById("postForm");
   const cancelBtn = document.getElementById("cancelBtn");
 
@@ -9,22 +10,31 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("id", Date.now().toString());
-    formData.append("title", document.getElementById("title").value.trim());
-    formData.append("author", document.getElementById("author").value.trim() || "Anonymous");
-    formData.append("story", document.getElementById("story").value.trim());
+    let data = {}
+    data["id"] = Date.now().toString()
+    data["title"] = document.getElementById("title").value.trim()
+    data["author"] = document.getElementById("title").value.trim()
+    data["story"] = document.getElementById("title").value.trim()
+    data["image "] = document.getElementById("image").files.length > 0 ? document.getElementById("image").files[0] : null
+    // const formData = new FormData();
+    // formData.append("id", Date.now().toString());
+    // formData.append("title", document.getElementById("title").value.trim());
+    // formData.append("author", document.getElementById("author").value.trim() || "Anonymous");
+    // formData.append("story", document.getElementById("story").value.trim());
 
-    const imageInput = document.getElementById("image");
-    if (imageInput.files.length > 0) {
-      formData.append("image", imageInput.files[0]);
-    }
+    // const imageInput = document.getElementById("image");
+    // if (imageInput.files.length > 0) {
+    //   formData.append("image", imageInput.files[0]);
+    // }
+    // console.log('formData: ' , formData)
 
-    try {
-      const response = await fetch("/api/posts", {
+      const response = await fetch("http://localhost:8000/api/stories", {
         method: "POST",
-        body: formData
+        body: JSON.stringify(data)
       });
+      const result = await response.json();
+
+      console.log(`Server Response: ${result}`);
 
       if (response.ok) {
         alert("Story submitted with image!");
@@ -33,9 +43,5 @@ document.addEventListener("DOMContentLoaded", () => {
         const errText = await response.text();
         alert("Failed to submit story: " + errText);
       }
-    } catch (err) {
-      console.error("Error:", err);
-      alert("Unexpected error occurred.");
-    }
   });
 });

@@ -7,7 +7,7 @@ const session = require('express-session');
 const path = require('path');
 const MongoStore = require('connect-mongo');
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 const bcrypt = require('bcrypt');
 
@@ -269,10 +269,6 @@ app.get("/heat/:content", function(req,res) {
     } 
 });
 
-app.get('/mapboxToken', function(req, res) {
-    res.send({token: process.env.MAPBOX_ACCESS_TOKEN});
-});
-
 //
 app.get("/stories", function (req, res) {
     let doc = fs.readFileSync("./app/html/stories.html", "utf8");
@@ -288,27 +284,73 @@ app.get("/savedLocation", function (req, res) {
 // // Route to handle story submissions (POST request to /api/posts)
 // // Accepts form data including an optional image upload
 // // Saves the story data to the MongoDB collection
-app.post("/api/posts", upload.single("image"), async (req, res) => {
-    try {
-      const { id, title, author, story } = req.body;
-      const imagePath = req.file ? req.file.path : null;
+// app.post("/api/posts", upload.single("image"), async (req, res) => {
+//     try {
+//       const { id, title, author, story } = req.body;
+//       const imagePath = req.file ? req.file.path : null;
   
-      const newStory = {
-        id,
-        title,
-        author: author || "Anonymous",
-        story,
-        image: imagePath
-      };
+//       const newStory = {
+//         id,
+//         title,
+//         author: author || "Anonymous",
+//         story,
+//         image: imagePath
+//       };
   
-      await postCollection.insertOne(newStory);
-      res.status(200).send("Story created.");
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error saving story.");
+//       await postCollection.insertOne(newStory);
+//       res.status(200).send("Story created.");
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).send("Error saving story.");
+//     }
+//   });
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const COLL_NAME  = 'stories';
+async function getStoriesCollection() {
+    // wait for the MongoClient to be ready
+    const db = database.db('stories')
+  
+    // check if it exists
+    const exists = await db.listCollections({ name: COLL_NAME }).toArray();
+    if (exists.length === 0) {
+      await db.createCollection(COLL_NAME);
+      console.log(`Created collection: ${COLL_NAME}`);
     }
-  });
   
+    return db.collection(COLL_NAME);
+}
+app.post('/api/stories', async (req, res) => {
+try {
+    console.log(req.body)
+    const { title, author, story } = req.body;
+    const imagePath = req.file ? req.file.path : null;
+
+    const newStory = {
+    id: Math.floor(Math.random()*10000),
+    title,
+    author: author || 'Anonymous',
+    story,
+    image: imagePath,
+    createdAt: new Date(),
+    };
+
+    const storiesColl = await getStoriesCollection();
+    const result = await storiesColl.insertOne(newStory);
+
+    res.status(201).json({
+    message: 'Story saved successfully',
+    storyId: result.insertedId
+    });
+} catch (err) {
+    console.error('Error saving story:', err);
+    res.status(500).json({ error: 'Failed to save story' });
+}
+});
+
+app.get('/api/stories', function (req, res) {
+    res.send('get request done successfully')
+})
 
 // Route to serve the 'postStory' page
 app.get("/postStory", function (req, res) {
@@ -316,10 +358,6 @@ app.get("/postStory", function (req, res) {
     res.send(doc);
 });
 
-app.get("/detailStory", function (req, res) {
-    let doc = fs.readFileSync("./app/html/detailStory.html", "utf8");
-    res.send(doc);
-});
 
 
 app.listen(port, () => {
