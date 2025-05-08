@@ -26,7 +26,9 @@
 //     });
 // });
 
+setupSearch();
 
+//sets up Mapbox search bar
 async function setupSearch() {
     const script = document.getElementById('search-js');
     
@@ -43,16 +45,16 @@ async function setupSearch() {
 
         document.getElementById('search-bar').appendChild(searchBar);
 
-        // add an event listener to handle the `retrieve` event
+        // add an event listener to retrieve coordinates of searched location
         searchBar.addEventListener('retrieve', (e) => {
-            const feature = e.detail;
-            console.log(feature) // geojson object representing the selected item
+            const feature = e.detail; // geojson object representing the selected item
+            window.location.replace(`/main?coor=${feature.geometry.coordinates}`); //sends coordinates to main page
         });
     }
 }
 
 
-setupSearch();
+
 
 
 

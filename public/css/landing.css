@@ -70,6 +70,11 @@ body {
     background-color: #06b23f;
 } */
 
+#search-bar {
+    width: 50%;
+    margin: 0 auto;
+}
+
 /* Main Content */
 main {
     text-align: center;
@@ -207,6 +212,10 @@ footer {
         padding: 0;
         width: 90%;
     }
+
+    #search-bar {
+        width: 90%;
+    }
   }
 
 @media (max-width: 600px) {
@@ -214,5 +223,9 @@ footer {
         margin: 0 auto;
         padding: 0;
         width: 95%;
+    }
+
+    #search-bar {
+        width: 100%;
     }
 }
