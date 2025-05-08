@@ -29,6 +29,9 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
 
+    <!--Mapbox search CDN-->
+    <script id="search-js" defer src="https://api.mapbox.com/search-js/v1.0.0/web.js"></script>
+
     <link rel="stylesheet" href="/css/landing.css" />
     <link rel="stylesheet" href="/css/load.css" />
     </head>
@@ -43,7 +46,7 @@
             <button id="searchBtn" class="search-btn">🔍</button>
         </div> -->
         <!-- Search Bar -->
-        <div class="search-container">
+        <!-- <div class="search-container">
         <input
             type="text"
             id="addressInput"
@@ -52,10 +55,15 @@
         <button id="searchBtn" class="search-btn">
             <i class="fas fa-location-dot"></i>
         </button>
-        </div>
+        </div> -->
+
+
+        
+        
 
         <!-- Main Content -->
         <main>
+        <div id="search-bar"></div>
         <h1><b>RiskMapper</b></h1>
         <div class="hero-icon"></div>
         <p class="description">
@@ -73,6 +81,6 @@
     </div>
     <footer id="footerPlaceholder"></footer>
     <script src="/js/load.js"></script>
-    <script src="landing.js"></script>
+    <script src="/js/landing.js"></script>
     </body>
 </html>
