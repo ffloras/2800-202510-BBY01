@@ -29,6 +29,7 @@ app.use("/text", express.static("./public/text"));
 app.use("/font", express.static("./public/font"));
 app.use("/html", express.static("./app/html"));
 app.use("/snippets", express.static("./public/snippets"));
+app.use("/uploads", express.static("./uploads"));
 
 app.set('view engine', 'ejs');
 

@@ -28,7 +28,7 @@ fetch('/mapboxToken')
 
             map.addSource('air-temp-layer', {
                 type: 'geojson',
-                data: '/20250509T00Z_MSC_RDPS-UMOS-MLR_AirTemp_AGL-1.5m_PT000H.json' // Path to the JSON file
+                data: '/uploads/20250509T00Z_MSC_RDPS-UMOS-MLR_AirTemp_AGL-1.5m_PT000H.json' // Path to the JSON file
             });
 
             map.addLayer({
