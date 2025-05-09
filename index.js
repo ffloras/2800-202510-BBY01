@@ -6,6 +6,7 @@ const session = require('express-session');
 
 const path = require('path');
 const MongoStore = require('connect-mongo');
+const { ObjectId } = require('mongodb');
 
 const port = process.env.PORT || 3000;
 
@@ -60,12 +61,13 @@ app.use(session({
     saveUninitialized: false,
 }));
 
+
 // this is the home page of the
 app.get("/", function (req, res) {
     let doc = fs.readFileSync("./app/html/index.html", "utf8");
     res.send(doc);
 });
-app.get("/landing", function(req, res) {
+app.get("/landing", function (req, res) {
     let doc = fs.readFileSync("./app/html/landing.html", "utf8");
     res.send(doc);
 });
@@ -99,6 +101,7 @@ app.post("/login", async (req, res) => {
         req.session.authenticated = true;
         req.session.username = username;
         req.session.cookie.maxAge = expireTime;
+        req.session.userID = result._id;
 
         res.redirect("/main"); //****change this to something else after user is logged in 
         return;
@@ -197,19 +200,115 @@ app.get("/main", function (req, res) {
     res.send(doc);
 });
 
+//for updating user's current search location
+app.post("/recordCurrentLocation", async function (req, res) {
+    if (req.session.authenticated) {
+        try {
+            const { currentLocation } = req.body; // Get data from the client
+
+            await userCollection.updateOne(
+                { _id: new ObjectId(req.session.userID) },
+                {
+                    $set: { 'currentSearchLocation': currentLocation },
+                    $currentDate: { lastModified: true }
+                });
+            res.status(201).send('Location saved successfully');
+        } catch (error) {
+            console.error('Error saving user location:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    } else {
+        res.send("User not logged in");
+    }
+
+})
+
+
+//saves currentSearchLocation into savedLocation array
+app.get("/saveLocation", async function (req, res) {
+    if (req.session.authenticated) {
+        try {
+            let userID = new ObjectId(req.session.userID);
+            const result = await userCollection.findOne(
+                { _id: userID }, { projection: { currentSearchLocation: 1 } }
+            );
+            let savedLocation = { location: result.currentSearchLocation, alert: false }
+            await userCollection.updateOne(
+                { _id: userID }, { $push: { savedLocation } }
+            )
+            res.status(201).send('Location saved');
+        } catch (error) {
+            res.status(500).send('Unable to save location');
+        }
+
+    } else {
+        res.send("User not logged in")
+    }
+});
+
+//sends user's current search location as a json with coordinate and name properities
+app.get('/getCurrentSearchLocation', async function (req, res) {
+    if (req.session.authenticated) {
+        try {
+            let userID = new ObjectId(req.session.userID);
+            const result = await userCollection.findOne(
+                { _id: userID }, { projection: { currentSearchLocation: 1 } }
+            );
+            let data = {
+                coordinate: result.currentSearchLocation.geometry.coordinates, 
+                address: result.currentSearchLocation.properties.full_address}
+            res.send(data);
+
+        } catch (error) {
+            res.status(500).send('Unable to save location');
+        }
+
+    } else {
+        res.send("User not logged in")
+    }
+})
+
+//checks if currently searched location is already saved in database
+app.get("/checkLocationSaved", async function (req, res) {
+    let isSaved = "false";
+    if (req.session.authenticated) {
+        let userID = new ObjectId(req.session.userID);
+        const result = await userCollection.findOne(
+            { _id: userID }, { projection: { savedLocation: 1, currentSearchLocation: 1 } }
+        );
+
+        let currentLocationProperties = result.currentSearchLocation.properties;
+        let currentAddress = currentLocationProperties.full_address;
+
+        if (result.savedLocation) {
+            let locationArray = result.savedLocation;
+
+            locationArray.forEach(saved => {
+                //console.log(location);
+                let address = saved.location.properties.full_address;
+                if (address === currentAddress) {
+                    isSaved = "true";
+                }
+            });
+        }
+    }
+    res.send(isSaved);
+    return;
+})
+
 //this is the profile page, used to display the user profile information
-app.get("/profile", function(req, res) {
+app.get("/profile", function (req, res) {
     let doc = fs.readFileSync("./app/html/profile.html", "utf8");
     res.send(doc);
 });
 
 //for floodAdaptation.html
-app.get("/floodAdaptation", function(req, res) {
+app.get("/floodAdaptation", function (req, res) {
     let doc = fs.readFileSync("./app/html/floodAdaptation.html", "utf8");
     res.send(doc);
 });
 
-app.get("/flood/:content", function(req,res) {
+app.get("/flood/:content", function (req, res) {
     switch (req.params.content) {
         case "protect":
             res.render("flood/floodProtect");
@@ -227,17 +326,17 @@ app.get("/flood/:content", function(req,res) {
             res.status(404);
             res.send("Content not found");
     }
-    
+
 });
 
 
 //for heatAdaptation.html
-app.get("/heatAdaptation", function(req, res) {
+app.get("/heatAdaptation", function (req, res) {
     let doc = fs.readFileSync("./app/html/heatAdaptation.html", "utf8");
     res.send(doc);
 });
 
-app.get("/heat/:content", function(req,res) {
+app.get("/heat/:content", function (req, res) {
     switch (req.params.content) {
         case "atRisk":
             res.render("heat/heatAtRisk");
@@ -266,11 +365,11 @@ app.get("/heat/:content", function(req,res) {
         default:
             res.status(404);
             res.send("Content not found");
-    } 
+    }
 });
 
-app.get('/mapboxToken', function(req, res) {
-    res.send({token: process.env.MAPBOX_ACCESS_TOKEN});
+app.get('/mapboxToken', function (req, res) {
+    res.send({ token: process.env.MAPBOX_ACCESS_TOKEN });
 });
 
 //
@@ -285,6 +384,14 @@ app.get("/savedLocation", function (req, res) {
     res.send(doc);
 });
 
+app.get("/authenticated", function (req, res) {
+    if (req.session.authenticated) {
+        res.send('true');
+    } else {
+        res.send('false');
+    }
+
+})
 
 
 app.listen(port, () => {
