@@ -41,6 +41,7 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 let { database } = require('./databaseConnection.js');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const storiesCollection = database.db(mongodb_database).collection('stories');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -288,7 +289,11 @@ app.get("/savedLocation", function (req, res) {
 // // Route to handle story submissions (POST request to /api/posts)
 // // Accepts form data including an optional image upload
 // // Saves the story data to the MongoDB collection
-app.post("/api/posts", upload.single("image"), async (req, res) => {
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // You can customize storage options if needed
+
+app.post("/api/atories", upload.single("image"), async (req, res) => {
+    console.log(" /api/stories route was hit");
     try {
       const { id, title, author, story } = req.body;
       const imagePath = req.file ? req.file.path : null;
@@ -301,7 +306,8 @@ app.post("/api/posts", upload.single("image"), async (req, res) => {
         image: imagePath
       };
   
-      await postCollection.insertOne(newStory);
+      const result = await storiesCollection.insertOne(newStory);
+      console.log("Story saved to database:", result);
       res.status(200).send("Story created.");
     } catch (err) {
       console.error(err);
@@ -309,7 +315,16 @@ app.post("/api/posts", upload.single("image"), async (req, res) => {
     }
   });
   
-
+// Route to GET all stories
+app.get("/api/stories", async (req, res) => {
+    try {
+        const stories = await storiesCollection.find().toArray();
+        res.status(200).json(stories);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error fetching stories." });
+    }
+});
 // Route to serve the 'postStory' page
 app.get("/postStory", function (req, res) {
     let doc = fs.readFileSync("./app/html/postStory.html", "utf8");
