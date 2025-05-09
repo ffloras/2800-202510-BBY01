@@ -395,26 +395,26 @@ app.get("/authenticated", function (req, res) {
 // // Route to handle story submissions (POST request to /api/posts)
 // // Accepts form data including an optional image upload
 // // Saves the story data to the MongoDB collection
-app.post("/api/posts", upload.single("image"), async (req, res) => {
-    try {
-      const { id, title, author, story } = req.body;
-      const imagePath = req.file ? req.file.path : null;
+// app.post("/api/posts", upload.single("image"), async (req, res) => {
+//     try {
+//       const { id, title, author, story } = req.body;
+//       const imagePath = req.file ? req.file.path : null;
   
-      const newStory = {
-        id,
-        title,
-        author: author || "Anonymous",
-        story,
-        image: imagePath
-      };
+//       const newStory = {
+//         id,
+//         title,
+//         author: author || "Anonymous",
+//         story,
+//         image: imagePath
+//       };
   
-      await postCollection.insertOne(newStory);
-      res.status(200).send("Story created.");
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error saving story.");
-    }
-  });
+//       await postCollection.insertOne(newStory);
+//       res.status(200).send("Story created.");
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).send("Error saving story.");
+//     }
+//   });
   
 
 // Route to serve the 'postStory' page
