@@ -45,9 +45,33 @@ body {
     height: 100px;
 }
 
+.mobile-hidden {
+    display: none;
+}
+
 .header>p {
     font-size: 2.5rem;
     margin-left: 20px;
+}
+
+.header>a {
+    text-decoration: none;
+    color: #43413C;
+}
+
+#login-button {
+    padding: 10px 15px;
+    color: beige;
+    border-radius: 10px;
+    background-color: #43413C;
+    border: #43413C solid 2px;
+    box-shadow: 2px 2px 2px beige, 3.3px 3.3px 2px #43413C;
+}
+
+#login-button:hover {
+    background-color: beige;
+    color: #43413C;
+    box-shadow: 3.3px 3.3px 1px #43413C;
 }
 
 .hamburger-container {
@@ -125,7 +149,7 @@ body {
     margin: 0;
     background: linear-gradient(to top left, beige 50%, transparent 50%);
     translate: 0 50vw;
-    transition: translate 0.6s ease;
+    transition: translate 1s ease;
 }
 
 
@@ -153,6 +177,30 @@ body {
 
 .header-navigation-bg.toggle {
     opacity: 85%;
+}
+
+@media only screen and (min-width: 1200px) {
+    body {
+        padding: 150px 0 0;
+    }
+
+    .header {
+        top: 30px;
+        padding: 10px 40px;
+        width: 80%;
+        margin: 0 auto;
+        border-radius: 20px;
+        box-shadow: 4px 4px #43413C;
+        border: #43413C solid 2px;
+    }
+
+    .mobile-hidden {
+        display: block;
+    }
+
+    .hamburger-container {
+        display: none;
+    }
 }
 
 /* #endregion */
