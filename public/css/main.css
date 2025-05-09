@@ -18,6 +18,12 @@ main {
   border: none;
 }
 
+#save-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #save {
   padding: 10px 0 10px 0;
   display: inline-flex;
@@ -51,7 +57,6 @@ main {
 
 #map {
   height: 45vh;
-  background-color: rgb(111, 111, 177);
 }
 
 #gradient {

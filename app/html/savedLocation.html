@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Locations</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous">
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/load.css"/>
+    <link rel="stylesheet" href="/css/savedLocation.css" />
+
+</head>
+<body>
+    <nav id="navbarPlaceholder"></nav>
+    <h2 class="save-location-title">Saved Locations</h2>
+    <div class="map-container">
+        <div class="layer-container">
+            <button type="button">Temperature Map</button>
+            <button type="button">Water Level Map</button>
+        </div>
+        <div class="map"></div>
+    </div>
+    <div class="save-location-container">
+        <!-- hardcoded html blocks for looks only, remove when coding with js to generate them with template -->
+        <div class="save-location-block">
+            <p>101 Boardfish Ave.</p>
+            <div class="save-location-button-container">
+                <button type="button" class="save-location-alert">Alerts</button>
+                <button type="button" class="save-location-remove">Remove</button>
+            </div>
+        </div>
+        <div class="save-location-block">
+            <p>101 Boardfish Ave.</p>
+            <div class="save-location-button-container">
+                <button type="button" class="save-location-alert">Alerts</button>
+                <button type="button" class="save-location-remove">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- template here -->
+    <template id="save-location-block-template">
+        <div class="save-location-block">
+            <p class="location-name">location name</p>
+            <div class="save-location-button-container">
+                <button type="button" class="save-location-alert">Alerts</button>
+                <button type="button" class="save-location-remove">Remove</button>
+            </div>
+        </div>
+    </template>
+    <!-- template here -->
+
+    <footer id="footerPlaceholder"></footer>
+    <script src="/js/load.js"></script>
+    <script src="/js/savedLocation.js"></script>
+</body>
+</html>
