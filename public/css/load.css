@@ -59,7 +59,7 @@ body {
     color: #43413C;
 }
 
-#login-button {
+#login-button-nav {
     padding: 10px 15px;
     color: beige;
     border-radius: 10px;
@@ -68,7 +68,7 @@ body {
     box-shadow: 2px 2px 2px beige, 3.3px 3.3px 2px #43413C;
 }
 
-#login-button:hover {
+#login-button-nav:hover {
     background-color: beige;
     color: #43413C;
     box-shadow: 3.3px 3.3px 1px #43413C;
