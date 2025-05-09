@@ -1,0 +1,98 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f2f8f0;
+  margin: 0;
+  padding: 2rem;
+  color: #333;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: auto;
+  margin: auto;
+  background-color: #e6efdf;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8 24px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.form-container:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  color: #2e4a3d;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #2a3e2c;
+}
+
+input[type="text"],
+input[type="file"],
+textarea {
+  padding: 0.75rem;
+  border: 1px solid #bfcfb7;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fefefe;
+  transition: border 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.button-box {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dcdcdc;
+}
+
+button[type="submit"],
+button[type="button"] {
+  width: 200px;
+  padding: 1rem;
+  font-size: 1.05rem;
+  font-weight: bold;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button[type="submit"] {
+  background-color: #4caf50;
+}
+
+button[type="submit"]:hover {
+  background-color: #3d8e41;
+  transform: translateY(-2px);
+}
+
+button[type="button"] {
+  background-color: #1c2f48;
+}
+
+button[type="button"]:hover {
+  background-color: #355a7b;
+  transform: translateY(-2px);
+}

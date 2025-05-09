@@ -1,0 +1,52 @@
+.save-location-title {
+    margin: 20px auto;
+    width: 80%;
+    text-align: center;
+}
+
+.map-container {
+    margin: 0 1px
+}
+
+.layer-container {
+    display: flex;
+}
+
+.layer-container button {
+    width: 50%;
+    padding: 0;
+}
+
+.layer-container button:nth-child(2) {
+    border-left: none;
+}
+
+.map {
+    /* placeholder for no map */
+    background-color: lightgrey;
+    height: 500px;
+    border: solid 2px black;
+    border-top: none;
+}
+
+
+.save-location-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.save-location-block {
+    width: 80%;
+    margin: 20px auto 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    border: solid 1px black;
+    border-radius: 10px;
+}
+
+.save-location-block p {
+    margin-bottom: 0;
+    /* font seems to be vertically ascended */
+    padding-top: 2px;
+}

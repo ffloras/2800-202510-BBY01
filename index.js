@@ -231,7 +231,95 @@ app.get("/flood/:content", function(req,res) {
 });
 
 
+//for heatAdaptation.html
+app.get("/heatAdaptation", function(req, res) {
+    let doc = fs.readFileSync("./app/html/heatAdaptation.html", "utf8");
+    res.send(doc);
+});
 
+app.get("/heat/:content", function(req,res) {
+    switch (req.params.content) {
+        case "atRisk":
+            res.render("heat/heatAtRisk");
+            break;
+        case "buddy":
+            res.render("heat/heatBuddy");
+            break;
+        case "prepare":
+            res.render("heat/heatPrepare");
+            break;
+        case "indoors":
+            res.render("heat/heatIndoors");
+            break;
+        case "outdoors":
+            res.render("heat/heatOutdoors");
+            break;
+        case "overheat":
+            res.render("heat/heatOverheating");
+            break;
+        case "wildfire":
+            res.render("heat/heatWildfire");
+            break;
+        case "drought":
+            res.render("heat/heatDrought");
+            break;
+        default:
+            res.status(404);
+            res.send("Content not found");
+    } 
+});
+
+app.get('/mapboxToken', function(req, res) {
+    res.send({token: process.env.MAPBOX_ACCESS_TOKEN});
+});
+
+//
+app.get("/stories", function (req, res) {
+    let doc = fs.readFileSync("./app/html/stories.html", "utf8");
+    res.send(doc);
+});
+
+//
+app.get("/savedLocation", function (req, res) {
+    let doc = fs.readFileSync("./app/html/savedLocation.html", "utf8");
+    res.send(doc);
+});
+
+// // Route to handle story submissions (POST request to /api/posts)
+// // Accepts form data including an optional image upload
+// // Saves the story data to the MongoDB collection
+app.post("/api/posts", upload.single("image"), async (req, res) => {
+    try {
+      const { id, title, author, story } = req.body;
+      const imagePath = req.file ? req.file.path : null;
+  
+      const newStory = {
+        id,
+        title,
+        author: author || "Anonymous",
+        story,
+        image: imagePath
+      };
+  
+      await postCollection.insertOne(newStory);
+      res.status(200).send("Story created.");
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error saving story.");
+    }
+  });
+  
+
+// Route to serve the 'postStory' page
+app.get("/postStory", function (req, res) {
+    let doc = fs.readFileSync("./app/html/postStory.html", "utf8");
+    res.send(doc);
+});
+
+app.get("/detailStory", function (req, res) {
+    let doc = fs.readFileSync("./app/html/detailStory.html", "utf8");
+    res.send(doc);
+});
 
 
 app.listen(port, () => {

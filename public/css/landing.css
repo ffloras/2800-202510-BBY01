@@ -39,8 +39,10 @@ body {
     font-weight: bold;
 }
 
+
+
 /* Search Bar */
-.search-container {
+/* .search-container {
     display: flex;
     justify-content: center;
     margin: 20px;
@@ -66,12 +68,17 @@ body {
 
 .search-btn:hover {
     background-color: #06b23f;
+} */
+
+#search-bar {
+    width: 50%;
+    margin: 0 auto;
 }
 
 /* Main Content */
 main {
     text-align: center;
-    padding: 80px 20px 20px;
+    padding: 0 20px 20px;
     flex: 1;
 }
 
@@ -197,4 +204,28 @@ footer {
 
 .modern-btn:hover {
     background-color: #06b23f;
+}
+
+@media (max-width: 1000px) and (min-width: 599px) {
+    main {
+        margin: 0 auto;
+        padding: 0;
+        width: 90%;
+    }
+
+    #search-bar {
+        width: 90%;
+    }
+  }
+
+@media (max-width: 600px) {
+    main {
+        margin: 0 auto;
+        padding: 0;
+        width: 95%;
+    }
+
+    #search-bar {
+        width: 100%;
+    }
 }
