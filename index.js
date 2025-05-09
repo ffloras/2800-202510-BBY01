@@ -373,6 +373,11 @@ app.get('/mapboxToken', function (req, res) {
     res.send({ token: process.env.MAPBOX_ACCESS_TOKEN });
 });
 
+app.get('/mapboxTokenLayer', (req, res) => {
+    res.send({token : process.env.TOKENAPI})
+});
+
+
 //
 app.get("/stories", function (req, res) {
     let doc = fs.readFileSync("./app/html/stories.html", "utf8");
@@ -426,6 +431,11 @@ app.get("/postStory", function (req, res) {
 
 app.get("/detailStory", function (req, res) {
     let doc = fs.readFileSync("./app/html/detailStory.html", "utf8");
+    res.send(doc);
+});
+
+app.get('/layers', (req, res) => {
+    let doc = fs.readFileSync("./app/html/layers.html", "utf8");
     res.send(doc);
 });
 
