@@ -44,6 +44,7 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 let { database } = require('./databaseConnection.js');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const alertLocationsCollection = database.db(mongodb_database).collection('alertLocations');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -174,9 +175,16 @@ app.post("/signup", async (req, res) => {
         password: hashedPassword,
     };
 
-    await userCollection.insertOne(user);
+    let record = await userCollection.insertOne(user);
+    req.session.authenticated = true;
+    req.session.username = username;
+    req.session.cookie.maxAge = expireTime;
+    req.session.userID = record.insertedId;
+
+
     res.redirect("/login");
 });
+
 
 // this is the logout page, will be used to destory the session and redirect to the login page
 app.get("/logout", (req, res) => {
@@ -239,6 +247,22 @@ app.post("/saveLocation", async function (req, res) {
             await userCollection.updateOne(
                 { _id: userID }, { $push: { savedLocation } }
             )
+            if (alert) {
+                const alertResult = await alertLocationsCollection.findOne({ location: result.currentSearchLocation },
+                    {projection: {_id: 1}}
+                );
+                if (alertResult && alertResult.hasOwnProperty("_id")) {
+                    await alertLocationsCollection.updateOne(
+                        { _id: new ObjectId(alertResult._id) }, { $push: { users: userID } } 
+                    )
+                } else {
+                    let alertLocation = {
+                        location: result.currentSearchLocation,
+                        users: [userID]
+                    }
+                    await alertLocationsCollection.insertOne(alertLocation);
+                }
+            }
             res.status(201).send('Location saved');
         } catch (error) {
             res.status(500).send('Error saving location');
@@ -254,12 +278,15 @@ app.get('/getCurrentSearchLocation', async function (req, res) {
     if (req.session.authenticated) {
         try {
             let userID = new ObjectId(req.session.userID);
+            let data = null;
             const result = await userCollection.findOne(
                 { _id: userID }, { projection: { currentSearchLocation: 1 } }
             );
-            let data = {
-                coordinate: result.currentSearchLocation.geometry.coordinates,
-                address: result.currentSearchLocation.properties.full_address
+            if (result.hasOwnProperty("currentSearchLocation")) {
+                data = {
+                    coordinate: result.currentSearchLocation.geometry.coordinates,
+                    address: result.currentSearchLocation.properties.full_address
+                }
             }
             res.send(data);
 
@@ -270,8 +297,9 @@ app.get('/getCurrentSearchLocation', async function (req, res) {
     } else {
         res.send("User not logged in")
     }
-})
+});
 
+//middleware to store if current search location is already in saved location
 async function locationSaved(req, res, next) {
     let isSaved = "false";
     if (req.session.authenticated) {
@@ -280,14 +308,12 @@ async function locationSaved(req, res, next) {
             { _id: userID }, { projection: { savedLocation: 1, currentSearchLocation: 1 } }
         );
 
-        let currentLocationProperties = result.currentSearchLocation.properties;
-        let currentAddress = currentLocationProperties.full_address;
-
-        if (result.savedLocation) {
+        if (result.hasOwnProperty("currentSearchLocation") && result.hasOwnProperty("savedLocation")) {
+            let currentLocationProperties = result.currentSearchLocation.properties;
+            let currentAddress = currentLocationProperties.full_address;
             let locationArray = result.savedLocation;
 
             locationArray.forEach(saved => {
-                //console.log(location);
                 let address = saved.location.properties.full_address;
                 if (address === currentAddress) {
                     isSaved = "true";
@@ -305,6 +331,7 @@ app.get("/checkLocationSaved", locationSaved, function (req, res) {
     return;
 });
 
+//sends popup on main page based on if user is logged in, or if location has previously been saved
 app.get("/popup", locationSaved, (req, res) => {
     if (req.session.isLocationSaved == "true") {
         res.render("main/savedPopup");
