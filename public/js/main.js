@@ -1,7 +1,7 @@
 setupMapbox();
 setLocationSavedStatus();
 setLocationName();
-
+setSaveLocationButton();
 
 //sets up mapbox search bar and map
 async function setupMapbox() {
@@ -43,7 +43,7 @@ async function setupMapbox() {
 
     newSearch(searchBar);
 
-    setSaveLocationButton();
+
   }
 }
 
@@ -81,21 +81,66 @@ function newSearch(searchBar) {
 
 //adds event listener to save location button
 function setSaveLocationButton() {
-  document.getElementById("save").addEventListener("click", (e) => {
-    saveLocation();
-    document.getElementById("saveLocation").innerHTML = "Location saved";
-    document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
+  let popup = document.getElementById("popup-overlay");
+  popup.style.display = "none";
+  popup.innerHTML = "";
+
+  document.getElementById("save").addEventListener("click", async (e) => {
+    ajaxGET("/popup", (data) => {
+      popup.style.display = "flex";
+      popup.innerHTML = data;
+
+      //set alert popup buttons
+      if (document.getElementById("alert")) {
+        document.getElementById("alert-cancel").addEventListener("click", (e) => {
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+        document.getElementById("alert-save").addEventListener("click", (e) => {
+          let alertChecked = document.getElementById("alert-checkbox").checked;
+          saveLocation(alertChecked);
+          document.getElementById("saveLocation").innerHTML = "Location saved";
+          document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+      } 
+
+      //set already-saved popup button
+      else if (document.getElementById("already-saved")) {
+        document.getElementById("saved-back").addEventListener("click", (e) => {
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+      }
+
+      //set login popup button
+      else {
+        document.getElementById("login").addEventListener("click", (e) => {
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+      }
+    })
   })
 }
 
 //save current searched location into savedLocation in database
-async function saveLocation() {
+async function saveLocation(alert) {
   if (!(await isLocationSaved())) {
-    ajaxGET('/saveLocation', (response) => {
-      if (!response.ok) 
-        console.log(response);
-      window.location.replace("/login");
+    fetch("/saveLocation", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({alert: alert}),
     })
+      .then((response) => {
+        if (!response.ok) {
+          console.error("Failed to save location");
+        }
+      })
+      .catch((error) => console.error("Error:", error));
   }
 }
 
@@ -130,14 +175,14 @@ function isLocationSaved() {
 
 //sets save location button depending on if current search location is saved in database
 async function setLocationSavedStatus() {
-    let isSaved = await isLocationSaved();
-    if (isSaved) {
-      document.getElementById("saveLocation").innerHTML = "Location saved";
-      document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
-    } else {
-      document.getElementById("saveLocation").innerHTML = "Save Location";
-      document.getElementById("saveIcon").src = "/img/saveIconUnchecked.png";
-    }
+  let isSaved = await isLocationSaved();
+  if (isSaved) {
+    document.getElementById("saveLocation").innerHTML = "Location saved";
+    document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
+  } else {
+    document.getElementById("saveLocation").innerHTML = "Save Location";
+    document.getElementById("saveIcon").src = "/img/saveIconUnchecked.png";
+  }
 }
 
 //sets the current search location name

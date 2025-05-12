@@ -227,20 +227,21 @@ app.post("/recordCurrentLocation", async function (req, res) {
 
 
 //saves currentSearchLocation into savedLocation array
-app.get("/saveLocation", async function (req, res) {
+app.post("/saveLocation", async function (req, res) {
+    let { alert } = req.body;
     if (req.session.authenticated) {
         try {
             let userID = new ObjectId(req.session.userID);
             const result = await userCollection.findOne(
                 { _id: userID }, { projection: { currentSearchLocation: 1 } }
             );
-            let savedLocation = { location: result.currentSearchLocation, alert: false }
+            let savedLocation = { location: result.currentSearchLocation, alert: alert }
             await userCollection.updateOne(
                 { _id: userID }, { $push: { savedLocation } }
             )
             res.status(201).send('Location saved');
         } catch (error) {
-            res.status(500).send('Unable to save location');
+            res.status(500).send('Error saving location');
         }
 
     } else {
@@ -257,8 +258,9 @@ app.get('/getCurrentSearchLocation', async function (req, res) {
                 { _id: userID }, { projection: { currentSearchLocation: 1 } }
             );
             let data = {
-                coordinate: result.currentSearchLocation.geometry.coordinates, 
-                address: result.currentSearchLocation.properties.full_address}
+                coordinate: result.currentSearchLocation.geometry.coordinates,
+                address: result.currentSearchLocation.properties.full_address
+            }
             res.send(data);
 
         } catch (error) {
@@ -270,8 +272,7 @@ app.get('/getCurrentSearchLocation', async function (req, res) {
     }
 })
 
-//checks if currently searched location is already saved in database
-app.get("/checkLocationSaved", async function (req, res) {
+async function locationSaved(req, res, next) {
     let isSaved = "false";
     if (req.session.authenticated) {
         let userID = new ObjectId(req.session.userID);
@@ -293,9 +294,25 @@ app.get("/checkLocationSaved", async function (req, res) {
                 }
             });
         }
-    }
-    res.send(isSaved);
+    };
+    req.session.isLocationSaved = isSaved;
+    next();
+}
+
+//checks if currently searched location is already saved in database
+app.get("/checkLocationSaved", locationSaved, function (req, res) {
+    res.send(req.session.isLocationSaved);
     return;
+});
+
+app.get("/popup", locationSaved, (req, res) => {
+    if (req.session.isLocationSaved == "true") {
+        res.render("main/savedPopup");
+    } else if (req.session.authenticated) {
+        res.render("main/alertPopup");
+    } else {
+        res.render("main/loginPopup");
+    }
 })
 
 //this is the profile page, used to display the user profile information
@@ -375,7 +392,7 @@ app.get('/mapboxToken', function (req, res) {
 });
 
 app.get('/mapboxTokenLayer', (req, res) => {
-    res.send({token : process.env.TOKENAPI})
+    res.send({ token: process.env.TOKENAPI })
 });
 
 
@@ -406,7 +423,7 @@ app.get("/authenticated", function (req, res) {
 //     try {
 //       const { id, title, author, story } = req.body;
 //       const imagePath = req.file ? req.file.path : null;
-  
+
 //       const newStory = {
 //         id,
 //         title,
@@ -414,7 +431,7 @@ app.get("/authenticated", function (req, res) {
 //         story,
 //         image: imagePath
 //       };
-  
+
 //       await postCollection.insertOne(newStory);
 //       res.status(200).send("Story created.");
 //     } catch (err) {
@@ -422,7 +439,7 @@ app.get("/authenticated", function (req, res) {
 //       res.status(500).send("Error saving story.");
 //     }
 //   });
-  
+
 
 // Route to serve the 'postStory' page
 app.get("/postStory", function (req, res) {
