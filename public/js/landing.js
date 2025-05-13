@@ -26,12 +26,13 @@
 //     });
 // });
 
+
 setupSearch();
 
 //sets up Mapbox search bar
 async function setupSearch() {
     const script = document.getElementById('search-js');
-    
+
     // wait for the Mapbox Search JS script to load before using it
     script.onload = async function () {
 
@@ -46,11 +47,24 @@ async function setupSearch() {
         document.getElementById('search-bar').appendChild(searchBar);
 
         // add an event listener to retrieve coordinates of searched location
-        searchBar.addEventListener('retrieve', (e) => {
+        searchBar.addEventListener('retrieve', async (e) => {
             const feature = e.detail; // geojson object representing the selected item
+
+            //if user is logged in, save search location in db
+            const response = await fetch('/recordCurrentLocation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ currentLocation: feature }),
+            });
+
+            //directs user to main page with search coordinates
             window.location.replace(`/main?coor=${feature.geometry.coordinates}`); //sends coordinates to main page
         });
     }
+
+    console.log(await isLoggedIn());
 }
 
 

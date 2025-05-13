@@ -18,12 +18,52 @@ main {
   border: none;
 }
 
+#save-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #save {
   padding: 10px 0 10px 0;
   display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
+
+#popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+#popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 400px;
+}
+
+#alert-box {
+  background-color: rgb(212, 209, 202);
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Additional CSS for styling the checkbox and button */
 
 #mapLayers {
   list-style: none;
@@ -33,7 +73,7 @@ main {
   justify-content: space-around;
 }
 
-#mapLayers > li {
+#mapLayers>li {
   width: 50%;
   text-align: center;
   padding: 10px 0 10px 0;
@@ -78,7 +118,10 @@ main {
   main {
     width: 80%;
   }
+
+
 }
+
 
 @media (max-width: 600px) {
   body {
@@ -98,4 +141,5 @@ main {
   #save {
     padding: 10px 0 10px 1.5%;
   }
+
 }
