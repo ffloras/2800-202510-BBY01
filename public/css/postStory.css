@@ -96,3 +96,21 @@ button[type="button"]:hover {
   background-color: #355a7b;
   transform: translateY(-2px);
 }
+
+/* Word counter styling for story input */
+#storyCountError {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+  font-style: italic;
+  transition: color 0.3s ease;
+  padding-left: 0.2rem;
+}
+
+#storyCountError.invalid {
+  color: #c62828; /* Red for errors */
+}
+
+#storyCountError.valid {
+  color: #2e7d32; /* Green for valid count */
+}
