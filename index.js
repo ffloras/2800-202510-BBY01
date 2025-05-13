@@ -297,6 +297,15 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
        
       const { id, title, author, story } = req.body;
       const imagePath = req.file ? req.file.path : null;
+
+    // Server-side word count validation
+    let wordCount = story.split(/\s+/).filter(word => word.length > 0).length;
+    if (wordCount < 20) {
+      return res.status(400).send("Story must be at least 20 words.");
+    }
+    if (wordCount > 70) {
+        return res.status(400).send("Story must be no more than 70 words.");
+      }
   
       const newStory = {
         id,
