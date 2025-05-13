@@ -293,8 +293,8 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // You can customize storage options if needed
 
 app.post("/api/stories", upload.single("image"), async (req, res) => {
-    console.log(" /api/stories route was hit");
     try {
+       
       const { id, title, author, story } = req.body;
       const imagePath = req.file ? req.file.path : null;
   
@@ -310,7 +310,7 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
       console.log("Story saved to database:", result);
       res.status(200).send("Story created.");
     } catch (err) {
-      console.error(err);
+        console.error(" Error saving story:", err);
       res.status(500).send("Error saving story.");
     }
   });
@@ -325,6 +325,7 @@ app.get("/api/stories", async (req, res) => {
         res.status(500).json({ error: "Error fetching stories." });
     }
 });
+
 // Route to serve the 'postStory' page
 app.get("/postStory", function (req, res) {
     let doc = fs.readFileSync("./app/html/postStory.html", "utf8");

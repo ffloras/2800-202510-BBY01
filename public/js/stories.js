@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", async () => {
   const storyContainer = document.getElementById("stories-container");
 
