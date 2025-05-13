@@ -292,7 +292,7 @@ app.get("/savedLocation", function (req, res) {
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // You can customize storage options if needed
 
-app.post("/api/atories", upload.single("image"), async (req, res) => {
+app.post("/api/stories", upload.single("image"), async (req, res) => {
     console.log(" /api/stories route was hit");
     try {
       const { id, title, author, story } = req.body;
