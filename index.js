@@ -174,6 +174,8 @@ app.post("/signup", async (req, res) => {
         email: email,
         username: username,
         password: hashedPassword,
+        currentSearchLocation: null,
+        savedLocation: []
     };
 
     let record = await userCollection.insertOne(user);
@@ -250,11 +252,11 @@ app.post("/saveLocation", async function (req, res) {
             )
             if (alert) {
                 const alertResult = await alertLocationsCollection.findOne({ location: result.currentSearchLocation },
-                    {projection: {_id: 1}}
+                    { projection: { _id: 1 } }
                 );
                 if (alertResult && alertResult.hasOwnProperty("_id")) {
                     await alertLocationsCollection.updateOne(
-                        { _id: new ObjectId(alertResult._id) }, { $push: { users: userID } } 
+                        { _id: new ObjectId(alertResult._id) }, { $push: { users: userID } }
                     )
                 } else {
                     let alertLocation = {
@@ -283,7 +285,7 @@ app.get('/getCurrentSearchLocation', async function (req, res) {
             const result = await userCollection.findOne(
                 { _id: userID }, { projection: { currentSearchLocation: 1 } }
             );
-            if (result.hasOwnProperty("currentSearchLocation")) {
+            if (result.currentSearchLocation) {
                 data = {
                     coordinate: result.currentSearchLocation.geometry.coordinates,
                     address: result.currentSearchLocation.properties.full_address
@@ -309,7 +311,7 @@ async function locationSaved(req, res, next) {
             { _id: userID }, { projection: { savedLocation: 1, currentSearchLocation: 1 } }
         );
 
-        if (result.hasOwnProperty("currentSearchLocation") && result.hasOwnProperty("savedLocation")) {
+        if (result.currentSearchLocation) {
             let currentLocationProperties = result.currentSearchLocation.properties;
             let currentAddress = currentLocationProperties.full_address;
             let locationArray = result.savedLocation;
@@ -340,6 +342,127 @@ app.get("/popup", locationSaved, (req, res) => {
         res.render("main/alertPopup");
     } else {
         res.render("main/loginPopup");
+    }
+});
+
+app.get("/deletePopup", (req, res) => {
+    try {
+        res.render("savedLocations/deletePopup");
+    } catch (error) {
+        console.error("Error rendering EJS template:", error);
+        res.status(500).send("Error rendering template.");
+    }
+})
+
+//display list of saved locations
+app.get("/displaySavedLocations", async (req, res) => {
+    let userID = new ObjectId(req.session.userID);
+    try {
+        let result = await userCollection.findOne({ _id: userID }, { projection: { savedLocation: 1 } })
+        let locationArray = result.savedLocation;
+        //console.log(result);
+        if (locationArray.length == 0) {
+            res.render("savedLocations/location", { locationArray: [], message: "No Saved Locations" });
+        } else {
+            res.render("savedLocations/location", { locationArray: locationArray, message: "" });
+        }
+    } catch (error) {
+        console.error("Error displaying saved location: ", error);
+    }
+});
+
+//deletes saved location from the database
+app.post("/deleteLocation", async (req, res) => {
+    let { locationId, alertOn } = req.body;
+    let userID = new ObjectId(req.session.userID);
+    try {
+        //remove location from saved location
+        let result = await userCollection.findOne({ _id: userID }, { projection: { savedLocation: 1 } })
+        await userCollection.updateOne(
+            { _id: userID },
+            { $pull: { savedLocation: { "location.id": locationId } } }
+        )
+        if (alertOn) {
+            //removes location/user from alert locations
+            const alertResult = await alertLocationsCollection.findOne({ "location.id": locationId },
+                { projection: { _id: 1, users: 1 } }
+            );
+
+            if (alertResult && alertResult.hasOwnProperty("_id") && alertResult.users.length > 1) {
+                let docID = new ObjectId(alertResult._id);
+                await alertLocationsCollection.updateOne(
+                    { _id: docID }, { $pull: { users: userID } }
+                )
+                res.status(200).send("User removed from alert location");
+            } else if (alertResult && alertResult.hasOwnProperty("_id")) {
+                let docID = new ObjectId(alertResult._id);
+                await alertLocationsCollection.deleteOne({ _id: docID });
+                res.status(200).send("Alert location deleted");
+            } else {
+                res.status(200).send("Location not in alertLocation")
+            }
+        } else {
+            res.status(200).send("Location deleted from savedLocation")
+        }
+    } catch (error) {
+        res.status(500).send("Error deleting saved location: " + error)
+    }
+
+})
+
+app.post("/updateAlert", async (req, res) => {
+    let { locationId, newAlert } = req.body;
+    let userID = new ObjectId(req.session.userID);
+    try {
+        //updates alerts in savedLocations
+        await userCollection.updateOne(
+            { _id: userID, savedLocation: { $elemMatch: { "location.id": locationId } } },
+            { $set: { "savedLocation.$.alert": newAlert } }
+        )
+
+        //updates alerts in alertsLocation
+        let locationResult = await userCollection.findOne(
+            { _id: userID, savedLocation: { $elemMatch: { "location.id": locationId } } },
+            { projection: { "savedLocation.$": 1 } }
+        )
+        //geojson object of location
+        let location = locationResult.savedLocation[0].location;
+
+        const alertResult = await alertLocationsCollection.findOne({ "location.id": locationId },
+            { projection: { _id: 1, users: 1 } }
+        );
+
+        if (newAlert) {
+            if (alertResult && alertResult.hasOwnProperty("_id")) {
+                let docID = new ObjectId(alertResult._id);
+                await alertLocationsCollection.updateOne(
+                    { _id: docID }, { $push: { users: userID } }
+                )
+            } else {
+                let alertLocation = {
+                    location: location,
+                    users: [userID]
+                }
+                await alertLocationsCollection.insertOne(alertLocation);
+            }
+            res.status(200).send("alert location updated");
+        } else {
+            if (alertResult && alertResult.hasOwnProperty("_id") && alertResult.users.length > 1) {
+                let docID = new ObjectId(alertResult._id);
+                await alertLocationsCollection.updateOne(
+                    { _id: docID }, { $pull: { users: userID } }
+                )
+                res.status(200).send("alert location updated");
+            } else if (alertResult && alertResult.hasOwnProperty("_id")) {
+                let docID = new ObjectId(alertResult._id);
+                await alertLocationsCollection.deleteOne({ _id: docID });
+                res.status(200).send("alert location updated");
+            } else {
+                res.status(500).send("error updating alertLocation database")
+            }
+        }
+    } catch (error) {
+        res.status(500).send("error updating savedLocations alert: " + error)
     }
 })
 
@@ -432,8 +555,15 @@ app.get("/stories", function (req, res) {
 
 //
 app.get("/savedLocation", function (req, res) {
-    let doc = fs.readFileSync("./app/html/savedLocation.html", "utf8");
-    res.send(doc);
+    if (req.session.authenticated) {
+        let doc = fs.readFileSync("./app/html/savedLocation.html", "utf8");
+        res.send(doc);
+    } else {
+        console.log("log in to view contents");
+        let doc = fs.readFileSync("./app/html/login.html", "utf8");
+        res.send(doc);
+    }
+
 });
 
 app.get("/authenticated", function (req, res) {
@@ -452,36 +582,36 @@ const upload = multer({ dest: 'uploads/' }); // You can customize storage option
 
 app.post("/api/stories", upload.single("image"), async (req, res) => {
     try {
-       
-      const { id, title, author, story } = req.body;
-      const imagePath = req.file ? req.file.path : null;
 
-    // Server-side word count validation
-    let wordCount = story.split(/\s+/).filter(word => word.length > 0).length;
-    if (wordCount < 20) {
-      return res.status(400).send("Story must be at least 20 words.");
-    }
-    if (wordCount > 70) {
-        return res.status(400).send("Story must be no more than 70 words.");
-      }
-  
-      const newStory = {
-        id,
-        title,
-        author: author || "Anonymous",
-        story,
-        image: imagePath
-      };
-  
-      const result = await storiesCollection.insertOne(newStory);
-      console.log("Story saved to database:", result);
-      res.status(200).send("Story created.");
+        const { id, title, author, story } = req.body;
+        const imagePath = req.file ? req.file.path : null;
+
+        // Server-side word count validation
+        let wordCount = story.split(/\s+/).filter(word => word.length > 0).length;
+        if (wordCount < 20) {
+            return res.status(400).send("Story must be at least 20 words.");
+        }
+        if (wordCount > 70) {
+            return res.status(400).send("Story must be no more than 70 words.");
+        }
+
+        const newStory = {
+            id,
+            title,
+            author: author || "Anonymous",
+            story,
+            image: imagePath
+        };
+
+        const result = await storiesCollection.insertOne(newStory);
+        console.log("Story saved to database:", result);
+        res.status(200).send("Story created.");
     } catch (err) {
         console.error(" Error saving story:", err);
-      res.status(500).send("Error saving story.");
+        res.status(500).send("Error saving story.");
     }
-  });
-  
+});
+
 // Route to GET all stories
 app.get("/api/stories", async (req, res) => {
     try {

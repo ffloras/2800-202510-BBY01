@@ -1,0 +1,25 @@
+<h3 id="message">
+  <%= message %>
+</h3>
+<% for (let i=0; i < locationArray.length; i++) { %>
+  <div class="save-location-block">
+    <p class="location-name">
+      <%= locationArray[i].location.properties.full_address%>
+    </p>
+    <div class="save-location-button-container">
+      <div class="icon">
+        <input type="image" id="<%= locationArray[i].location.id %>-alert"
+          class="save-location-alert location-button <% if (locationArray[i].alert) { %> alert-on <% } %>"
+          src=" <% if (locationArray[i].alert) { %> /img/alertOnIcon.png <% } else { %> /img/alertOffIcon.png <% } %>"
+          alt="alert button">
+        <div><% if (locationArray[i].alert) { %> Alert On <% } else { %> Alert Off <% } %></div>
+      </div>
+      <div class="icon">
+        <input type="image" id="<%= locationArray[i].location.id %>-remove" 
+          class="save-location-remove location-button <% if (locationArray[i].alert) { %> alert-on <% } %>"
+          src="/img/deleteIcon.png">
+        <div>Delete</div>
+      </div>
+    </div>
+  </div>
+  <% } %>

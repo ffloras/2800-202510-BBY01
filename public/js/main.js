@@ -141,7 +141,7 @@ async function saveLocation(alert) {
           console.error("Failed to save location");
         }
       })
-      .catch((error) => console.error("Error:", error));
+      .catch((error) => console.error("Failed to save location: ", error));
   }
 }
 
