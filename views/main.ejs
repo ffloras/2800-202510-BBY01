@@ -1,0 +1,46 @@
+<% let stylesheets=["/css/main.css", "https://api.mapbox.com/mapbox-gl-js/v3.11.1/mapbox-gl.css"]; %>
+<% let scripts=[{ script: "/js/common.js" }, { script: "/js/main.js" },
+    { script: "https://api.mapbox.com/search-js/v1.0.0/web.js", id: "search-js" }, {script: "https://api.mapbox.com/mapbox-gl-js/v3.11.1/mapbox-gl.js"}]; %>
+
+<%- include("templates/header", { stylesheets: stylesheets }) %>
+
+<template id="riskTemplateShort">
+    <div id="riskShort">
+    </div>
+    <div id="downArrow"></div>
+</template>
+
+
+<template id="riskTemplateLong">
+    <div id="riskLong">
+    </div>
+    <div id="upArrow"></div>
+</template>
+<main>
+    <div id="search-bar"></div>
+
+    <div id="save-container">
+        <div id="save">
+            <img id="saveIcon" src="/img/saveIconUnchecked.png" alt="save location" width="20" height="20">
+            <span id="saveLocation">Save Location</span>
+        </div>
+        <div id="locationName"></div>
+    </div>
+
+
+    <ul id="mapLayers">
+        <li id="heatLayer">Heat Map</li>
+        <li id="floodLayer">Water Level Map</li>
+    </ul>
+
+    <div id="map">
+    </div>
+
+    <div id="gradient">Gradient</div>
+
+    <div id="risks">
+        <div id="riskHeading"><strong>Environmental Risks at this Location</strong></div>
+        <div id="riskContent">There is currently no Environmental Risk</div>
+    </div>
+</main>
+<%- include("templates/footer", { scripts: scripts }) %>
