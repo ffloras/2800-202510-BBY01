@@ -13,12 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle save
     document.getElementById('profileForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        alert("Profile saved successfully!");
+        let name = document.getElementById('profile-name').value;
+        let email = document.getElementById('profile-email').value;
+        let queryString =
+            "name=" + name + "&email=" + email;
+        ajaxPOST("/profileUpdate", function() {}, queryString);
         inputs.forEach(input => input.disabled = true);
         saveBtn.disabled = true;
-
-        
+        alert("Profile Saved!");
     });
+
 
     // Handle delete
     deleteBtn.addEventListener('click', () => {
