@@ -1,0 +1,10 @@
+    <footer id="footerPlaceholder"></footer>
+    <!-- Scripts -->
+    <script defer src="/js/load.js"></script>
+    <% if(locals?.scripts) {%>
+        <% for(let i=0; i < scripts.length; i++) {%>
+            <script id="<%- scripts[i].id ? scripts[i].id : `script-${i}`%>" defer src="<%- scripts[i].script %>"></script>
+        <% }%>
+    <% }%>
+</body>
+</html>

@@ -42,6 +42,7 @@ const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 
 let { database } = require('./databaseConnection.js');
+const { error } = require('console');
 
 const userCollection = database.db(mongodb_database).collection('users');
 const storiesCollection = database.db(mongodb_database).collection('stories');
@@ -68,18 +69,12 @@ app.use(session({
 
 // this is the home page of the
 app.get("/", function (req, res) {
-    let doc = fs.readFileSync("./app/html/index.html", "utf8");
-    res.send(doc);
-});
-app.get("/landing", function (req, res) {
-    let doc = fs.readFileSync("./app/html/landing.html", "utf8");
-    res.send(doc);
+    res.render("index");
 });
 
 // this is the login page
 app.get("/login", function (req, res) {
-    let doc = fs.readFileSync("./app/html/login.html", "utf8");
-    res.send(doc);
+    res.render("login");
 });
 // this will submit the login data to the database to check if the user exists
 app.post("/login", async (req, res) => {
@@ -106,7 +101,7 @@ app.post("/login", async (req, res) => {
         req.session.username = username;
         req.session.cookie.maxAge = expireTime;
         req.session.userID = result._id;
-
+        app.locals.loggedIn = true;
         res.redirect("/main"); //****change this to something else after user is logged in 
         return;
     }
@@ -119,8 +114,7 @@ app.post("/login", async (req, res) => {
 
 // this is the signup page
 app.get("/signup", function (req, res) {
-    let doc = fs.readFileSync("./app/html/signup.html", "utf8");
-    res.send(doc);
+    res.render("signup");
 });
 
 // this is the post request for the signup page, used to submit user data to the database
@@ -129,42 +123,34 @@ app.post("/signup", async (req, res) => {
     const email = req.body.email;
     const username = req.body.username;
     const password = req.body.password;
+    let details = [];
+    const schema = Joi.object(
+        {
+            name: Joi.string().alphanum().max(20).required(),
+            username: Joi.string().alphanum().max(20).required(),
+            email: Joi.string().max(20).email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+            password: Joi.string().min(8).max(20).required()
+        });
 
-    // used for username validation
-    const schema = Joi.string().max(20).required();
-    const validationResult = schema.validate(username);
+    const validationResult = schema.validate({ name, username, email, password }, { abortEarly: false });
     if (validationResult.error != null) {
-        console.log(validationResult.error);
-        res.redirect("/signup");
-        return;
+        for (let detail of validationResult.error["details"]) {
+            details.push(detail.message);
+        }
     }
-
-    // used for password validation
-    const passwordSchema = Joi.string().min(8).max(30).required();
-    const passwordValidation = passwordSchema.validate(password);
-    if (passwordValidation.error != null) {
-        console.log(passwordValidation.error);
-        res.redirect("/signup");
-        return;
-    }
-
-    // used for email validation
-    const emailSchema = Joi.string().email().max(30).required();
-    const emailValidation = emailSchema.validate(email);
-    if (emailValidation.error != null) {
-        console.log(emailValidation.error);
-        res.redirect("/signup");
-        return;
-    }
-
     // will check if the username or email already exists in the database
-    const existinguser = await userCollection.findOne({ $or: [{ username: username }, { email: email }] });
-    if (existinguser) {
-        console.log("User already exists");
-        res.redirect("/signup?error=User already exists");
+    const existingUser = await userCollection.findOne({  username: username });
+    const existingEmail = await userCollection.findOne({ email: email });
+    if (existingUser && username.length > 0 ) {
+        details.push("Username already in use");
+    }
+    if (existingEmail && email.length > 0 ) {
+        details.push("Email already in use");
+    }
+    if (details.length > 0) {
+        res.render("signup", { error: details, input: {name: name, email: email, username: username, password: password} });
         return;
     }
-
     // hashes the password with bcrypt
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -196,21 +182,15 @@ app.get("/logout", (req, res) => {
             console.error("Error during logout: ", err);
             res.status(500).send("Internal Server Error");
         } else {
+            app.locals.loggedIn = false;
             res.redirect("/login");
         }
     });
 });
 
-
-app.get("/index", function (req, res) {
-    let doc = fs.readFileSync("./app/html/index.html", "utf8");
-    res.send(doc);
-});
-
 //
 app.get("/main", function (req, res) {
-    let doc = fs.readFileSync("./app/html/main.html", "utf8");
-    res.send(doc);
+    res.render("main");
 });
 
 //for updating user's current search location
@@ -468,8 +448,7 @@ app.post("/updateAlert", async (req, res) => {
 
 //this is the profile page, used to display the user profile information
 app.get("/profile", function (req, res) {
-    let doc = fs.readFileSync("./app/html/profile.html", "utf8");
-    res.send(doc);
+    res.render("profile");
 });
 
 //for floodAdaptation.html
@@ -549,21 +528,12 @@ app.get('/mapboxTokenLayer', (req, res) => {
 
 //
 app.get("/stories", function (req, res) {
-    let doc = fs.readFileSync("./app/html/stories.html", "utf8");
-    res.send(doc);
+    res.render("stories");
 });
 
 //
 app.get("/savedLocation", function (req, res) {
-    if (req.session.authenticated) {
-        let doc = fs.readFileSync("./app/html/savedLocation.html", "utf8");
-        res.send(doc);
-    } else {
-        console.log("log in to view contents");
-        let doc = fs.readFileSync("./app/html/login.html", "utf8");
-        res.send(doc);
-    }
-
+    res.render("savedLocation");
 });
 
 app.get("/authenticated", function (req, res) {
@@ -572,7 +542,6 @@ app.get("/authenticated", function (req, res) {
     } else {
         res.send('false');
     }
-
 })
 
 app.get("/sessionInfo", (req, res) => {
@@ -716,18 +685,21 @@ app.put("/api/stories/:id", upload.single("image"), async (req, res) => {
 
 // Route to serve the 'postStory' page
 app.get("/postStory", function (req, res) {
-    let doc = fs.readFileSync("./app/html/postStory.html", "utf8");
-    res.send(doc);
+    res.render("postStory");
 });
 
 app.get("/detailStory", function (req, res) {
-    let doc = fs.readFileSync("./app/html/detailStory.html", "utf8");
-    res.send(doc);
+    res.render("detailStory");
 });
 
 app.get('/layers', (req, res) => {
     let doc = fs.readFileSync("./app/html/layers.html", "utf8");
     res.send(doc);
+});
+
+app.use(function (req, res) {
+    res.status(404);
+    res.render("404");
 });
 
 

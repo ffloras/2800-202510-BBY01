@@ -1,0 +1,42 @@
+<% let stylesheets = ["/css/landing.css"]; %>
+<% let scripts = [{ script: "/js/common.js" }, { script: "/js/landing.js" }, { script: "https://api.mapbox.com/search-js/v1.0.0/web.js", id: "search-js" }]; %>
+
+<%- include("templates/header", { stylesheets: stylesheets }) %>
+<div id="landingPage">
+    <!-- Search Bar -->
+    <!-- <div class="search-container">
+        <input type="text" id="addressInput" placeholder="Search you address">
+        <button id="searchBtn" class="search-btn">🔍</button>
+    </div> -->
+    <!-- Search Bar -->
+    <!-- <div class="search-container">
+    <input
+        type="text"
+        id="addressInput"
+        placeholder="Enter your location"
+    />
+    <button id="searchBtn" class="search-btn">
+        <i class="fas fa-location-dot"></i>
+    </button>
+    </div> -->
+
+    <!-- Main Content -->
+    <div id="search-bar"></div>
+    <main>
+
+        <h1><b>RiskMapper</b></h1>
+        <div class="hero-icon"></div>
+        <p class="description">
+            Search your location to view the environmental risks and a map of the
+            climate data in your area.
+        </p>
+    </main>
+
+    <div class="about-container">
+        <section class="about">
+            <h2><b>About Us</b></h2>
+            <p>We are a group of individuals</p>
+        </section>
+    </div>
+</div>
+<%- include("templates/footer", { scripts: scripts }) %>
