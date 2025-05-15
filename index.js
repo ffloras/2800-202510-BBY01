@@ -574,9 +574,38 @@ app.get("/authenticated", function (req, res) {
     }
 
 })
-// // Route to handle story submissions (POST request to /api/posts)
-// // Accepts form data including an optional image upload
-// // Saves the story data to the MongoDB collection
+
+// Route to GET all stories
+app.get("/api/stories", async (req, res) => {
+    try {
+        const stories = await storiesCollection.find().toArray();
+        res.status(200).json(stories);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error fetching stories." });
+    }
+});
+
+// Route to get a single story by ID
+app.get("/api/stories/:id", async (req, res) => {
+    console.log("/api/stories/:id route hit!");
+
+    try {
+      const { id } = req.params;
+      const story = await storiesCollection.findOne({ _id: new ObjectId(id) });
+  
+      if (!story) {
+        return res.status(404).json({ error: "Story not found" });
+      }
+  
+      res.json(story);
+    } catch (err) {
+      console.error("Error fetching story by ID:", err);
+      res.status(500).json({ error: "Error fetching story" });
+    }
+  });
+
+// Route to handle story submissions (POST to /api/posts), accepting form data with optional image upload and saving it to the MongoDB collection
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // You can customize storage options if needed
 
@@ -612,16 +641,6 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
     }
 });
 
-// Route to GET all stories
-app.get("/api/stories", async (req, res) => {
-    try {
-        const stories = await storiesCollection.find().toArray();
-        res.status(200).json(stories);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error fetching stories." });
-    }
-});
 
 // Route to serve the 'postStory' page
 app.get("/postStory", function (req, res) {

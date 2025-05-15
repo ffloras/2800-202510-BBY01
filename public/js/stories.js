@@ -16,9 +16,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       storyCard.innerHTML = `
         <h4>${story.title}</h4>
         <p><strong>Author:</strong> ${story.author}</p>
-        <p>${story.story}</p>
-        <a href="/detailStory" class="button-read-more">Read more...</a>
+        <p>${story.story.split(" ").slice(0, 25).join(" ")}...</p>
+        <a href="/detailStory?id=${story._id}" class="button-read-more">Read more...</a>
       `;
+
       storyContainer.appendChild(storyCard);
     });
   } catch (err) {
