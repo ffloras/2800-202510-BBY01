@@ -72,9 +72,17 @@ app.get("/", function (req, res) {
     res.render("index");
 });
 
+app.get("/main", function (req, res) {
+    res.render("main");
+});
+
 // this is the login page
 app.get("/login", function (req, res) {
-    res.render("login");
+    if (! req.session.authenticated) {
+        res.render("login");
+    } else {
+        res.redirect("/main");
+    }
 });
 // this will submit the login data to the database to check if the user exists
 app.post("/login", async (req, res) => {
@@ -114,7 +122,11 @@ app.post("/login", async (req, res) => {
 
 // this is the signup page
 app.get("/signup", function (req, res) {
-    res.render("signup");
+    if (!req.session.authenticated) {
+        res.render("signup");
+    } else {
+        res.redirect("/main");
+    }
 });
 
 // this is the post request for the signup page, used to submit user data to the database
@@ -183,15 +195,13 @@ app.get("/logout", (req, res) => {
             res.status(500).send("Internal Server Error");
         } else {
             app.locals.loggedIn = false;
-            res.redirect("/login");
+            res.redirect("/");
         }
     });
 });
 
 //
-app.get("/main", function (req, res) {
-    res.render("main");
-});
+
 
 //for updating user's current search location
 app.post("/recordCurrentLocation", async function (req, res) {
