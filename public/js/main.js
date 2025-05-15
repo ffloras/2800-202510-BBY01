@@ -2,6 +2,7 @@ setupMapbox();
 setLocationSavedStatus();
 setLocationName();
 setSaveLocationButton();
+setupAI()
 
 //sets up mapbox search bar and map
 async function setupMapbox() {
@@ -30,7 +31,7 @@ async function setupMapbox() {
     let map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: getCoordinateFromURL() || searchCoordinate || [-122.95263, 49.26636], // starting position [lng, lat]
+      center: getCoordinateFromSessionStorage() || searchCoordinate || [-122.95263, 49.26636], // starting position [lng, lat]
       zoom: 9, // starting zoom
     });
 
@@ -48,14 +49,16 @@ async function setupMapbox() {
 }
 
 //return coordinate array from this page's URL consisting of longitude and latitude
-function getCoordinateFromURL() {
-  let url = new URL(window.location.href);
-  let params = url.searchParams.get("coor");
-  let coor = null;
-  if (params) {
-    coor = params.split(",");
+function getCoordinateFromSessionStorage() {
+  // let url = new URL(window.location.href);
+  // let params = url.searchParams.get("coor");
+  // let coor = null;
+  let coor = sessionStorage.getItem("coor");
+  console.log(coor);
+  if (coor) {
+    coorArray = coor.split(",");
   }
-  return coor;
+  return coorArray;
 }
 
 //updates the current searched location in the database, updates location save status and name on main page
@@ -73,6 +76,10 @@ function newSearch(searchBar) {
       body: JSON.stringify({ currentLocation: feature }),
     });
 
+    let coordinate = feature.geometry.coordinates;
+    sessionStorage.setItem("coor", coordinate);
+
+    document.getElementById("ai-message").innerHTML = "Take a look at what this location's climate would look like in the next few decades.";
     setLocationSavedStatus();
     setLocationName();
 
@@ -104,7 +111,7 @@ function setSaveLocationButton() {
           popup.style.display = "none";
           popup.innerHTML = "";
         });
-      } 
+      }
 
       //set already-saved popup button
       else if (document.getElementById("already-saved")) {
@@ -126,6 +133,9 @@ function setSaveLocationButton() {
   })
 }
 
+function updateURLparam() {
+
+}
 //save current searched location into savedLocation in database
 async function saveLocation(alert) {
   if (!(await isLocationSaved())) {
@@ -134,7 +144,7 @@ async function saveLocation(alert) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({alert: alert}),
+      body: JSON.stringify({ alert: alert }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -192,4 +202,43 @@ async function setLocationName() {
   if (name) {
     document.getElementById("locationName").innerHTML = name.address;
   }
+}
+
+async function setupAI() {
+  document.getElementById("ai-button").addEventListener("click", async (e) => {
+
+    let searchLocation = await getCurrentSearchLocation();
+    let searchCoordinate = searchLocation ? searchLocation.coordinate : null;
+
+    console.log(searchCoordinate);
+
+    let coorArray = searchCoordinate || getCoordinateFromSessionStorage();
+    
+    let coor = {
+      long: coorArray[0],
+      lat: coorArray[1]
+    }
+
+    console.log(coor);
+
+    fetch("/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(coor)
+    })
+      .then(async (response) => {
+        let html = await response.text();
+        document.getElementById("ai-message").innerHTML = html;
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+
+  })
+
+
+
+
 }

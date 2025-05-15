@@ -18,6 +18,8 @@ const expireTime = 24 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes 
 
 const Joi = require("joi");
 
+const { GoogleGenAI } = require("@google/genai");
+const ai = new GoogleGenAI({ apiKey: "AIzaSyCswqWb8t4NbdCrREUeTj6EP9iWgM3zfWk" });
 
 
 const app = express();
@@ -78,7 +80,7 @@ app.get("/main", function (req, res) {
 
 // this is the login page
 app.get("/login", function (req, res) {
-    if (! req.session.authenticated) {
+    if (!req.session.authenticated) {
         res.render("login");
     } else {
         if (app.locals.loggedIn == false) {
@@ -154,16 +156,16 @@ app.post("/signup", async (req, res) => {
         }
     }
     // will check if the username or email already exists in the database
-    const existingUser = await userCollection.findOne({  username: username });
+    const existingUser = await userCollection.findOne({ username: username });
     const existingEmail = await userCollection.findOne({ email: email });
-    if (existingUser && username.length > 0 ) {
+    if (existingUser && username.length > 0) {
         details.push("Username already in use");
     }
-    if (existingEmail && email.length > 0 ) {
+    if (existingEmail && email.length > 0) {
         details.push("Email already in use");
     }
     if (details.length > 0) {
-        res.render("signup", { error: details, input: {name: name, email: email, username: username, password: password} });
+        res.render("signup", { error: details, input: { name: name, email: email, username: username, password: password } });
         return;
     }
     // hashes the password with bcrypt
@@ -203,7 +205,23 @@ app.get("/logout", (req, res) => {
     });
 });
 
-//
+app.post("/ai", async (req, res) => {
+    try {
+        let { long, lat } = req.body;
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents:
+                `Present a speculative vision summary of the climate of area  with longitude ${long} and latitude ${lat} in the 
+                next 10, 20, or 50 years based on available scientific data. Do not mention the coordinates.
+                Mention the name of the location. Keep it within 50 words.`
+        });
+        let text = response.text;
+        console.log(response.text)
+        res.send(text)
+    } catch (error) {
+        res.status(500).send("Error retreiving AI response: ", error);
+    }
+})
 
 
 //for updating user's current search location
@@ -585,19 +603,19 @@ app.get("/api/stories/:id", async (req, res) => {
     console.log("/api/stories/:id route hit!");
 
     try {
-      const { id } = req.params;
-      const story = await storiesCollection.findOne({ _id: new ObjectId(id) });
-  
-      if (!story) {
-        return res.status(404).json({ error: "Story not found" });
-      }
-  
-      res.json(story);
+        const { id } = req.params;
+        const story = await storiesCollection.findOne({ _id: new ObjectId(id) });
+
+        if (!story) {
+            return res.status(404).json({ error: "Story not found" });
+        }
+
+        res.json(story);
     } catch (err) {
-      console.error("Error fetching story by ID:", err);
-      res.status(500).json({ error: "Error fetching story" });
+        console.error("Error fetching story by ID:", err);
+        res.status(500).json({ error: "Error fetching story" });
     }
-  });
+});
 
 
 // Route to handle story submissions (POST to /api/posts), accepting form data with optional image upload and saving it to the MongoDB collection
@@ -639,61 +657,61 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
 
 app.put("/api/stories/:id", upload.single("image"), async (req, res) => {
     try {
-      const { title, story } = req.body;
-      const { id } = req.params;
-  
-      // Validate word count
-      let wordCount = story.split(/\s+/).filter(word => word.length > 0).length;
-      if (wordCount < 20 || wordCount > 70) {
-        return res.status(400).send("Story must be between 20 and 70 words.");
-      }
-  
-      const updateFields = {
-        title: title,
-        story: story,
-      };
-  
-      if (req.file) {
-        updateFields.image = `uploads/${req.file.filename}`;
-      }
-  
-      const result = await storiesCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: updateFields }
-      );
-  
-      if (result.modifiedCount === 1) {
-        res.status(200).send("Story updated.");
-      } else {
-        res.status(404).send("Story not found.");
-      }
-  
-    } catch (err) {
-      console.error("Error updating story:", err);
-      res.status(500).send("Internal server error.");
-    }
-  });
+        const { title, story } = req.body;
+        const { id } = req.params;
 
- // Added DELETE route for removing a story by ID from the database
-  app.delete("/api/stories/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-      console.log("DELETE route hit with ID:", id);
-  
-      const result = await storiesCollection.deleteOne({ _id: new ObjectId(id) });
-  
-      if (result.deletedCount === 1) {
-        res.status(200).send("Story deleted.");
-      } else {
-        res.status(404).send("Story not found.");
-      }
+        // Validate word count
+        let wordCount = story.split(/\s+/).filter(word => word.length > 0).length;
+        if (wordCount < 20 || wordCount > 70) {
+            return res.status(400).send("Story must be between 20 and 70 words.");
+        }
+
+        const updateFields = {
+            title: title,
+            story: story,
+        };
+
+        if (req.file) {
+            updateFields.image = `uploads/${req.file.filename}`;
+        }
+
+        const result = await storiesCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: updateFields }
+        );
+
+        if (result.modifiedCount === 1) {
+            res.status(200).send("Story updated.");
+        } else {
+            res.status(404).send("Story not found.");
+        }
+
     } catch (err) {
-      console.error("Error deleting story:", err);
-      res.status(500).send("Internal server error.");
+        console.error("Error updating story:", err);
+        res.status(500).send("Internal server error.");
     }
-  });
-  
-  
+});
+
+// Added DELETE route for removing a story by ID from the database
+app.delete("/api/stories/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("DELETE route hit with ID:", id);
+
+        const result = await storiesCollection.deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 1) {
+            res.status(200).send("Story deleted.");
+        } else {
+            res.status(404).send("Story not found.");
+        }
+    } catch (err) {
+        console.error("Error deleting story:", err);
+        res.status(500).send("Internal server error.");
+    }
+});
+
+
 
 
 // Route to serve the 'postStory' page
