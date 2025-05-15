@@ -1,4 +1,5 @@
 <% let stylesheets=["/css/detailStory.css"]; %>
+<% let scripts=[{ script: "/js/detailStory.js" }]; %>
 <%- include("templates/header", { stylesheets: stylesheets }) %>
 <div class="container my-5">
     <div class="story-container">
@@ -12,4 +13,4 @@
         </div>
     </div>
 </div>
-<%- include("templates/footer") %>
+<%- include("templates/footer", {scripts: scripts}) %>

@@ -81,6 +81,9 @@ app.get("/login", function (req, res) {
     if (! req.session.authenticated) {
         res.render("login");
     } else {
+        if (app.locals.loggedIn == false) {
+            app.locals.loggedIn = true;
+        }
         res.redirect("/main");
     }
 });

@@ -35,7 +35,7 @@
             <a href="/floodAdaptation" class="mobile-hidden">Flood Adaptations</a>
             <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
             <a href="/stories">Stories</a>
-            <a href="<%- locals.loggedIn ? "/logout" : "/login" %>" id="login-button-nav" class="mobile-hidden"><%= locals.loggedIn ? "Logout" : "Login" %></a>
+            <a href="<%- locals.loggedIn != false ? "/login" : "/logout" %>" id="login-button-nav" class="mobile-hidden"><%= locals.loggedIn ? "Logout" : "Login" %></a>
             <div class="hamburger-container">
                 <div class="hamburger untoggle"></div>
             </div>
