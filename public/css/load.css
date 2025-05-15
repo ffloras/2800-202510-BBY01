@@ -20,6 +20,11 @@ Copy and paste these into sections as needed */
 
 /* CSS STARTS HERE */
 
+html {
+    /* so that the scrollbar doesn't interfere with css */
+    scrollbar-gutter: stable both-edges;
+}
+
 body {
     padding-bottom: 70px;
     /* for the footer */
@@ -43,6 +48,7 @@ body {
     left: 0;
     z-index: 999;
     height: 100px;
+    box-sizing: content-box !important;
 }
 
 .mobile-hidden {
@@ -181,7 +187,7 @@ body {
 
 @media only screen and (min-width: 1200px) {
     body {
-        padding: 150px 0 0;
+        padding: 175px 0 0;
     }
 
     .header {
@@ -198,7 +204,7 @@ body {
         display: block;
     }
 
-    .hamburger-container {
+    .hamburger-container, .header-navigation-links, .header-navigation-bg {
         display: none;
     }
 }

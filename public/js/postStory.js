@@ -1,41 +1,75 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("postForm");
-  const cancelBtn = document.getElementById("cancelBtn");
+$(document).ready(function () {
+  const storyInput = $('#story');
+  const errorSpan = $('#storyCountError');
 
-  cancelBtn.addEventListener("click", () => {
-    window.location.href = "/stories.html";
+  // Live word count update
+  storyInput.on('input', function () {
+    let text = $(this).val().trim();
+    let wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
+
+    if (wordCount < 20) {
+      errorSpan.text('Story must be at least 20 words.');
+      errorSpan.removeClass('valid').addClass('invalid');
+    } else if (wordCount > 70) {
+      errorSpan.text('Story must be no more than 70 words.');
+      errorSpan.removeClass('valid').addClass('invalid');
+    } else {
+      errorSpan.text(`Word count: ${wordCount}`);
+      errorSpan.removeClass('invalid').addClass('valid');
+    }
   });
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Form submission handler
+  $('#postForm').submit(function (event) {
+    event.preventDefault();
 
-    const formData = new FormData();
-    formData.append("id", Date.now().toString());
-    formData.append("title", document.getElementById("title").value.trim());
-    formData.append("author", document.getElementById("author").value.trim() || "Anonymous");
-    formData.append("story", document.getElementById("story").value.trim());
+    let storyText = storyInput.val().trim();
+    let wordCount = storyText.split(/\s+/).filter(function (word) {
+      return word.length > 0;
+    }).length;
 
-    const imageInput = document.getElementById("image");
-    if (imageInput.files.length > 0) {
-      formData.append("image", imageInput.files[0]);
+    // Validation
+    if (wordCount < 20) {
+      alert('Story must be at least 20 words.');
+      return;
     }
 
-    try {
-      const response = await fetch("/api/posts", {
-        method: "POST",
-        body: formData
-      });
+    if (wordCount > 70) {
+      alert('Story must be no more than 70 words.');
+      return;
+    }
 
-      if (response.ok) {
-        alert("Story submitted with image!");
-        window.location.href = "/stories.html";
-      } else {
-        const errText = await response.text();
-        alert("Failed to submit story: " + errText);
+    let formData = new FormData(this);
+
+    // Submit via AJAX
+    $.ajax({
+      url: '/api/stories',
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function (response) {
+        console.log('Story submitted successfully!', response);
+        alert('Story submitted successfully!');
+        $('#postForm')[0].reset();
+        errorSpan.text('').removeClass('valid invalid');
+        window.location.href = '/stories';
+      },
+      error: function (xhr, status, error) {
+        console.error('Error submitting story:', error);
+        let errorMessage = 'Error submitting story. Please try again.';
+        if (xhr.responseText === "Story must be maximum 70 words.") {
+          errorMessage = "Story must be no more than 70 words.";
+        }
+        alert(errorMessage);
       }
-    } catch (err) {
-      console.error("Error:", err);
-      alert("Unexpected error occurred.");
-    }
+    });
+  });
+
+  // Cancel button handler
+  $('#cancelBtn').click(function () {
+    $('#postForm')[0].reset();
+    errorSpan.text('').removeClass('valid invalid');
+    window.location.href = '/';
   });
 });

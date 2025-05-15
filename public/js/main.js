@@ -1,7 +1,8 @@
 setupMapbox();
 setLocationSavedStatus();
 setLocationName();
-
+setSaveLocationButton();
+setupAI()
 
 //sets up mapbox search bar and map
 async function setupMapbox() {
@@ -30,7 +31,7 @@ async function setupMapbox() {
     let map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: getCoordinateFromURL() || searchCoordinate || [-122.95263, 49.26636], // starting position [lng, lat]
+      center: getCoordinateFromSessionStorage() || searchCoordinate || [-122.95263, 49.26636], // starting position [lng, lat]
       zoom: 9, // starting zoom
     });
 
@@ -43,19 +44,21 @@ async function setupMapbox() {
 
     newSearch(searchBar);
 
-    setSaveLocationButton();
+
   }
 }
 
 //return coordinate array from this page's URL consisting of longitude and latitude
-function getCoordinateFromURL() {
-  let url = new URL(window.location.href);
-  let params = url.searchParams.get("coor");
-  let coor = null;
-  if (params) {
-    coor = params.split(",");
+function getCoordinateFromSessionStorage() {
+  // let url = new URL(window.location.href);
+  // let params = url.searchParams.get("coor");
+  // let coor = null;
+  let coor = sessionStorage.getItem("coor");
+  console.log(coor);
+  if (coor) {
+    coorArray = coor.split(",");
   }
-  return coor;
+  return coorArray;
 }
 
 //updates the current searched location in the database, updates location save status and name on main page
@@ -73,6 +76,10 @@ function newSearch(searchBar) {
       body: JSON.stringify({ currentLocation: feature }),
     });
 
+    let coordinate = feature.geometry.coordinates;
+    sessionStorage.setItem("coor", coordinate);
+
+    document.getElementById("ai-message").innerHTML = "Take a look at what this location's climate would look like in the next few decades.";
     setLocationSavedStatus();
     setLocationName();
 
@@ -81,21 +88,70 @@ function newSearch(searchBar) {
 
 //adds event listener to save location button
 function setSaveLocationButton() {
-  document.getElementById("save").addEventListener("click", (e) => {
-    saveLocation();
-    document.getElementById("saveLocation").innerHTML = "Location saved";
-    document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
+  let popup = document.getElementById("popup-overlay");
+  popup.style.display = "none";
+  popup.innerHTML = "";
+
+  document.getElementById("save").addEventListener("click", async (e) => {
+    ajaxGET("/popup", (data) => {
+      popup.style.display = "flex";
+      popup.innerHTML = data;
+
+      //set alert popup buttons
+      if (document.getElementById("alert")) {
+        document.getElementById("alert-cancel").addEventListener("click", (e) => {
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+        document.getElementById("alert-save").addEventListener("click", (e) => {
+          let alertChecked = document.getElementById("alert-checkbox").checked;
+          saveLocation(alertChecked);
+          document.getElementById("saveLocation").innerHTML = "Location saved";
+          document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+      }
+
+      //set already-saved popup button
+      else if (document.getElementById("already-saved")) {
+        document.getElementById("saved-back").addEventListener("click", (e) => {
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+      }
+
+      //set login popup button
+      else {
+        document.getElementById("login").addEventListener("click", (e) => {
+          popup.style.display = "none";
+          popup.innerHTML = "";
+        });
+      }
+    })
+
   })
 }
 
+function updateURLparam() {
+
+}
 //save current searched location into savedLocation in database
-async function saveLocation() {
+async function saveLocation(alert) {
   if (!(await isLocationSaved())) {
-    ajaxGET('/saveLocation', (response) => {
-      if (!response.ok) 
-        console.log(response);
-      window.location.replace("/login");
+    fetch("/saveLocation", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ alert: alert }),
     })
+      .then((response) => {
+        if (!response.ok) {
+          console.error("Failed to save location");
+        }
+      })
+      .catch((error) => console.error("Failed to save location: ", error));
   }
 }
 
@@ -130,14 +186,14 @@ function isLocationSaved() {
 
 //sets save location button depending on if current search location is saved in database
 async function setLocationSavedStatus() {
-    let isSaved = await isLocationSaved();
-    if (isSaved) {
-      document.getElementById("saveLocation").innerHTML = "Location saved";
-      document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
-    } else {
-      document.getElementById("saveLocation").innerHTML = "Save Location";
-      document.getElementById("saveIcon").src = "/img/saveIconUnchecked.png";
-    }
+  let isSaved = await isLocationSaved();
+  if (isSaved) {
+    document.getElementById("saveLocation").innerHTML = "Location saved";
+    document.getElementById("saveIcon").src = "/img/saveIconChecked.png";
+  } else {
+    document.getElementById("saveLocation").innerHTML = "Save Location";
+    document.getElementById("saveIcon").src = "/img/saveIconUnchecked.png";
+  }
 }
 
 //sets the current search location name
@@ -146,4 +202,43 @@ async function setLocationName() {
   if (name) {
     document.getElementById("locationName").innerHTML = name.address;
   }
+}
+
+async function setupAI() {
+  document.getElementById("ai-button").addEventListener("click", async (e) => {
+
+    let searchLocation = await getCurrentSearchLocation();
+    let searchCoordinate = searchLocation ? searchLocation.coordinate : null;
+
+    console.log(searchCoordinate);
+
+    let coorArray = searchCoordinate || getCoordinateFromSessionStorage();
+    
+    let coor = {
+      long: coorArray[0],
+      lat: coorArray[1]
+    }
+
+    console.log(coor);
+
+    fetch("/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(coor)
+    })
+      .then(async (response) => {
+        let html = await response.text();
+        document.getElementById("ai-message").innerHTML = html;
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+
+  })
+
+
+
+
 }

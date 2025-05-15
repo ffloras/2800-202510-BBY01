@@ -1,0 +1,30 @@
+<% let stylesheets=["/css/postStory.css"]; %>
+<% let scripts=[{ script: "/js/postStory.js" }]; %>
+
+<%- include("templates/header", { stylesheets: stylesheets }) %>
+<div class="container my-5" id="postFormContainer">
+  <h2 class="mb-4 text-center">Create a New Story</h2>
+  <form id="postForm" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="author" class="form-label">Author</label>
+      <input type="text" class="form-control" id="author" name="author" required />
+    </div>
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" class="form-control" id="title" name="title" required />
+    </div>
+    <div class="mb-3">
+      <label for="story" class="form-label">Story (20-70 words)<span id="storyCountError"> </span></label>
+      <textarea class="form-control" id="story" name="story" rows="5" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="image" class="form-label">Add Image</label>
+      <input class="form-control" type="file" id="image" name="image" accept="image/*" />
+    </div>
+    <div class="d-flex justify-content-between">
+      <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+</div>
+<%- include("templates/footer", { scripts: scripts }) %>

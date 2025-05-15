@@ -1,0 +1,30 @@
+<% let stylesheets=["/css/savedLocation.css"]; %>
+<% let scripts=[{ script: "/js/savedLocation.js" }]; %>
+
+<%- include("templates/header", { stylesheets: stylesheets }) %>
+<h2 class="save-location-title">Saved Locations</h2>
+<div class="map-container">
+    <div class="layer-container">
+        <button type="button">Temperature Map</button>
+        <button type="button">Water Level Map</button>
+    </div>
+    <div class="map"></div>
+</div>
+<div id="popup-overlay"></div>
+<div class="save-location-container" id="save-container">
+
+</div>
+
+<!-- template here -->
+<template id="save-location-block-template">
+    <div class="save-location-block">
+        <p class="location-name">location name</p>
+        <div class="save-location-button-container">
+            <button type="button" class="save-location-alert">Alerts</button>
+            <button type="button" class="save-location-remove">Remove</button>
+        </div>
+    </div>
+</template>
+<!-- template here -->
+
+<%- include("templates/footer", { scripts: scripts }) %>

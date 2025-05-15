@@ -32,37 +32,7 @@
             </a>
         </div>
     </div>
-    <div id="stories-container">
-        <!-- delete these hardcoded html blocks and use the template below to generate the stories from the database when you start coding -->
-        <div class="story-block">
-            <h4>My climate story</h4>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac tortor non lectus convallis consequat sed nec
-                purus. Ut tellus nibh, molestie eget gravida ut, laoreet in dolor. Pellentesque tristique eu ante sit amet aliquet.
-                Proin placerat non ex nec dapibus. Integer eu ligula augue. Aliquam non lorem eget sapien dapibus egestas. Donec
-                volutpat nec sapien a commodo. Sed finibus accumsan risus eu suscipit. Praesent eget rutrum dolor. Aliquam et rutrum
-                justo, sit amet elementum purus. Suspendisse sagittis nisi at lobortis eleifend. Pellentesque laoreet vestibulum justo
-                sed aliquam.
-            </p>
-            <a href="/detailStory" class="button-read-more">Read more...</a>
-        </div>
-        <div class="story-block">
-            <h4>My climate story</h4>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac tortor non lectus convallis consequat
-                sed nec
-                purus. Ut tellus nibh, molestie eget gravida ut, laoreet in dolor. Pellentesque tristique eu ante sit amet
-                aliquet.
-                Proin placerat non ex nec dapibus. Integer eu ligula augue. Aliquam non lorem eget sapien dapibus egestas. Donec
-                volutpat nec sapien a commodo. Sed finibus accumsan risus eu suscipit. Praesent eget rutrum dolor. Aliquam et
-                rutrum
-                justo, sit amet elementum purus. Suspendisse sagittis nisi at lobortis eleifend. Pellentesque laoreet vestibulum
-                justo
-                sed aliquam.
-            </p>
-            <a href="/detailStory" class="button-read-more">Read more...</a>
-        </div>
-    </div>
+    <div id="stories-container"></div>
 
     <!-- template here -->
     <template id="story-template">
@@ -71,12 +41,15 @@
             <p class="story-text">
                 story text here
             </p>
-            <a href="/detailStory" class="button-read-more">Read more...</a>
+            <a href="/detailStory.html?id=STORY_ID" class="button-read-more">Read more...</a>
+
         </div>
     </template>
     <!-- template here -->
 
     <footer id="footerPlaceholder"></footer>
     <script src="/js/load.js"></script>
+    <script src="/js/stories.js"></script>
+
 </body>
 </html>
