@@ -26,7 +26,7 @@
 <body>
     <div id="navbarPlaceholder">
         <div class="header">
-            <a href="/index">
+            <a href="/">
                 <img id="header-logo" src="img/EcoRiskView.png" alt="logo">
             </a>
             <a href="/main">Home</a>
@@ -35,7 +35,7 @@
             <a href="/floodAdaptation" class="mobile-hidden">Flood Adaptations</a>
             <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
             <a href="/stories">Stories</a>
-            <a href="<%- locals.loggedIn != false ? "/login" : "/logout" %>" id="login-button-nav" class="mobile-hidden"><%= locals.loggedIn ? "Logout" : "Login" %></a>
+            <a href="<%- locals.loggedIn === false ? "/login" : "/logout" %>" id="login-button-nav" class="mobile-hidden"><%- locals.loggedIn===false ? "Login" : "Logout" %></a>
             <div class="hamburger-container">
                 <div class="hamburger untoggle"></div>
             </div>

@@ -59,8 +59,9 @@ async function setupSearch() {
                 body: JSON.stringify({ currentLocation: feature }),
             });
 
-            //directs user to main page with search coordinates
-            window.location.replace(`/main?coor=${feature.geometry.coordinates}`); //sends coordinates to main page
+            //stores coordinate in sessionStorage
+            sessionStorage.setItem("coor", feature.geometry.coordinates)
+            window.location.replace(`/main`); 
         });
     }
 
