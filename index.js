@@ -575,6 +575,18 @@ app.get("/authenticated", function (req, res) {
 
 })
 
+app.get("/sessionInfo", (req, res) => {
+    if (req.session.authenticated) {
+        res.json({
+            username: req.session.username,
+            userID: req.session.userID
+        });
+    } else {
+        res.status(401).json({ error: "Not logged in" });
+    }
+});
+
+
 // Route to GET all stories
 app.get("/api/stories", async (req, res) => {
     try {
@@ -605,6 +617,7 @@ app.get("/api/stories/:id", async (req, res) => {
     }
   });
 
+
 // Route to handle story submissions (POST to /api/posts), accepting form data with optional image upload and saving it to the MongoDB collection
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // You can customize storage options if needed
@@ -612,8 +625,9 @@ const upload = multer({ dest: 'uploads/' }); // You can customize storage option
 app.post("/api/stories", upload.single("image"), async (req, res) => {
     try {
 
-        const { id, title, author, story } = req.body;
-        const imagePath = req.file ? req.file.path : null;
+        const { id, title, story } = req.body;
+        const author = req.session.username;
+        const imagePath = req.file ? `uploads/${req.file.filename}` : null;
 
         // Server-side word count validation
         let wordCount = story.split(/\s+/).filter(word => word.length > 0).length;
@@ -640,6 +654,64 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
         res.status(500).send("Error saving story.");
     }
 });
+
+app.put("/api/stories/:id", upload.single("image"), async (req, res) => {
+    try {
+      const { title, story } = req.body;
+      const { id } = req.params;
+  
+      // Validate word count
+      let wordCount = story.split(/\s+/).filter(word => word.length > 0).length;
+      if (wordCount < 20 || wordCount > 70) {
+        return res.status(400).send("Story must be between 20 and 70 words.");
+      }
+  
+      const updateFields = {
+        title: title,
+        story: story,
+      };
+  
+      if (req.file) {
+        updateFields.image = `uploads/${req.file.filename}`;
+      }
+  
+      const result = await storiesCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updateFields }
+      );
+  
+      if (result.modifiedCount === 1) {
+        res.status(200).send("Story updated.");
+      } else {
+        res.status(404).send("Story not found.");
+      }
+  
+    } catch (err) {
+      console.error("Error updating story:", err);
+      res.status(500).send("Internal server error.");
+    }
+  });
+
+ // Added DELETE route for removing a story by ID from the database
+  app.delete("/api/stories/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      console.log("DELETE route hit with ID:", id);
+  
+      const result = await storiesCollection.deleteOne({ _id: new ObjectId(id) });
+  
+      if (result.deletedCount === 1) {
+        res.status(200).send("Story deleted.");
+      } else {
+        res.status(404).send("Story not found.");
+      }
+    } catch (err) {
+      console.error("Error deleting story:", err);
+      res.status(500).send("Internal server error.");
+    }
+  });
+  
+  
 
 
 // Route to serve the 'postStory' page
