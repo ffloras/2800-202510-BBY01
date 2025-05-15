@@ -91,12 +91,13 @@ app.get("/login", function (req, res) {
 app.post("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    let details = [];
 
-    const schema = Joi.string().max(20).required();
+    const schema = Joi.string().max(20).required().label("username");
     const validationResult = schema.validate(username);
     if (validationResult.error != null) {
-        console.log(validationResult.error);
-        res.redirect("/login");
+        details.push(validationResult.error["details"][0].message);
+        res.render("login", {error: details, username: username, password: password});
         return;
     }
 
@@ -104,7 +105,8 @@ app.post("/login", async (req, res) => {
 
     console.log(result);
     if (!result) {
-        res.redirect("/login");
+        details.push("Username not found");
+        res.render("login", { error: details, input: { username: username, password: password }});
         return;
     }
     if (await bcrypt.compare(password, result.password)) {
@@ -113,12 +115,17 @@ app.post("/login", async (req, res) => {
         req.session.cookie.maxAge = expireTime;
         req.session.userID = result._id;
         app.locals.loggedIn = true;
+        app.locals.username = username;
         res.redirect("/main"); //****change this to something else after user is logged in 
         return;
     }
     else {
-        console.log("incorrect password");
-        res.redirect("/login");
+        if (password.length > 0) {
+            details.push("Incorrect password");
+        } else {
+            details.push("Empty password");
+        }
+        res.render("login", { error: details, input: { username: username, password: password } });
         return;
     }
 });
@@ -351,7 +358,7 @@ app.get("/deletePopup", (req, res) => {
 app.get("/displaySavedLocations", async (req, res) => {
     let userID = new ObjectId(req.session.userID);
     try {
-        let result = await userCollection.findOne({ _id: userID }, { projection: { savedLocation: 1 } })
+        let result = await userCollection.findOne({ username: req.session.username }, { projection: { savedLocation: 1 } })
         let locationArray = result.savedLocation;
         //console.log(result);
         if (locationArray.length == 0) {
@@ -460,9 +467,30 @@ app.post("/updateAlert", async (req, res) => {
 })
 
 //this is the profile page, used to display the user profile information
-app.get("/profile", function (req, res) {
-    res.render("profile");
+app.get("/profile", async function (req, res) {
+    if (req.session.authenticated) {
+        let result = await userCollection.findOne({ username: req.session.username }, { projection: { name: 1, email: 1} })
+        res.render("profile", {name: result.name, email: result.email});
+    } else {
+        res.redirect("/main");
+    }
+    
 });
+
+app.post("/profileUpdate", async function (req, res) {
+    if (req.session.authenticated) {
+        res.setHeader("Content-Type", "application/json");
+        let name = req.body.name;
+        let email = req.body.email;
+        await userCollection.updateOne(
+            { username: req.session.username },
+            {
+                $set: { 'name': name, 'email': email },
+            });
+    } else {
+        res.redirect("/main");
+    }
+})
 
 //for floodAdaptation.html
 app.get("/floodAdaptation", function (req, res) {
