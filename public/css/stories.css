@@ -33,6 +33,35 @@
     color: black;
 }
 
+.view-button-container {
+    display: flex;
+    width: 90%;
+    justify-content: flex-end;
+
+}
+
+.view-button-container svg {
+    width: 24px;
+    position: relative;
+    top: 1px;
+    margin-right: 3px;
+}
+
+.view-button {
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    white-space: nowrap; 
+    width: 95px;
+    border-radius: 10px;
+    padding: 5px;
+    min-width: 140px; 
+    border: solid 2px black;
+    color: black;
+}
+
 #stories-container {
     width: 80%;
     margin: auto;

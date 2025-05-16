@@ -668,7 +668,7 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
         const newStory = {
             id,
             title,
-            author: author || "Anonymous", // visible to public
+            author: author || "Anonymous", 
             story,
             image: imagePath,
             ownerId: new ObjectId(req.session.userID) // internal ownership tracking
@@ -775,7 +775,7 @@ app.get("/myStories", function (req, res) {
     if (!req.session.authenticated) { // Protect this page
         return res.redirect("/login");
     }
-    // This path assumes myStories.html is in your_project_root/app/html/myStories.html
+    
     res.sendFile(path.resolve(__dirname, "app", "html", "myStories.html"), function (err) {
         if (err) {
             console.error("Error loading myStories.html from app/html:", err);
