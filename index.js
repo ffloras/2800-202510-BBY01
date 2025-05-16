@@ -223,7 +223,7 @@ app.post("/ai", async (req, res) => {
                 Mention the name of the location. Keep it within 50 words.`
         });
         let text = response.text;
-        console.log(response.text)
+        //console.log(response.text)
         res.send(text)
     } catch (error) {
         res.status(500).send("Error retreiving AI response: ", error);
