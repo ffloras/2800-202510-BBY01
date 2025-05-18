@@ -57,8 +57,11 @@ function getCoordinateFromSessionStorage() {
   console.log(coor);
   if (coor) {
     coorArray = coor.split(",");
+    return coorArray;
+  } else {
+    return null;
   }
-  return coorArray;
+  
 }
 
 //updates the current searched location in the database, updates location save status and name on main page

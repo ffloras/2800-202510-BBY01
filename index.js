@@ -223,7 +223,7 @@ app.post("/ai", async (req, res) => {
                 Mention the name of the location. Keep it within 50 words.`
         });
         let text = response.text;
-        console.log(response.text)
+        //console.log(response.text)
         res.send(text)
     } catch (error) {
         res.status(500).send("Error retreiving AI response: ", error);
@@ -653,8 +653,7 @@ const upload = multer({ dest: 'uploads/' }); // You can customize storage option
 app.post("/api/stories", upload.single("image"), async (req, res) => {
     try {
 
-        const { id, title, story } = req.body;
-        const author = req.session.username;
+        const { id, title, story, author } = req.body;
         const imagePath = req.file ? `uploads/${req.file.filename}` : null;
 
         // Server-side word count validation
@@ -669,10 +668,12 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
         const newStory = {
             id,
             title,
-            author: author || "Anonymous",
+            author: author || "Anonymous", 
             story,
-            image: imagePath
+            image: imagePath,
+            ownerId: new ObjectId(req.session.userID) // internal ownership tracking
         };
+        
 
         const result = await storiesCollection.insertOne(newStory);
         console.log("Story saved to database:", result);
@@ -680,6 +681,21 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
     } catch (err) {
         console.error(" Error saving story:", err);
         res.status(500).send("Error saving story.");
+    }
+});
+
+app.get('/api/my-stories', async (req, res) => {
+    if (!req.session || !req.session.username) {
+        return res.status(401).json({ error: "Unauthorized" }); // Send JSON
+    }
+    try {
+        const ownerId = new ObjectId(req.session.userID);
+        const stories = await storiesCollection.find({ ownerId }).sort({ createdAt: -1 }).toArray();
+          
+        res.json(stories);
+    } catch (error) {
+        console.error("Error fetching user's stories:", error);
+        res.status(500).json({ error: "Server error fetching user's stories" }); // Send JSON
     }
 });
 
@@ -704,10 +720,11 @@ app.put("/api/stories/:id", upload.single("image"), async (req, res) => {
         }
 
         const result = await storiesCollection.updateOne(
-            { _id: new ObjectId(id) },
+            { _id: new ObjectId(id), ownerId: new ObjectId(req.session.userID) },
             { $set: updateFields }
         );
-
+        
+        
         if (result.modifiedCount === 1) {
             res.status(200).send("Story updated.");
         } else {
@@ -726,7 +743,11 @@ app.delete("/api/stories/:id", async (req, res) => {
         const { id } = req.params;
         console.log("DELETE route hit with ID:", id);
 
-        const result = await storiesCollection.deleteOne({ _id: new ObjectId(id) });
+        const result = await storiesCollection.deleteOne({
+            _id: new ObjectId(id),
+            ownerId: new ObjectId(req.session.userID)
+        });
+        
 
         if (result.deletedCount === 1) {
             res.status(200).send("Story deleted.");
@@ -740,8 +761,6 @@ app.delete("/api/stories/:id", async (req, res) => {
 });
 
 
-
-
 // Route to serve the 'postStory' page
 app.get("/postStory", function (req, res) {
     res.render("postStory");
@@ -750,6 +769,22 @@ app.get("/postStory", function (req, res) {
 app.get("/detailStory", function (req, res) {
     res.render("detailStory");
 });
+
+
+app.get("/myStories", function (req, res) {
+    if (!req.session.authenticated) { // Protect this page
+        return res.redirect("/login");
+    }
+    
+    res.sendFile(path.resolve(__dirname, "app", "html", "myStories.html"), function (err) {
+        if (err) {
+            console.error("Error loading myStories.html from app/html:", err);
+            // Send a more detailed error message to help debug
+            res.status(500).send(`Error loading myStories.html. Server details: ${err.message}. Path attempted: ${path.resolve(__dirname, "app", "html", "myStories.html")}`);
+        }
+    });
+});
+
 
 app.get('/layers', (req, res) => {
     let doc = fs.readFileSync("./app/html/layers.html", "utf8");
