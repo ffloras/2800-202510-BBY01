@@ -19,7 +19,7 @@ const expireTime = 24 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes 
 const Joi = require("joi");
 
 const { GoogleGenAI } = require("@google/genai");
-const ai = new GoogleGenAI({ apiKey: "AIzaSyCswqWb8t4NbdCrREUeTj6EP9iWgM3zfWk" });
+const ai = new GoogleGenAI({ apiKey: process.env.GEN_AI_KEY });
 
 
 const app = express();
@@ -220,7 +220,7 @@ app.post("/ai", async (req, res) => {
             contents:
                 `Present a speculative vision summary of the climate of area  with longitude ${long} and latitude ${lat} in the 
                 next 10, 20, or 50 years based on available scientific data. Do not mention the coordinates.
-                Mention the name of the location. Keep it within 50 words.`
+                Mention the general location. Keep it within 50 words.`
         });
         let text = response.text;
         //console.log(response.text)
@@ -228,6 +228,59 @@ app.post("/ai", async (req, res) => {
     } catch (error) {
         res.status(500).send("Error retreiving AI response: ", error);
     }
+});
+
+const floodWords = ["flood", "rain"];
+const heatWords = ["heat", "fire"];
+
+//get alerts from weather api based on coordinates
+//sends an array of alert objects with properties: id, type (flood/heat), severity
+app.post("/alerts", async (req, res) => {
+  let [ long , lat ] = req.body;
+  const url = `http://api.weatherapi.com/v1/alerts.json?key=${process.env.WEATHER_API_KEY}&q=${lat},${long}`;
+  try {
+    let results = [];
+    let alreadyAlertedFlood = false;
+    let alreadyAlertedHeat = false;
+    const response = await fetch(url);
+    const alertsJson = await response.json();
+    alertsArray = alertsJson.alerts.alert;
+    alertsArray.forEach((alert) => {
+
+        if (!alreadyAlertedFlood) {
+            floodWords.forEach((keyword) => {
+            if (!alreadyAlertedFlood && ( alert.headline.includes(keyword) || alert.category.includes(keyword) || 
+                alert.event.includes(keyword) || alert.desc.includes(keyword))) {
+                results.push({
+                    id: alert.event + alert.severity + alert.areas + alert.effective.slice(0, 7),
+                    type: "flood",
+                    severity: alert.severity,
+                });
+                alreadyAlertedFlood = true;
+            }
+        });
+        }
+        if (!alreadyAlertedHeat) {
+            heatWords.forEach((keyword) => {
+            if (!alreadyAlertedHeat && ( alert.headline.includes(keyword) || alert.category.includes(keyword) || 
+                alert.event.includes(keyword) || alert.desc.includes(keyword))) {
+                results.push({
+                    id: alert.event + alert.severity + alert.areas + alert.effective.slice(0, 7),
+                    type: "heat",
+                    severity: alert.severity,
+                });
+                alreadyAlertedHeat = true;
+            }
+        });
+        }
+    })
+    //console.log(alertsArray)
+    res.send(results);
+  } catch (error) {
+    console.error("error:", error);
+    res.status(500).send("an error occured");
+  }
+  
 })
 
 
@@ -241,7 +294,6 @@ app.post("/recordCurrentLocation", async function (req, res) {
                 { _id: new ObjectId(req.session.userID) },
                 {
                     $set: { 'currentSearchLocation': currentLocation },
-                    $currentDate: { lastModified: true }
                 });
             res.status(201).send('Location saved successfully');
         } catch (error) {

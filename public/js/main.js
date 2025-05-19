@@ -48,7 +48,7 @@ async function setupMapbox() {
   }
 }
 
-//return coordinate array from this page's URL consisting of longitude and latitude
+//return coordinate array from browser's session storage consisting of longitude and latitude
 function getCoordinateFromSessionStorage() {
   // let url = new URL(window.location.href);
   // let params = url.searchParams.get("coor");
@@ -61,7 +61,7 @@ function getCoordinateFromSessionStorage() {
   } else {
     return null;
   }
-  
+
 }
 
 //updates the current searched location in the database, updates location save status and name on main page
@@ -82,9 +82,11 @@ function newSearch(searchBar) {
     let coordinate = feature.geometry.coordinates;
     sessionStorage.setItem("coor", coordinate);
 
-    document.getElementById("ai-message").innerHTML = "Take a look at what this location's climate would look like in the next few decades.";
+    document.getElementById("ai-message").innerHTML = "Explore what this location's climate would be like in the next few decades.";
     setLocationSavedStatus();
     setLocationName();
+
+    console.log(await getAlerts());
 
   });
 }
@@ -136,9 +138,6 @@ function setSaveLocationButton() {
   })
 }
 
-function updateURLparam() {
-
-}
 //save current searched location into savedLocation in database
 async function saveLocation(alert) {
   if (!(await isLocationSaved())) {
@@ -207,22 +206,18 @@ async function setLocationName() {
   }
 }
 
+//gets search location coordinates and sends request to /ai on button click and writes repsonse to html
 async function setupAI() {
   document.getElementById("ai-button").addEventListener("click", async (e) => {
 
     let searchLocation = await getCurrentSearchLocation();
     let searchCoordinate = searchLocation ? searchLocation.coordinate : null;
-
-    console.log(searchCoordinate);
-
     let coorArray = searchCoordinate || getCoordinateFromSessionStorage();
-    
+
     let coor = {
       long: coorArray[0],
       lat: coorArray[1]
     }
-
-    console.log(coor);
 
     fetch("/ai", {
       method: "POST",
@@ -237,11 +232,32 @@ async function setupAI() {
       })
       .catch((error) => {
         console.error(error);
+      });
+  });
+}
+
+
+//sends search coordinates to /alerts, return response as an array of alert objects
+function getAlerts() {
+  return new Promise((resolve, reject) => {
+    let coor = getCoordinateFromSessionStorage();
+    if (coor) {
+      fetch("/alerts", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(coor),
       })
-
+        .then((response) => { return response.json() })
+        .then((response) => {
+          resolve(response)
+        })
+        .catch((err) => {
+          reject(err);
+        })
+    } else {
+      resolve(null)
+    }
   })
-
-
-
-
 }
