@@ -1,0 +1,13 @@
+<h6 class="alertHeading"><%= message %></h6>
+<% for (let i = 0; i < alerts.length; i++) { %>
+
+  <div class="alertContainer">
+  <img src="<%= alerts[i].img %>" alt="alerts[i].type" class="risk-img">
+  <ul class="alertList">
+    <li><%= alerts[i].description %></li>
+    <li>Severity: <%= alerts[i].severity %></li>
+    <li><a class="alertLink" href="<%= alerts[i].link %>">See Adaptation Tips</a></1i>
+  </ul>
+  </div>
+
+<% } %>

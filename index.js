@@ -99,7 +99,7 @@ app.post("/login", async (req, res) => {
     const validationResult = schema.validate(username);
     if (validationResult.error != null) {
         details.push(validationResult.error["details"][0].message);
-        res.render("login", {error: details, username: username, password: password});
+        res.render("login", { error: details, username: username, password: password });
         return;
     }
 
@@ -108,7 +108,7 @@ app.post("/login", async (req, res) => {
     console.log(result);
     if (!result) {
         details.push("Username not found");
-        res.render("login", { error: details, input: { username: username, password: password }});
+        res.render("login", { error: details, input: { username: username, password: password } });
         return;
     }
     if (await bcrypt.compare(password, result.password)) {
@@ -232,55 +232,80 @@ app.post("/ai", async (req, res) => {
 
 const floodWords = ["flood", "rain"];
 const heatWords = ["heat", "fire"];
+function getAlerts(long, lat) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const url = `http://api.weatherapi.com/v1/alerts.json?key=${process.env.WEATHER_API_KEY}&q=${lat},${long}`;
+            let results = [];
+            let alreadyAlertedFlood = false;
+            let alreadyAlertedHeat = false;
+            const response = await fetch(url);
+            const alertsJson = await response.json();
+            alertsArray = alertsJson.alerts.alert;
+            alertsArray.forEach((alert) => {
 
-//get alerts from weather api based on coordinates
-//sends an array of alert objects with properties: id, type (flood/heat), severity
-app.post("/alerts", async (req, res) => {
-  let [ long , lat ] = req.body;
-  const url = `http://api.weatherapi.com/v1/alerts.json?key=${process.env.WEATHER_API_KEY}&q=${lat},${long}`;
-  try {
-    let results = [];
-    let alreadyAlertedFlood = false;
-    let alreadyAlertedHeat = false;
-    const response = await fetch(url);
-    const alertsJson = await response.json();
-    alertsArray = alertsJson.alerts.alert;
-    alertsArray.forEach((alert) => {
-
-        if (!alreadyAlertedFlood) {
-            floodWords.forEach((keyword) => {
-            if (!alreadyAlertedFlood && ( alert.headline.includes(keyword) || alert.category.includes(keyword) || 
-                alert.event.includes(keyword) || alert.desc.includes(keyword))) {
-                results.push({
-                    id: alert.event + alert.severity + alert.areas + alert.effective.slice(0, 7),
-                    type: "flood",
-                    severity: alert.severity,
-                });
-                alreadyAlertedFlood = true;
-            }
-        });
-        }
-        if (!alreadyAlertedHeat) {
-            heatWords.forEach((keyword) => {
-            if (!alreadyAlertedHeat && ( alert.headline.includes(keyword) || alert.category.includes(keyword) || 
-                alert.event.includes(keyword) || alert.desc.includes(keyword))) {
-                results.push({
-                    id: alert.event + alert.severity + alert.areas + alert.effective.slice(0, 7),
-                    type: "heat",
-                    severity: alert.severity,
-                });
-                alreadyAlertedHeat = true;
-            }
-        });
+                if (!alreadyAlertedFlood) {
+                    floodWords.forEach((keyword) => {
+                        if (!alreadyAlertedFlood && (alert.headline.includes(keyword) || alert.category.includes(keyword) ||
+                            alert.event.includes(keyword) || alert.desc.includes(keyword))) {
+                            results.push({
+                                id: alert.event + alert.severity + alert.areas + alert.effective.slice(0, 7),
+                                type: "flood",
+                                description: "Heavy rainfall or flooding",
+                                severity: alert.severity,
+                                img: "/img/floodRiskIcon.png",
+                                link: "/floodAdaptation"
+                            });
+                            alreadyAlertedFlood = true;
+                        }
+                    });
+                }
+                if (!alreadyAlertedHeat) {
+                    heatWords.forEach((keyword) => {
+                        if (!alreadyAlertedHeat && (alert.headline.includes(keyword) || alert.category.includes(keyword) ||
+                            alert.event.includes(keyword) || alert.desc.includes(keyword))) {
+                            results.push({
+                                id: alert.event + alert.severity + alert.areas + alert.effective.slice(0, 7),
+                                type: "heat",
+                                description: "Fire or Extreme Heat",
+                                severity: alert.severity,
+                                img: "/img/heatRiskIcon.png",
+                                link: "/heatAdaptation"
+                            });
+                            alreadyAlertedHeat = true;
+                        }
+                    });
+                }
+            })
+            //console.log(alertsArray)
+            resolve(results);
+        } catch (err) {
+            reject(err);
         }
     })
-    //console.log(alertsArray)
-    res.send(results);
-  } catch (error) {
-    console.error("error:", error);
-    res.status(500).send("an error occured");
-  }
-  
+}
+//get alerts from weather api based on coordinates
+//sends an array of alert objects with properties: id, type (flood/heat), severity
+app.post("/getRisks", async (req, res) => {
+    let [long, lat] = req.body;
+    if (long && lat) {
+        try {
+            let alerts = await getAlerts(long, lat);
+            if (alerts.length > 0) {
+                //console.log(alerts[0])
+                res.render("main/risks", {alerts : alerts, message: ""})
+            } else {
+                let message = "There are currently no flood or heat risks for this location."
+                res.render("main/risks", {alerts: [], message: message})
+            }
+        } catch (error) {
+            res.status(500).send("Unable to get risk information");
+        }
+    } else {
+        let message = "Unable to determine the location. Please search again."
+        res.render("main/risks", {alerts: [], message: message})
+    }
+
 })
 
 
@@ -539,12 +564,12 @@ app.post("/updateAlert", async (req, res) => {
 //this is the profile page, used to display the user profile information
 app.get("/profile", async function (req, res) {
     if (req.session.authenticated) {
-        let result = await userCollection.findOne({ username: req.session.username }, { projection: { name: 1, email: 1} })
-        res.render("profile", {name: result.name, email: result.email});
+        let result = await userCollection.findOne({ username: req.session.username }, { projection: { name: 1, email: 1 } })
+        res.render("profile", { name: result.name, email: result.email });
     } else {
         res.redirect("/main");
     }
-    
+
 });
 
 app.post("/profileUpdate", async function (req, res) {
@@ -700,6 +725,7 @@ app.get("/api/stories/:id", async (req, res) => {
 
 // Route to handle story submissions (POST to /api/posts), accepting form data with optional image upload and saving it to the MongoDB collection
 const multer = require('multer');
+const { rejects } = require('assert');
 const upload = multer({ dest: 'uploads/' }); // You can customize storage options if needed
 
 app.post("/api/stories", upload.single("image"), async (req, res) => {
@@ -720,12 +746,12 @@ app.post("/api/stories", upload.single("image"), async (req, res) => {
         const newStory = {
             id,
             title,
-            author: author || "Anonymous", 
+            author: author || "Anonymous",
             story,
             image: imagePath,
             ownerId: new ObjectId(req.session.userID) // internal ownership tracking
         };
-        
+
 
         const result = await storiesCollection.insertOne(newStory);
         console.log("Story saved to database:", result);
@@ -743,7 +769,7 @@ app.get('/api/my-stories', async (req, res) => {
     try {
         const ownerId = new ObjectId(req.session.userID);
         const stories = await storiesCollection.find({ ownerId }).sort({ createdAt: -1 }).toArray();
-          
+
         res.json(stories);
     } catch (error) {
         console.error("Error fetching user's stories:", error);
@@ -775,8 +801,8 @@ app.put("/api/stories/:id", upload.single("image"), async (req, res) => {
             { _id: new ObjectId(id), ownerId: new ObjectId(req.session.userID) },
             { $set: updateFields }
         );
-        
-        
+
+
         if (result.modifiedCount === 1) {
             res.status(200).send("Story updated.");
         } else {
@@ -799,7 +825,7 @@ app.delete("/api/stories/:id", async (req, res) => {
             _id: new ObjectId(id),
             ownerId: new ObjectId(req.session.userID)
         });
-        
+
 
         if (result.deletedCount === 1) {
             res.status(200).send("Story deleted.");
@@ -827,7 +853,7 @@ app.get("/myStories", function (req, res) {
     if (!req.session.authenticated) { // Protect this page
         return res.redirect("/login");
     }
-    
+
     res.sendFile(path.resolve(__dirname, "app", "html", "myStories.html"), function (err) {
         if (err) {
             console.error("Error loading myStories.html from app/html:", err);
