@@ -1,22 +1,17 @@
-<% let stylesheets=["/css/myStories.css"]; %>
-<% let scripts=[{ script: "/js/myStories.js" }]; %>
-
-<%- include("templates/header", { stylesheets: stylesheets }) %>
+<% let stylesheets=["/css/myStories.css"]; %> <% let scripts=[{ script:
+"/js/myStories.js" }]; %> <%- include("templates/header", { stylesheets:
+stylesheets }) %>
 <div class="myStories-top">
-    <h2>My Stories</h2> 
-</div> 
+  <h2>My Stories</h2>
+</div>
 <div id="myStories-container"></div>
 
 <!-- template here -->
 <template id="story-template">
-    <div class="story-block">
-        <h4 class="story-title">title here</h4>
-        <p class="story-text">
-            story text here
-        </p>
-     
-
-    </div>
+  <div class="story-block">
+    <h4 class="story-title">title here</h4>
+    <p class="story-text">story text here</p>
+  </div>
 </template>
 <!-- template here -->
 <%- include("templates/footer", { scripts: scripts }) %>
