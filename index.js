@@ -68,6 +68,26 @@ app.use(session({
     saveUninitialized: false,
 }));
 
+const url = `https://riskmapperDev.onrender.com/`; // Replace with your Render URL
+const interval = 840000; // (840000 14mins)
+
+//Reloader Function
+//https://dev.to/harshgit98/solution-for-rendercom-web-services-spin-down-due-to-inactivity-2h8i
+function reloadWebsite() {
+    fetch(url)
+        .then(response => {
+            console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
+        })
+        .catch(error => {
+            console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
+        });
+}
+
+setInterval(reloadWebsite, interval);
+
+const alertTime = 10800000; //3 hours 10800000
+const alertInterval = setInterval(monitorAlerts, alertTime);
+
 
 // this is the home page of the
 app.get("/", function (req, res) {
@@ -185,7 +205,8 @@ app.post("/signup", async (req, res) => {
         username: username,
         password: hashedPassword,
         currentSearchLocation: null,
-        savedLocation: []
+        savedLocation: [],
+        alreadyAlerted: [],
     };
 
     let record = await userCollection.insertOne(user);
@@ -230,8 +251,10 @@ app.post("/ai", async (req, res) => {
     }
 });
 
-const floodWords = ["flood", "rain"];
+const floodWords = ["flood", "rainfall"];
 const heatWords = ["heat", "fire"];
+//get alerts from weather api based on coordinates
+//sends an array of alert objects with properties: id, type (flood/heat), severity, description, img and link (to adaptation page)
 function getAlerts(long, lat) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -284,8 +307,56 @@ function getAlerts(long, lat) {
         }
     })
 }
-//get alerts from weather api based on coordinates
-//sends an array of alert objects with properties: id, type (flood/heat), severity
+
+
+
+async function monitorAlerts() {
+    try {
+        let alertLocations = await alertLocationsCollection.find({}).toArray();
+        //console.log(alertLocations);
+        alertLocations.forEach(async (alertLocation) => {
+            let [long, lat] = alertLocation.location.geometry.coordinates;
+            let locationName = alertLocation.location.properties.name_preferred;
+            let users = alertLocation.users;
+            let alerts = await getAlerts(long, lat);
+            if (alerts.length > 0) {
+                alerts.forEach((alert) => {
+                    sendAlerts(alert, locationName, users)
+                })
+            }
+            //console.log(locationName + " " + users);
+        });
+    } catch (error) {
+        console.error("Error obtaining alert location information: ", error);
+    }
+}
+
+//params: alert(object), locationName(name of alert location), users(array of user _id)
+async function sendAlerts(alert, locationName, users) {
+    for(let i = 0; i < users.length; i++) {
+        let userID = new ObjectId(users[i]);
+        let alertedObject = await userCollection.findOne({_id: userID}, 
+            { projection: {alreadyAlerted: 1, email: 1, name: 1} });
+        let alreadyAlerted = alertedObject.alreadyAlerted;
+        if (!alreadyAlerted.includes(alert.id)) {
+            let userEmail = alertedObject.email;
+            let userName = alertedObject.name;
+            console.log(`alertid: ${alert.id}, location: ${locationName}, alert: ${alert.description}, severity: ${alert.severity}`)
+            console.log(`userid: ${users[i]}, email: ${userEmail}, name: ${userName}`);
+            await userCollection.updateOne({_id: userID}, { $push: {alreadyAlerted: alert.id } })
+            //send email
+            // 
+            // 
+            // 
+            //
+            //emailjs
+        } else {
+            console.log("already been alerted")
+        }
+    }
+}
+
+//renders environment risks info using information from getAlerts();
 app.post("/getRisks", async (req, res) => {
     let [long, lat] = req.body;
     if (long && lat) {
@@ -293,17 +364,17 @@ app.post("/getRisks", async (req, res) => {
             let alerts = await getAlerts(long, lat);
             if (alerts.length > 0) {
                 //console.log(alerts[0])
-                res.render("main/risks", {alerts : alerts, message: ""})
+                res.render("main/risks", { alerts: alerts, message: "" })
             } else {
                 let message = "There are currently no flood or heat risks for this location."
-                res.render("main/risks", {alerts: [], message: message})
+                res.render("main/risks", { alerts: [], message: message })
             }
         } catch (error) {
             res.status(500).send("Unable to get risk information");
         }
     } else {
         let message = "Unable to determine the location. Please search again."
-        res.render("main/risks", {alerts: [], message: message})
+        res.render("main/risks", { alerts: [], message: message })
     }
 
 })

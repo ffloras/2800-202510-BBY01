@@ -159,15 +159,19 @@ async function saveLocation(alert) {
 //returns the current search location from the database
 function getCurrentSearchLocation() {
   return new Promise((resolve, reject) => {
-    ajaxGET('/getCurrentSearchLocation', (response) => {
-      try {
-        //console.log("hi" + JSON.parse(response).address)
-        resolve(JSON.parse(response));
+    fetch('/getCurrentSearchLocation')
+      .then((response) => { return response.json() })
+      .then((response) => { resolve(response) })
+      .catch(() => resolve(null))
+    // ajaxGET('/getCurrentSearchLocation', (response) => {
+    //   try {
 
-      } catch (error) {
-        resolve(null);
-      }
-    });
+    //     resolve(JSON.parse(response));
+
+    //   } catch (error) {
+    //     resolve(null);
+    //   }
+    // });
   });
 
 }
@@ -239,20 +243,26 @@ async function setupAI() {
 
 
 function getRisks(coor) {
-  fetch("/getRisks", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(coor),
-  })
-    .then((response) => { return response.text() })
-    .then((response) => {
-      //console.log(response)
-      document.getElementById("riskContent").innerHTML = response;
+  if (coor) {
+    fetch("/getRisks", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(coor),
     })
-    .catch((err) => {
-      console.error("Error obtaining risk information")
-    })
+      .then((response) => { return response.text() })
+      .then((response) => {
+        //console.log(response)
+        document.getElementById("riskContent").innerHTML = response;
+      })
+      .catch((err) => {
+        console.error("Error obtaining risk information")
+      })
+  } else {
+    let message = "<h6 class='alertHeading'>No Location Selected.</h6>";
+    document.getElementById("riskContent").innerHTML = message;
+  }
+
 
 }
