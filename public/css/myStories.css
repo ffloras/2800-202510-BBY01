@@ -1,3 +1,11 @@
+
+body {
+    background-color: #f4f8f2; /* a very light greenish off-white */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
 .myStories-top {
     display: flex;
     width: 80%;

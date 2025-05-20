@@ -100,20 +100,49 @@ main {
 }
 
 #risks {
-  margin: 0;
-  text-align: center;
-  background-color: rgb(61, 157, 114);
+  margin: 0 auto;
+  background-color: #f4f8f2;
+  color: #116002;
 }
 
-#riskHeading {
-  padding: 10px 0 10px 0;
+.riskHeading {
+  padding-top: 10px;
   font-size: 1.5em;
+  text-align: center;
 }
 
 #riskContent {
-  padding: 10px 0 10px 0;
+  padding: 10px 0 30px 0;
+  width: 100%;
 }
 
+.risk-img {
+  width: 80px;
+}
+
+.alertHeading {
+  text-align: center;
+}
+.alertContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+}
+
+.alertList {
+  list-style-type: none;
+  padding-top: 10px;
+}
+
+li:first-child {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.alertLink {
+  color: #116002;
+}
 
 @media (max-width: 1000px) and (min-width: 599px) {
   main {
