@@ -20,27 +20,27 @@
                                     <p class="text-center">Sign up for an account!</p>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
+                                        <label class="form-label" for="signup-name">Name</label>
                                         <input type="text" id="signup-name" class="form-control" name="name"
                                             placeholder="Name" value="<%- locals?.input ? input["name"] : "" %>"/>
-                                        <label class="form-label" for="signup-name">Name</label>
                                     </div>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
+                                        <label class="form-label" for="signup-email">Email</label>
                                         <input type="text" id="signup-email" class="form-control" name="email"
                                             placeholder="Email" value="<%- locals?.input ? input["email"] : "" %>"/>
-                                        <label class="form-label" for="signup-email">Email</label>
                                     </div>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
+                                        <label class="form-label" for="signup-username">Username</label>
                                         <input type="text" id="signup-username" class="form-control" name="username"
                                             placeholder="Username" value="<%- locals?.input ? input["username"] : "" %>"/>
-                                        <label class="form-label" for="signup-username">Username</label>
                                     </div>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="password" id="signup-password" class="form-control"
-                                            name="password" value="<%- locals?.input ? input["password"] : "" %>"/>
                                         <label class="form-label" for="signup-password">Password</label>
+                                        <input type="password" id="signup-password" class="form-control"
+                                            name="password" placeholder="Password" value="<%- locals?.input ? input["password"] : "" %>"/>
                                     </div>
 
                                     <div class="text-center pt-1 mb-5 pb-1">

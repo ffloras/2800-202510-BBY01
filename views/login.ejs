@@ -17,15 +17,15 @@
                             <p class="text-center">Please login to your account</p>
 
                             <div data-mdb-input-init class="form-outline mb-4">
+                                <label class="form-label" for="login-username">Username</label>
                                 <input type="text" id="login-username" class="form-control" name="username"
                                     placeholder="Username" value="<%- locals?.input ? input["username"] : "" %>"/>
-                                <label class="form-label" for="login-username">Username</label>
                             </div>
 
                             <div data-mdb-input-init class="form-outline mb-4">
+                                <label class="form-label" for="login-password">Password</label>
                                 <input type="password" id="login-password" class="form-control" name="password" 
                                 value="<%- locals?.input ? input["password"] : "" %>"/>
-                                <label class="form-label" for="login-password">Password</label>
                             </div>
                             <% if (locals?.error) {%>
                                 <ul class="list-group list-group-flush">

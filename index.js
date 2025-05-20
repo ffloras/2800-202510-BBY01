@@ -1055,7 +1055,7 @@ app.get("/layers", (req, res) => {
 
 app.use(function (req, res) {
   res.status(404);
-  res.render("404");
+  res.render("404", {message: "Oops, this page doesn't exist."});
 });
 
 app.listen(port, () => {
