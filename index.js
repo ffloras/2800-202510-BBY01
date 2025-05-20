@@ -72,7 +72,7 @@ app.use(
 );
 
 const url = `https://two800-202510-bby01-6ko8.onrender.com`; // Replace with your Render URL
-const interval = 840000; // (840000 14mins)
+const interval = 300000; // (840000 14mins, 300000 5mins)
 
 //Reloader Function
 //https://dev.to/harshgit98/solution-for-rendercom-web-services-spin-down-due-to-inactivity-2h8i
