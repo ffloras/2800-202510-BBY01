@@ -154,8 +154,8 @@ body {
     z-index: 998;
     margin: 0;
     background: linear-gradient(to top left, beige 50%, transparent 50%);
-    translate: 0 50vw;
-    transition: translate 1s ease;
+    translate: 0 80vw;
+    transition: translate 0.7s ease;
 }
 
 
