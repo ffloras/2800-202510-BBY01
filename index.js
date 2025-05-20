@@ -915,6 +915,7 @@ app.get("/postStory", function (req, res) {
     res.render("postStory");
 });
 
+// Route to serve the 'detailStory' page
 app.get("/detailStory", function (req, res) {
     res.render("detailStory");
 });
