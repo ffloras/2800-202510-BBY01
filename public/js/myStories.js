@@ -7,7 +7,7 @@ $(document).ready(function () {
             return res.json();
         })
         .then(data => {
-            const container = $('#stories-container');
+            const container = $('#myStories-container');
             container.empty();
 
             if (!Array.isArray(data)) {
@@ -46,7 +46,7 @@ $(document).ready(function () {
         })
         .catch(err => {
             console.error("Error fetching or processing my stories:", err);
-            $('#stories-container').empty().append("<p>Error loading stories. Please try again later.</p>");
+            $('#myStories-container').empty().append("<p>Error loading stories. Please try again later.</p>");
         });
 
     // DELETE
@@ -59,8 +59,8 @@ $(document).ready(function () {
                 .then(res => {
                     if (res.ok) {
                         storyDiv.remove();
-                        if ($('#stories-container').children('.story-block').length === 0) {
-                            $('#stories-container').append("<p>No stories found.</p>");
+                        if ($('#myStories-container').children('.story-block').length === 0) {
+                            $('#myStories-container').append("<p>No stories found.</p>");
                         }
                     } else {
                         res.text().then(text => alert("Failed to delete story. Server says: " + (text || res.statusText)));

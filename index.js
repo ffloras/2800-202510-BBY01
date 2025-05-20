@@ -850,15 +850,16 @@ app.get("/detailStory", function (req, res) {
 
 
 app.get("/myStories", function (req, res) {
-    if (!req.session.authenticated) { // Protect this page
+    if (!req.session.authenticated) {
         return res.redirect("/login");
     }
 
-    res.sendFile(path.resolve(__dirname, "app", "html", "myStories.html"), function (err) {
+    res.render("myStories", {}, function (err, html) {
         if (err) {
-            console.error("Error loading myStories.html from app/html:", err);
-            // Send a more detailed error message to help debug
-            res.status(500).send(`Error loading myStories.html. Server details: ${err.message}. Path attempted: ${path.resolve(__dirname, "app", "html", "myStories.html")}`);
+            console.error("Error rendering myStories.ejs from views:", err);
+            res.status(500).send(`Error rendering myStories.ejs. Server details: ${err.message}`);
+        } else {
+            res.send(html);
         }
     });
 });
