@@ -68,7 +68,7 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-const url = `https://riskmapperDev.onrender.com/`; // Replace with your Render URL
+const url = `https://two800-202510-bby01-6ko8.onrender.com`; // Replace with your Render URL
 const interval = 300000; // (840000 14mins; 300000 5mins)
 
 //Reloader Function
