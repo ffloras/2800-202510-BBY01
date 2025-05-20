@@ -27,7 +27,7 @@
                             <label for="login-username" class="form-label">Username</label>
                             <input type="text" class="form-control form-control-lg" 
                                    id="login-username" name="username" 
-                                   value="<%- locals?.input ? input["username"] : "" %>"
+                                   value="<%- locals?.input ? input["username"].trim() : "" %>"
                                    required>
                             <div class="invalid-feedback">Please enter your username</div>
                         </div>
@@ -36,7 +36,7 @@
                             <label for="login-password" class="form-label">Password</label>
                             <input type="password" class="form-control form-control-lg" 
                                    id="login-password" name="password"
-                                   value="<%- locals?.input ? input["password"] : "" %>"
+                                   value="<%- locals?.input ? input["password"].trim() : "" %>"
                                    required>
                             <div class="invalid-feedback">Please enter your password</div>
                         </div>

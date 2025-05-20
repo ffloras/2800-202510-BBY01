@@ -133,8 +133,8 @@ app.get("/login", function (req, res) {
 });
 // this will submit the login data to the database to check if the user exists
 app.post("/login", async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const username = req.body.username.trim();
+  const password = req.body.password.trim();
   let details = [];
 
   const schema = Joi.string().max(20).required().label("username");
@@ -197,10 +197,10 @@ app.get("/signup", function (req, res) {
 
 // this is the post request for the signup page, used to submit user data to the database
 app.post("/signup", async (req, res) => {
-  const name = req.body.name;
-  const email = req.body.email;
-  const username = req.body.username;
-  const password = req.body.password;
+  const name = req.body.name.trim();
+  const email = req.body.email.trim();
+  const username = req.body.username.trim();
+  const password = req.body.password.trim();
   let details = [];
   const schema = Joi.object({
     name: Joi.string().alphanum().max(20).required(),
@@ -273,7 +273,7 @@ app.get("/logout", (req, res) => {
       res.status(500).send("Internal Server Error");
     } else {
       app.locals.loggedIn = false;
-      res.redirect("/");
+      res.redirect("/login");
     }
   });
 });
