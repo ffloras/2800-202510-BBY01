@@ -31,7 +31,7 @@ async function setupMapbox() {
     let map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: getCoordinateFromSessionStorage() || searchCoordinate || [-122.95263, 49.26636], // starting position [lng, lat]
+      center: searchCoordinate || getCoordinateFromSessionStorage() || [-122.95263, 49.26636], // starting position [lng, lat]
       zoom: 9, // starting zoom
     });
 
@@ -43,25 +43,24 @@ async function setupMapbox() {
     searchBar.bindMap(map)
 
     newSearch(searchBar);
-
+    getRisks(searchCoordinate || getCoordinateFromSessionStorage());
 
   }
 }
 
-//return coordinate array from this page's URL consisting of longitude and latitude
+//return coordinate array from browser's session storage consisting of longitude and latitude
 function getCoordinateFromSessionStorage() {
   // let url = new URL(window.location.href);
   // let params = url.searchParams.get("coor");
   // let coor = null;
   let coor = sessionStorage.getItem("coor");
-  console.log(coor);
   if (coor) {
     coorArray = coor.split(",");
     return coorArray;
   } else {
     return null;
   }
-  
+
 }
 
 //updates the current searched location in the database, updates location save status and name on main page
@@ -82,9 +81,11 @@ function newSearch(searchBar) {
     let coordinate = feature.geometry.coordinates;
     sessionStorage.setItem("coor", coordinate);
 
-    document.getElementById("ai-message").innerHTML = "Take a look at what this location's climate would look like in the next few decades.";
+    document.getElementById("ai-message").innerHTML = "Explore what this location's climate would be like in the next few decades.";
     setLocationSavedStatus();
     setLocationName();
+
+    getRisks(coordinate);
 
   });
 }
@@ -136,9 +137,6 @@ function setSaveLocationButton() {
   })
 }
 
-function updateURLparam() {
-
-}
 //save current searched location into savedLocation in database
 async function saveLocation(alert) {
   if (!(await isLocationSaved())) {
@@ -161,15 +159,19 @@ async function saveLocation(alert) {
 //returns the current search location from the database
 function getCurrentSearchLocation() {
   return new Promise((resolve, reject) => {
-    ajaxGET('/getCurrentSearchLocation', (response) => {
-      try {
-        //console.log("hi" + JSON.parse(response).address)
-        resolve(JSON.parse(response));
+    fetch('/getCurrentSearchLocation')
+      .then((response) => { return response.json() })
+      .then((response) => { resolve(response) })
+      .catch(() => resolve(null))
+    // ajaxGET('/getCurrentSearchLocation', (response) => {
+    //   try {
 
-      } catch (error) {
-        resolve(null);
-      }
-    });
+    //     resolve(JSON.parse(response));
+
+    //   } catch (error) {
+    //     resolve(null);
+    //   }
+    // });
   });
 
 }
@@ -209,39 +211,58 @@ async function setLocationName() {
 
 async function setupAI() {
   document.getElementById("ai-button").addEventListener("click", async (e) => {
-
     let searchLocation = await getCurrentSearchLocation();
-    let searchCoordinate = searchLocation ? searchLocation.coordinate : null;
+    let coorArray = searchLocation ? searchLocation.coordinate : getCoordinateFromSessionStorage();
 
-    console.log(searchCoordinate);
+    if (coorArray) {
+      let coor = {
+        long: coorArray[0],
+        lat: coorArray[1]
+      }
 
-    let coorArray = searchCoordinate || getCoordinateFromSessionStorage();
-    
-    let coor = {
-      long: coorArray[0],
-      lat: coorArray[1]
+      fetch("/ai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(coor)
+      })
+        .then(async (response) => {
+          let html = await response.text();
+          document.getElementById("ai-message").innerHTML = html;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      let html = "Unable to get location information. Please search the location again."
+      document.getElementById("ai-message").innerHTML = html;
     }
+  });
+}
 
-    console.log(coor);
 
-    fetch("/ai", {
+function getRisks(coor) {
+  if (coor) {
+    fetch("/getRisks", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-type": "application/json",
       },
-      body: JSON.stringify(coor)
+      body: JSON.stringify(coor),
     })
-      .then(async (response) => {
-        let html = await response.text();
-        document.getElementById("ai-message").innerHTML = html;
+      .then((response) => { return response.text() })
+      .then((response) => {
+        //console.log(response)
+        document.getElementById("riskContent").innerHTML = response;
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((err) => {
+        console.error("Error obtaining risk information")
       })
-
-  })
-
-
+  } else {
+    let message = "<h6 class='alertHeading'>No Location Selected.</h6>";
+    document.getElementById("riskContent").innerHTML = message;
+  }
 
 
 }
