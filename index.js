@@ -772,17 +772,7 @@ app.get("/detailStory", function (req, res) {
 
 
 app.get("/myStories", function (req, res) {
-    if (!req.session.authenticated) { // Protect this page
-        return res.redirect("/login");
-    }
-    
-    res.sendFile(path.resolve(__dirname, "app", "html", "myStories.html"), function (err) {
-        if (err) {
-            console.error("Error loading myStories.html from app/html:", err);
-            // Send a more detailed error message to help debug
-            res.status(500).send(`Error loading myStories.html. Server details: ${err.message}. Path attempted: ${path.resolve(__dirname, "app", "html", "myStories.html")}`);
-        }
-    });
+    res.render("myStories");
 });
 
 
