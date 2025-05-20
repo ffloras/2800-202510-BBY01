@@ -3,7 +3,7 @@ const express = require("express");
 
 const fs = require("fs");
 const session = require("express-session");
-
+const emailjs = require("@emailjs/nodejs")
 const path = require("path");
 const MongoStore = require("connect-mongo");
 const { ObjectId } = require("mongodb");
@@ -22,6 +22,19 @@ const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEN_AI_KEY });
 
 const app = express();
+
+emailjs.init({
+  publicKey: process.env.EMAILJS_PUBLIC_KEY,
+  privateKey: process.env.EMAILJS_PRIVATE_KEY,
+  // Do not allow headless browsers
+  blockHeadless: true,
+  limitRate: {
+    // Set the limit rate for the application
+    id: 'app',
+    // Allow 1 request per 10s
+    throttle: 10000,
+  },
+});
 
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
@@ -399,12 +412,23 @@ async function sendAlerts(alert, locationName, users) {
         { _id: userID },
         { $push: { alreadyAlerted: alert.id } }
       );
-      //send email
-      //
-      //
-      //
-      //
-      //emailjs
+      // email alerts
+      let templateParams = {
+        name: userName,
+        email: userEmail,
+        location: locationName,
+        type: alert.type,
+        severity: alert.severity,
+        description: alert.description
+      };
+      emailjs.send(process.env.EMAILJS_SERVICE_ID, process.env.EMAILJS_TEMPLATE_ID, templateParams).then(
+        (response) => {
+          console.log('SUCCESS!', response.status, response.text);
+        },
+        (error) => {
+          console.log('FAILED...', error);
+        },
+      );
     } else {
       console.log("already been alerted");
     }
