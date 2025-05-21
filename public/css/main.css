@@ -144,6 +144,9 @@ li:first-child {
   color: #116002;
 }
 
+#layerButtons {
+  margin-bottom: 1%;
+}
 @media (max-width: 1000px) and (min-width: 599px) {
   main {
     width: 80%;
