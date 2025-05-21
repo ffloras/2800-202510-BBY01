@@ -43,7 +43,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 30px;
+    padding: 0 10px;
     background-color: beige;
     position: fixed;
     bottom: 0;
@@ -66,8 +66,8 @@ body {
 .header>a {
     text-decoration: none;
     color: #43413C;
-    padding: 10px;
-    margin: 10px;
+    padding: 5px;
+    margin: 0;
 }
 
 .header>a:hover {
@@ -96,8 +96,8 @@ body {
 }
 
 .hamburger-container {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 10px;
     display: flex;
     justify-content: center;
@@ -106,7 +106,7 @@ body {
 }
 
 .hamburger, .hamburger::after, .hamburger::before {
-    width: 32px;
+    width: 28px;
     height: 5px;
     background-color: beige;
     border-radius: 15px;
@@ -165,7 +165,7 @@ body {
     bottom: 80px;
     right: 0;
     left: 0;
-    padding: 30px 20px 10px;
+    padding: 30px 10px 10px;
     text-align: end;
     z-index: 998;
     margin: 0;
@@ -181,7 +181,13 @@ body {
 
 .header-navigation-links a {
     text-decoration: none;
-    padding: 5px;
+    padding: 5px 0;
+    color: #4b873c;
+}
+
+.header-navigation-links a:active {
+    text-decoration: underline;
+    color: #a7c9b9;
 }
 
 
@@ -211,7 +217,11 @@ body {
     opacity: 85%;
 }
 
-@media only screen and (min-width: 1005px) {
+.header>.mobile-link {
+    color: #4b873c;
+}
+
+@media only screen and (min-width: 768px) {
     body {
         padding: 160px 0 100px;
     }
@@ -226,8 +236,12 @@ body {
         border: #43413C solid 2px;
     }
 
+    .header>.mobile-link {
+        color: #43413C;
+    }
+
     .header>a {
-        margin: 0;
+        padding: 10px;
     }
 
     .mobile-hidden {
@@ -281,20 +295,20 @@ body {
 
 #footerPlaceholder>a {
     color: #4b873c;
+    text-decoration: none;
 }
 
 #footerPlaceholder>a:hover {
-    text-decoration: none;
-    color: #a7c9b9;
+    text-decoration: underline;
 }
 
 #footerPlaceholder>a:active {
-    text-decoration: underline;
+
     color: #43413C;
 }
 
 
-@media only screen and (min-width: 1005px) {
+@media only screen and (min-width: 768px) {
     #footerPlaceholder {
         bottom: 0px;
     }
