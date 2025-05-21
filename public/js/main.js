@@ -54,12 +54,7 @@ async function setupMapbox() {
     getRisks(searchCoordinate || getCoordinateFromSessionStorage());
 
     map.on('load', () => {
-      map.addSource('air-temp-layer', {
-        type: 'geojson',
-        data: '/uploads/20250509T00Z_MSC_RDPS-UMOS-MLR_AirTemp_AGL-1.5m_PT000H.json' // Path to the JSON file
-      });
 
-      
       // layer toggling
 
       let isSatellite = false;
