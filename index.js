@@ -410,10 +410,8 @@ async function sendAlerts(alert, locationName, users) {
       let userEmail = alertedObject.email;
       let userName = alertedObject.name;
       console.log(
-        `alertid: ${alert.id}, location: ${locationName}, alert: ${alert.description}, severity: ${alert.severity}`
-      );
-      console.log(
-        `userid: ${users[i]}, email: ${userEmail}, name: ${userName}`
+        `userid: ${users[i]}, email: ${userEmail}, name: ${userName}
+         alertid: ${alert.id}, location: ${locationName}, alert: ${alert.description}, severity: ${alert.severity}`
       );
       await userCollection.updateOne(
         { _id: userID },
