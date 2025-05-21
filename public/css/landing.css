@@ -104,13 +104,13 @@ main h1 {
 
 .description {
     font-size: 16px;
-    padding: 10px 0 0 0;
-    margin-bottom: 30px;
 }
+
 
 .description-container {
     display: flex;
     align-items: center;
+    padding-bottom: 10px;
 }
 
 /* About section */
@@ -175,7 +175,6 @@ footer {
 
 */ .description {
     font-size: 16px;
-    padding: 0 20px;
     margin-bottom: 30px;
 }
 
@@ -250,6 +249,7 @@ footer {
 
     .description-container {
         flex-direction: column;
+        padding-bottom: 30px;
     }
 
     .about-container {
@@ -258,5 +258,10 @@ footer {
 
     #search-bar {
         width: 100%;
+    }
+
+    .center {
+        display: flex;
+        justify-content: center;
     }
 }
