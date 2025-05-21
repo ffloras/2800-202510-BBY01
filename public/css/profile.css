@@ -4,7 +4,6 @@
     font-family: Arial, sans-serif;
     background-color: #f4f8f2;
     padding: 40px 20px;
-    min-height: 100vh;
 }
 
 
@@ -48,7 +47,7 @@
 
 #profilePage .button-group {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-top: 25px;
     gap: 10px;
 }
@@ -60,7 +59,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background-color: #5689bf;
+    background-color: #4b873c;
     color: white;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

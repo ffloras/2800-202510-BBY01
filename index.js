@@ -424,7 +424,8 @@ async function sendAlerts(alert, locationName, users) {
         location: locationName,
         type: alert.type,
         severity: alert.severity,
-        description: alert.description
+        description: alert.description,
+        link: "https://two800-202510-bby01-6ko8.onrender.com/policy"
       };
       emailjs.send(process.env.EMAILJS_SERVICE_ID, process.env.EMAILJS_TEMPLATE_ID, templateParams).then(
         (response) => {
@@ -780,14 +781,48 @@ app.get("/profile", async function (req, res) {
 app.post("/profileUpdate", async function (req, res) {
   if (req.session.authenticated) {
     res.setHeader("Content-Type", "application/json");
-    let name = req.body.name;
-    let email = req.body.email;
-    await userCollection.updateOne(
-      { username: req.session.username },
-      {
-        $set: { name: name, email: email },
-      }
+    let name = req.body.name.trim();
+    let email = req.body.email.trim();
+    let details = [];
+    const schema = Joi.object({
+      name: Joi.string().alphanum().max(20).required(),
+      email: Joi.string()
+        .max(30)
+        .email({ minDomainSegments: 2})
+        .required()
+    });
+
+    const validationResult = schema.validate(
+      { name, email },
+      { abortEarly: false }
     );
+    if (validationResult.error != null) {
+      for (let detail of validationResult.error["details"]) {
+        details.push(detail.message);
+      }
+    }
+    // will check if the username or email already exists in the database
+    // have to make it understand which value is changed and check that one
+    const existingEmail = await userCollection.findOne({ 
+      $and: [
+        {username: { $not: {$eq: req.session.username}}},
+        {email: email} 
+      ]
+    });
+    if (existingEmail && email.length > 0) {
+      details.push("Email already in use");
+    }
+    if (details.length > 0) {
+      res.render("profile", { error: details });
+    } else {
+      await userCollection.updateOne(
+        { username: req.session.username },
+        {
+          $set: { name: name, email: email },
+        }
+      );
+    }
+    
   } else {
     res.redirect("/main");
   }
@@ -896,6 +931,10 @@ app.get("/authenticated", function (req, res) {
   } else {
     res.send("false");
   }
+});
+
+app.get("/policy", function (req, res) {
+  res.render("policy");
 });
 
 app.get("/sessionInfo", (req, res) => {

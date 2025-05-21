@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const editBtn = document.getElementById('editBtn');
     const saveBtn = document.getElementById('saveBtn');
-    const deleteBtn = document.getElementById('deleteBtn');
+    // const deleteBtn = document.getElementById('deleteBtn');
     const inputs = document.querySelectorAll('#profileForm input, #profileForm select');
 
     // Enable editing
@@ -23,12 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Profile Saved!");
     });
 
-
-    // Handle delete
-    deleteBtn.addEventListener('click', () => {
-        if (confirm("Are you sure you want to delete your profile?")) {
-            alert("Profile deleted.");
-            // Optional: send delete request to server
-        }
-    });
-});
+})
+//     // Handle delete
+//     deleteBtn.addEventListener('click', () => {
+//         if (confirm("Are you sure you want to delete your profile?")) {
+//             alert("Profile deleted.");
+//             // Optional: send delete request to server
+//         }
+//     });
+// });

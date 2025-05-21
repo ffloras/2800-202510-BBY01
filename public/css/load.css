@@ -26,8 +26,11 @@ html {
 }
 
 body {
-    padding-bottom: 70px;
+    padding-bottom: 160px;
+    position: relative;
     /* for the footer */
+    /* background-color: #f8f9fa; */
+    min-height: 100vh;
 }
 
 /* #region  Header */
@@ -63,6 +66,18 @@ body {
 .header>a {
     text-decoration: none;
     color: #43413C;
+    padding: 10px;
+    margin: 10px;
+}
+
+.header>a:hover {
+    color: #4b873c;
+    text-decoration: underline;
+}
+
+.header>a:active {
+    color: #a7c9b9;
+    text-decoration: none;
 }
 
 #login-button-nav {
@@ -196,15 +211,15 @@ body {
     opacity: 85%;
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1005px) {
     body {
-        padding: 160px 0 0;
+        padding: 160px 0 100px;
     }
 
     .header {
         top: 30px;
-        padding: 10px 40px;
-        max-width: 70%;
+        padding: 10px 20px;
+        width: fit-content;
         margin: 0 auto;
         border-radius: 20px;
         box-shadow: 4px 4px #43413C;
@@ -222,7 +237,7 @@ body {
 
 @media only screen and (min-width: 1600px) {
     .header {
-        max-width: 60%;
+        max-width: 70%;
     }
 }
 
@@ -234,24 +249,44 @@ body {
 
 /* #region Footer */
 
-.footer-navigation {
+#footerPlaceholder {
     display: flex;
     background-color: beige;
-    position: fixed;
-    bottom: 0;
-    right: 0;
+    position: absolute;
+    width: fit-content;
+    margin: 0 auto 20px;
+    bottom: 70px;
     left: 0;
-    opacity: 85%;
-    z-index: 999;
+    right: 0;
+    padding: 10px;
+    border-radius: 10px;
+    justify-content: space-between;
+    border: solid 2px black;
 }
 
-.footer-navigation>a {
+#footerPlaceholder>* {
+    margin: 5px;
+}
+
+#footerPlaceholder>a {
+    color: #4b873c;
+}
+
+#footerPlaceholder>a:hover {
     text-decoration: none;
-    padding: 15px 0px;
-    width: 50%;
-    text-align: center;
-    font-size: 1.2rem;
-    border: solid 1px black;
+    color: #a7c9b9;
+}
+
+#footerPlaceholder>a:active {
+    text-decoration: underline;
+    color: #43413C;
+}
+
+
+@media only screen and (min-width: 1005px) {
+    #footerPlaceholder {
+        bottom: 0px;
+    }
 }
 
 /* #endregion */
