@@ -8,6 +8,9 @@ main {
   border-radius: 10px;
   background-color: beige;
 }
+body {
+  background-color: #f4f8f2; /* a very light greenish off-white */
+}
 
 #mainHeading {
   display: flex;

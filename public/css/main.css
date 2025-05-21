@@ -1,7 +1,12 @@
+body {
+  background-color: #f4f8f2; /* a very light greenish off-white */
+}
+
 main {
   margin: 0 auto;
   width: 50%;
 }
+
 
 #searchBar {
   display: flex;
@@ -101,7 +106,7 @@ main {
 
 #risks {
   margin: 0 auto;
-  background-color: #f4f8f2;
+  background-color: #c0efca;
   color: #116002;
 }
 

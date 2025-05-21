@@ -8,7 +8,7 @@ const path = require("path");
 const MongoStore = require("connect-mongo");
 const { ObjectId } = require("mongodb");
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 const bcrypt = require("bcrypt");
 
