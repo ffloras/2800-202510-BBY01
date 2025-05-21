@@ -1,7 +1,12 @@
+body {
+  background-color: #f4f8f2; /* a very light greenish off-white */
+}
+
 main {
   margin: 0 auto;
   width: 50%;
 }
+
 
 #searchBar {
   display: flex;
@@ -101,7 +106,7 @@ main {
 
 #risks {
   margin: 0 auto;
-  background-color: #f4f8f2;
+  background-color: #c0efca;
   color: #116002;
 }
 
@@ -144,6 +149,22 @@ li:first-child {
   color: #116002;
 }
 
+#layerButtons {
+  margin-bottom: 1%;
+}
+
+#toggleTemperature {
+  margin: 0.5%;
+}
+#togglePrecipitation {
+  margin: 0.5%;
+}
+#toggleWildFires {
+  margin: 0.5%;
+}
+#toggleSatellite {
+  margin: 0.5%;
+}
 @media (max-width: 1000px) and (min-width: 599px) {
   main {
     width: 80%;

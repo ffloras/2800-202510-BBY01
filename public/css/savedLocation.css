@@ -1,8 +1,13 @@
+body {
+    background-color: #f4f8f2; /* a very light greenish off-white */
+  }
+  
 .save-location-title {
     margin: 20px auto;
     width: 80%;
     text-align: center;
 }
+
 
 .map-container {
     margin: 0 1px

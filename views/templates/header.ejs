@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RiskMapper - Climate Risk Dashboard</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/img/RiskMapper.png">
     <!-- Bootstrap, JQuery, FontAwesome... -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -27,14 +28,14 @@
     <div id="navbarPlaceholder">
         <div class="header">
             <a href="/">
-                <img id="header-logo" src="img/EcoRiskView.png" alt="logo">
+                <img id="header-logo" src="img/RiskMapper.png" alt="logo">
             </a>
             <a href="/main">Home</a>
             <% if (locals.loggedIn) {%>
                 <a href="/profile" class="mobile-hidden">Profile</a>
                 <% }%>
-            <a href="/heatAdaptation" class="mobile-hidden">Heat Adaptations</a>
-            <a href="/floodAdaptation" class="mobile-hidden">Flood Adaptations</a>
+            <a href="/heatAdapt" class="mobile-hidden">Heat Adaptations</a>
+            <a href="/floodAdapt" class="mobile-hidden">Flood Adaptations</a>
             <% if (locals.loggedIn) {%>
                 <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
             <% }%>

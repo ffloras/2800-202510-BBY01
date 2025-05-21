@@ -1,10 +1,12 @@
 /* Scoped styles for profile page */
+
 #profilePage {
     font-family: Arial, sans-serif;
-    background-color: #f5f8fa;
+    background-color: #f4f8f2;
     padding: 40px 20px;
     min-height: 100vh;
 }
+
 
 .profile-container {
     max-width: 500px;

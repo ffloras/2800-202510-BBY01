@@ -35,6 +35,14 @@ async function setupMapbox() {
       zoom: 9, // starting zoom
     });
 
+    map.addControl(new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserHeading: true
+    }));
+
     // set the mapboxgl library to use for markers and enable the marker functionality
     searchBar.mapboxgl = mapboxgl
     searchBar.marker = true

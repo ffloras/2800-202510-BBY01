@@ -1,42 +1,57 @@
-<% let stylesheets = ["/css/landing.css"]; %>
-<% let scripts = [{ script: "/js/common.js" }, { script: "/js/landing.js" }, { script: "https://api.mapbox.com/search-js/v1.0.0/web.js", id: "search-js" }]; %>
+<% let stylesheets=["/css/landing.css"]; %>
+  <% let scripts=[{ script: "/js/common.js" }, { script: "/js/landing.js" }, {
+    script: "https://api.mapbox.com/search-js/v1.0.0/web.js" , id: "search-js" }]; %> <%- include("templates/header", {
+      stylesheets: stylesheets }) %>
+      <div id="landingPage">
 
-<%- include("templates/header", { stylesheets: stylesheets }) %>
-<div id="landingPage">
-    <!-- Search Bar -->
-    <!-- <div class="search-container">
-        <input type="text" id="addressInput" placeholder="Search you address">
-        <button id="searchBtn" class="search-btn">🔍</button>
-    </div> -->
-    <!-- Search Bar -->
-    <!-- <div class="search-container">
-    <input
-        type="text"
-        id="addressInput"
-        placeholder="Enter your location"
-    />
-    <button id="searchBtn" class="search-btn">
-        <i class="fas fa-location-dot"></i>
-    </button>
-    </div> -->
+        <!-- Main Content -->
 
-    <!-- Main Content -->
-    <div id="search-bar"></div>
-    <main>
+        <main>
+          <h1><b>RiskMapper</b></h1>
+          <div id="search-bar"></div>
+          <p class="search-info">
+            Search your location to learn about the environmental risks around you.
+          </p>
+          <div class="description-container">
+            <img src="/img/RiskMapper.png" width="200px">
+            <p class="description">
+            From rising flood zones to wildfire-prone areas, our
+            interactive maps help you stay prepared and make smarter decisions for
+            your safety. Whether you're planning ahead or just staying informed, 
+            RiskMapper gives you the tools to protect your home, your family, and your community.
+          </p>
 
-        <h1><b>RiskMapper</b></h1>
-        <div class="hero-icon"></div>
-        <p class="description">
-            Search your location to view the environmental risks and a map of the
-            climate data in your area.
-        </p>
-    </main>
+          </div>
+          
+            
+            <div class="about-container">
+            <div>
+              <h2><b>About Us</b></h2>
+              <img src="/img/lightbulb.png" width="200px" height="200px">
+            </div>
+            
+            <section class="about">
+              <p>
+                We are a group of passionate developers, designers, and climate advocates committed to helping
+                communities stay informed and resilient in the face of environmental challenges. RiskMapper was created
+                as a response to the increasing need for accessible, real-time information on climate-related risks such
+                as floods, wildfires, and heatwaves.
+              </p>
+              <p>
+                Our goal is to empower individuals with the knowledge they need to make safe decisions and take
+                proactive measures. Through user-friendly maps, alerts, and educational resources, we aim to make
+                climate data more transparent and actionable for everyone.
+              </p>
+              <p>
+                This project is fueled by collaboration, innovation, and a shared belief that technology can play a
+                vital role in community preparedness and environmental sustainability.
+              </p>
+            </section>
+            </div>
 
-    <div class="about-container">
-        <section class="about">
-            <h2><b>About Us</b></h2>
-            <p>We are a group of individuals</p>
-        </section>
-    </div>
-</div>
-<%- include("templates/footer", { scripts: scripts }) %>
+          
+      </div>
+      </main>
+
+
+      <%- include("templates/footer", { scripts: scripts }) %>
