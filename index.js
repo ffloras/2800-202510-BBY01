@@ -207,7 +207,7 @@ app.post("/signup", async (req, res) => {
     username: Joi.string().alphanum().max(20).required(),
     email: Joi.string()
       .max(30)
-      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+      .email({ minDomainSegments: 2})
       .required(),
     password: Joi.string().min(8).max(20).required(),
   });
