@@ -269,8 +269,10 @@ app.post("/signup", async (req, res) => {
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error("Error during logout: ", err);
-      res.status(500).send("Internal Server Error");
+      //console.error("Error during logout: ", err);
+      //res.status(500).send("Internal Server Error");
+      let message = "Error logging out";
+      res.redirect(`/errors?message=${message}`);
     } else {
       app.locals.loggedIn = false;
       res.redirect("/");
@@ -291,7 +293,8 @@ app.post("/ai", async (req, res) => {
     //console.log(response.text)
     res.send(text);
   } catch (error) {
-    res.status(500).send("Error retreiving AI response: ", error);
+    let message = "Error retrieving response";
+    res.redirect(`/errors?message=${message}`);
   }
 });
 
@@ -472,8 +475,10 @@ app.post("/recordCurrentLocation", async function (req, res) {
       );
       res.status(201).send("Location saved successfully");
     } catch (error) {
-      console.error("Error saving user location:", error);
-      res.status(500).send("Internal Server Error");
+      //console.error("Error saving user location:", error);
+      //res.status(500).send("Internal Server Error");
+      let message = "Error saving user location";
+      res.redirect(`/errors?message=${message}`);
     }
   } else {
     res.send("User not logged in");
@@ -518,7 +523,10 @@ app.post("/saveLocation", async function (req, res) {
       }
       res.status(201).send("Location saved");
     } catch (error) {
-      res.status(500).send("Error saving location");
+      //res.status(500).send("Error saving location");
+      let message = "Error saving location";
+      res.redirect(`/errors?message=${message}`);
+      
     }
   } else {
     res.send("User not logged in");
@@ -543,7 +551,9 @@ app.get("/getCurrentSearchLocation", async function (req, res) {
       }
       res.send(data);
     } catch (error) {
-      res.status(500).send("Unable to save location");
+      //res.status(500).send("Unable to save location");
+      let message = "Error saving user current search location";
+      res.redirect(`/errors?message=${message}`);
     }
   } else {
     res.send("User not logged in");
@@ -598,7 +608,7 @@ app.get("/deletePopup", (req, res) => {
   try {
     res.render("savedLocations/deletePopup");
   } catch (error) {
-    console.error("Error rendering EJS template:", error);
+    //console.error("Error rendering EJS template:", error);
     res.status(500).send("Error rendering template.");
   }
 });
@@ -625,7 +635,8 @@ app.get("/displaySavedLocations", async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error displaying saved location: ", error);
+    //console.error("Error displaying saved location: ", error);
+    res.status(500).send("Error displaying saved location.");
   }
 });
 
@@ -672,7 +683,9 @@ app.post("/deleteLocation", async (req, res) => {
       res.status(200).send("Location deleted from savedLocation");
     }
   } catch (error) {
-    res.status(500).send("Error deleting saved location: " + error);
+    //res.status(500).send("Error deleting saved location: " + error);
+    let message = "Error deleting saved location";
+    res.redirect(`/errors?message=${message}`);
   }
 });
 
@@ -737,11 +750,15 @@ app.post("/updateAlert", async (req, res) => {
         await alertLocationsCollection.deleteOne({ _id: docID });
         res.status(200).send("alert location updated");
       } else {
-        res.status(500).send("error updating alertLocation database");
+        //res.status(500).send("error updating alertLocation database");
+        let message = "Error updating alert location database";
+        res.redirect(`/errors?message=${message}`);
       }
     }
   } catch (error) {
-    res.status(500).send("error updating savedLocations alert: " + error);
+    //res.status(500).send("error updating savedLocations alert: " + error);
+    let message = "Error updating saved location alerts."
+    res.redirect(`/errors?message=${message}`);
   }
 });
 
@@ -853,7 +870,12 @@ app.get("/stories", function (req, res) {
 
 //
 app.get("/savedLocation", function (req, res) {
-  res.render("savedLocation");
+    if (req.session.authenticated) {
+        res.render("savedLocation");
+    } else {
+        res.redirect("/login");
+    }
+  
 });
 
 app.get("/authenticated", function (req, res) {
@@ -1052,6 +1074,16 @@ app.get("/layers", (req, res) => {
   let doc = fs.readFileSync("./app/html/layers.html", "utf8");
   res.send(doc);
 });
+
+app.get("/errors", (req, res) => {
+    let message = req.query.message;
+    if (message) {
+        res.render("errors", {message: message});
+    } else {
+        res.render("errors", {message: ""})
+    }
+    
+})
 
 app.use(function (req, res) {
   res.status(404);
