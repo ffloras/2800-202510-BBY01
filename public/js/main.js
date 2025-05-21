@@ -53,6 +53,38 @@ async function setupMapbox() {
     newSearch(searchBar);
     getRisks(searchCoordinate || getCoordinateFromSessionStorage());
 
+    map.on('load', () => {
+      map.addSource('air-temp-layer', {
+        type: 'geojson',
+        data: '/uploads/20250509T00Z_MSC_RDPS-UMOS-MLR_AirTemp_AGL-1.5m_PT000H.json' // Path to the JSON file
+      });
+
+      
+      // layer toggling
+
+      let isSatellite = false;
+
+      document.getElementById('toggleSatellite').addEventListener('click', () => {
+        if (!isSatellite) {
+          map.setStyle('mapbox://styles/mapbox/satellite-v9');
+          isSatellite = true;
+        } else {
+          map.setStyle('mapbox://styles/mapbox/outdoors-v12');
+          isSatellite = false;
+        }
+      });
+
+      document.getElementById('toggleWildfires').addEventListener('click', () => {
+        const visibility = map.getLayoutProperty('wildfires', 'visibility');
+        map.setLayoutProperty('wildfires', 'visibility', visibility === 'visible' ? 'none' : 'visible');
+      });
+
+      document.getElementById('togglePrecipitation').addEventListener('click', () => {
+        const visibility = map.getLayoutProperty('precipitation', 'visibility');
+        map.setLayoutProperty('precipitation', 'visibility', visibility === 'visible' ? 'none' : 'visible');
+      });
+
+    });
   }
 }
 
