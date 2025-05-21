@@ -39,7 +39,7 @@
                 <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
             <% }%>
             <a href="/stories">Stories</a>
-            <a href="<%- authenticated ? "/logout" : "/login" %>" id="login-button-nav" class="mobile-hidden"><%- locals.loggedIn===false ? "Login" : "Logout" %></a>
+            <a href="<%- authenticated ? "/logout" : "/login" %>" id="login-button-nav" class="mobile-hidden"><%- authenticated ? "Logout" : "Login" %></a>
             <div class="hamburger-container">
                 <div class="hamburger untoggle"></div>
             </div>
