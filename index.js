@@ -41,7 +41,7 @@ app.use("/css", express.static("./public/css"));
 app.use("/img", express.static("./public/img"));
 app.use("/text", express.static("./public/text"));
 app.use("/font", express.static("./public/font"));
-app.use("/html", express.static("./app/html"));
+//app.use("/html", express.static("./app/html"));
 app.use("/snippets", express.static("./public/snippets"));
 app.use("/uploads", express.static("./uploads"));
 
@@ -332,7 +332,7 @@ function getAlerts(long, lat) {
                 description: "Heavy rainfall or flooding",
                 severity: alert.severity,
                 img: "/img/floodRiskIcon.png",
-                link: "/floodAdaptation",
+                link: "/floodAdapt",
               });
               alreadyAlertedFlood = true;
             }
@@ -357,7 +357,7 @@ function getAlerts(long, lat) {
                 description: "Fire or Extreme Heat",
                 severity: alert.severity,
                 img: "/img/heatRiskIcon.png",
-                link: "/heatAdaptation",
+                link: "/heatAdapt",
               });
               alreadyAlertedHeat = true;
             }
@@ -401,6 +401,10 @@ async function sendAlerts(alert, locationName, users) {
       { _id: userID },
       { projection: { alreadyAlerted: 1, email: 1, name: 1 } }
     );
+    if (!alertedObject.hasOwnProperty(alreadyAlerted)) {
+        console.log("unable to find user: " + users[i]);
+        return;
+    }
     let alreadyAlerted = alertedObject.alreadyAlerted;
     if (!alreadyAlerted.includes(alert.id)) {
       let userEmail = alertedObject.email;
@@ -791,11 +795,14 @@ app.post("/profileUpdate", async function (req, res) {
   }
 });
 
-//for floodAdaptation.html
-app.get("/floodAdaptation", function (req, res) {
-  let doc = fs.readFileSync("./app/html/floodAdaptation.html", "utf8");
-  res.send(doc);
-});
+app.get("/floodAdapt", (req, res) => {
+     let categories = [{name: "protect", heading: "Protect Your Home and Property"}, 
+     {name: "plan", heading: "Make an Emergency Plan"}, 
+     {name: "bag", heading: "Make Grab-and-Go Bags"}, 
+     {name: "insurance", heading: "Research insurance options"},]
+    res.render("floodAdapt", {categories: categories})
+})
+
 
 app.get("/flood/:content", function (req, res) {
   switch (req.params.content) {
@@ -817,10 +824,17 @@ app.get("/flood/:content", function (req, res) {
   }
 });
 
-//for heatAdaptation.html
-app.get("/heatAdaptation", function (req, res) {
-  let doc = fs.readFileSync("./app/html/heatAdaptation.html", "utf8");
-  res.send(doc);
+//for heatAdapt.html
+app.get("/heatAdapt", function (req, res) {
+  let categories = [{name: "atRisk", heading: "Who is most at risk"}, 
+     {name: "buddy", heading: "Pick a heat buddy"}, 
+     {name: "prepare", heading: "Prepare your home"}, 
+     {name: "indoors", heading: "How to stay cool indoors"}, 
+     {name: "outdoors", heading: "How to stay cool outdoors"}, 
+     {name: "overheat", heading: "Overheating"}, 
+     {name: "wildfire", heading: "Extreme Heat and Wildfires"}, 
+     {name: "drought", heading: "Extreme Heat and Drought"}]
+  res.render("heatAdapt", {categories: categories});
 });
 
 app.get("/heat/:content", function (req, res) {
