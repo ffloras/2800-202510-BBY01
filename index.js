@@ -111,6 +111,11 @@ setInterval(reloadWebsite, interval);
 const alertTime = 10800000; //3 hours 10800000
 const alertInterval = setInterval(monitorAlerts, alertTime);
 
+app.use(function(req, res, next) {
+  res.locals.authenticated = req.session.authenticated;
+  next();
+});
+
 // this is the home page of the
 app.get("/", function (req, res) {
   res.render("index");
@@ -125,9 +130,6 @@ app.get("/login", function (req, res) {
   if (!req.session.authenticated) {
     res.render("login");
   } else {
-    if (app.locals.loggedIn == false) {
-      app.locals.loggedIn = true;
-    }
     res.redirect("/main");
   }
 });
