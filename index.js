@@ -401,7 +401,7 @@ async function sendAlerts(alert, locationName, users) {
       { _id: userID },
       { projection: { alreadyAlerted: 1, email: 1, name: 1 } }
     );
-    if (!alertedObject.hasOwnProperty(alreadyAlerted)) {
+    if (!alertedObject.hasOwnProperty("alreadyAlerted")) {
         console.log("unable to find user: " + users[i]);
         return;
     }
