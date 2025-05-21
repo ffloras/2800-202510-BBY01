@@ -29,7 +29,7 @@ body {
     padding-bottom: 160px;
     position: relative;
     /* for the footer */
-    /* background-color: #f8f9fa; */
+    background-color: #f8f9fa;
     min-height: 100vh;
 }
 
@@ -226,6 +226,10 @@ body {
         border: #43413C solid 2px;
     }
 
+    .header>a {
+        margin: 0;
+    }
+
     .mobile-hidden {
         display: block;
     }
@@ -235,9 +239,16 @@ body {
     }
 }
 
+@media only screen and (min-width: 1400px) {
+    .header>a {
+        margin: 10px;
+    }
+}
+
 @media only screen and (min-width: 1600px) {
     .header {
         max-width: 70%;
+        min-width: 40%;
     }
 }
 
