@@ -24,7 +24,7 @@
 
                     <form id="login-form" action="/login" method="POST" novalidate>
                         <div class="mb-3">
-                            <label for="login-username" class="form-label">Username</label>
+                            <label for="login-username" class="form-label">Username<span class="required-asterisk">*</span></label>
                             <input type="text" class="form-control form-control-lg" 
                                    id="login-username" name="username" 
                                    value="<%- locals?.input ? input["username"].trim() : "" %>"
@@ -33,7 +33,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="login-password" class="form-label">Password</label>
+                            <label for="login-password" class="form-label">Password<span class="required-asterisk">*</span></label>
                             <input type="password" class="form-control form-control-lg" 
                                    id="login-password" name="password"
                                    value="<%- locals?.input ? input["password"].trim() : "" %>"

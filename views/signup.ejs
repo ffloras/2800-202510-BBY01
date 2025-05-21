@@ -24,7 +24,7 @@
 
                     <form id="signup-form" action="/signup" method="POST" novalidate>
                         <div class="mb-3">
-                            <label for="signup-name" class="form-label">Full Name</label>
+                            <label for="signup-name" class="form-label">Full Name<span class="required-asterisk">*</span></label>
                             <input type="text" class="form-control form-control-lg" 
                                    id="signup-name" name="name" 
                                    value="<%- locals?.input ? input["name"].trim() : "" %>"
@@ -33,7 +33,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="signup-email" class="form-label">Email Address</label>
+                            <label for="signup-email" class="form-label">Email Address<span class="required-asterisk">*</span></label>
                             <input type="email" class="form-control form-control-lg" 
                                    id="signup-email" name="email" 
                                    value="<%- locals?.input ? input["email"].trim() : "" %>"
@@ -42,7 +42,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="signup-username" class="form-label">Username</label>
+                            <label for="signup-username" class="form-label">Username<span class="required-asterisk">*</span></label>
                             <input type="text" class="form-control form-control-lg" 
                                    id="signup-username" name="username" 
                                    value="<%- locals?.input ? input["username"].trim() : "" %>"
@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="signup-password" class="form-label">Password</label>
+                            <label for="signup-password" class="form-label">Password<span class="required-asterisk">*</span></label>
                             <input type="password" class="form-control form-control-lg" 
                                    id="signup-password" name="password"
                                    value="<%- locals?.input ? input["password"].trim() : "" %>"
