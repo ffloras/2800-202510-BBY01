@@ -1,0 +1,36 @@
+<% let stylesheets=["/css/riskAdaptation.css"]; %>
+  <% let scripts=[{ script: "/js/heatAdaptation.js" }]; %>
+
+    <%- include("templates/header", { stylesheets: stylesheets }) %>
+      <main>
+        <div id="mainHeading">
+          <img src="/img/heatRiskIcon.png" alt="heat icon" width="120px">
+          <div id="title">
+            <p>How to prepare for</p>
+            <h1><strong>Extreme Heat</strong></h1>
+          </div>
+        </div>
+
+        <% for (let i=0; i < categories.length; i++) { %>
+          <div class="contentContainer">
+            <div id="<%= categories[i].name %>Heading" class="contentHeading red">
+              <h3>
+                <%= categories[i].heading %>
+              </h3>
+              <img id="<%= categories[i].name %>Icon" src="/img/plusIcon.png" alt="expand/minimize">
+            </div>
+            <div class="shadingRed">
+              <div id="<%= categories[i].name %>" class="content"></div>
+            </div>
+          </div>
+        <% } %>
+
+        <div id="credits">
+          <p>This information is from the government of British Columbia website.
+            <a href="https://www2.gov.bc.ca/gov/content/safety/emergency-management/preparedbc/know-your-hazards/severe-weather/extreme-heat"
+              target="_blank">Learn more</a>
+          </p>
+        </div>
+      </main>
+
+      <%- include("templates/footer", { scripts: scripts }) %>

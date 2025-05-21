@@ -8,7 +8,13 @@ async function displaySavedLocations() {
   try {
     //display list of saved locations
     let response = await fetch("/displaySavedLocations");
+    
     let html = await response.text();
+
+    if (!response.ok) {
+      throw new Error(html);
+    }
+
     document.getElementById("save-container").innerHTML = html;
 
     //add event listeners to alert/delete buttons
@@ -72,6 +78,6 @@ async function displaySavedLocations() {
       });
     })
   } catch (error) {
-    console.error("Error fetching saved locations: ", error);
+    window.location.href = `/errors?message=${error}`;
   }
 }

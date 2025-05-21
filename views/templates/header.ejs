@@ -30,10 +30,14 @@
                 <img id="header-logo" src="img/EcoRiskView.png" alt="logo">
             </a>
             <a href="/main">Home</a>
-            <a href="/profile" class="mobile-hidden">Profile</a>
-            <a href="/heatAdaptation" class="mobile-hidden">Heat Adaptations</a>
-            <a href="/floodAdaptation" class="mobile-hidden">Flood Adaptations</a>
-            <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
+            <% if (locals.loggedIn) {%>
+                <a href="/profile" class="mobile-hidden">Profile</a>
+                <% }%>
+            <a href="/heatAdapt" class="mobile-hidden">Heat Adaptations</a>
+            <a href="/floodAdapt" class="mobile-hidden">Flood Adaptations</a>
+            <% if (locals.loggedIn) {%>
+                <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
+            <% }%>
             <a href="/stories">Stories</a>
             <a href="<%- locals.loggedIn === false ? "/login" : "/logout" %>" id="login-button-nav" class="mobile-hidden"><%- locals.loggedIn===false ? "Login" : "Logout" %></a>
             <div class="hamburger-container">
@@ -43,16 +47,18 @@
         <div class="header-navigation-bg untoggle"></div>
         <nav class="header-navigation">
             <ul class="header-navigation-links untoggle">
-                <li><a href="/index">Landing</a></li>
-                <li><a href="/main">Home/Main</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/savedLocation">Saved Locations</a></li>
-                <li><a href="/layers">Layers</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/signup">Signup</a></li>
-                <li><a href="/heatAdaptation">heatAdaptions</a></li>
-                <li><a href="/floodAdaptation">Flood Adaptions</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li></li>
+                <% if (locals.loggedIn) {%>
+                    <li><a href="/profile">Profile</a></li>
+                <% }%>
+                <li><a href="/heatAdaptation">Heat Adaptations</a></li>
+                <li><a href="/floodAdaptation">Flood Adaptations</a></li>
+                <% if (locals.loggedIn) {%>
+                    <li><a href="/savedLocation">Saved Locations</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                <% } else {%>
+                    <li><a href="/login">Login</a></li>
+                <% }%>
             </ul>
         </nav>
     </div>

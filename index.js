@@ -41,7 +41,7 @@ app.use("/css", express.static("./public/css"));
 app.use("/img", express.static("./public/img"));
 app.use("/text", express.static("./public/text"));
 app.use("/font", express.static("./public/font"));
-app.use("/html", express.static("./app/html"));
+//app.use("/html", express.static("./app/html"));
 app.use("/snippets", express.static("./public/snippets"));
 app.use("/uploads", express.static("./uploads"));
 
@@ -133,8 +133,8 @@ app.get("/login", function (req, res) {
 });
 // this will submit the login data to the database to check if the user exists
 app.post("/login", async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const username = req.body.username.trim();
+  const password = req.body.password.trim();
   let details = [];
 
   const schema = Joi.string().max(20).required().label("username");
@@ -197,10 +197,10 @@ app.get("/signup", function (req, res) {
 
 // this is the post request for the signup page, used to submit user data to the database
 app.post("/signup", async (req, res) => {
-  const name = req.body.name;
-  const email = req.body.email;
-  const username = req.body.username;
-  const password = req.body.password;
+  const name = req.body.name.trim();
+  const email = req.body.email.trim();
+  const username = req.body.username.trim();
+  const password = req.body.password.trim();
   let details = [];
   const schema = Joi.object({
     name: Joi.string().alphanum().max(20).required(),
@@ -269,11 +269,13 @@ app.post("/signup", async (req, res) => {
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error("Error during logout: ", err);
-      res.status(500).send("Internal Server Error");
+      //console.error("Error during logout: ", err);
+      //res.status(500).send("Internal Server Error");
+      let message = "Error logging out";
+      res.redirect(`/errors?message=${message}`);
     } else {
       app.locals.loggedIn = false;
-      res.redirect("/");
+      res.redirect("/login");
     }
   });
 });
@@ -291,7 +293,8 @@ app.post("/ai", async (req, res) => {
     //console.log(response.text)
     res.send(text);
   } catch (error) {
-    res.status(500).send("Error retreiving AI response: ", error);
+    let message = "Error retrieving response";
+    res.redirect(`/errors?message=${message}`);
   }
 });
 
@@ -329,7 +332,7 @@ function getAlerts(long, lat) {
                 description: "Heavy rainfall or flooding",
                 severity: alert.severity,
                 img: "/img/floodRiskIcon.png",
-                link: "/floodAdaptation",
+                link: "/floodAdapt",
               });
               alreadyAlertedFlood = true;
             }
@@ -354,7 +357,7 @@ function getAlerts(long, lat) {
                 description: "Fire or Extreme Heat",
                 severity: alert.severity,
                 img: "/img/heatRiskIcon.png",
-                link: "/heatAdaptation",
+                link: "/heatAdapt",
               });
               alreadyAlertedHeat = true;
             }
@@ -398,6 +401,10 @@ async function sendAlerts(alert, locationName, users) {
       { _id: userID },
       { projection: { alreadyAlerted: 1, email: 1, name: 1 } }
     );
+    if (!alertedObject.hasOwnProperty("alreadyAlerted")) {
+        console.log("unable to find user: " + users[i]);
+        return;
+    }
     let alreadyAlerted = alertedObject.alreadyAlerted;
     if (!alreadyAlerted.includes(alert.id)) {
       let userEmail = alertedObject.email;
@@ -472,8 +479,10 @@ app.post("/recordCurrentLocation", async function (req, res) {
       );
       res.status(201).send("Location saved successfully");
     } catch (error) {
-      console.error("Error saving user location:", error);
-      res.status(500).send("Internal Server Error");
+      //console.error("Error saving user location:", error);
+      //res.status(500).send("Internal Server Error");
+      let message = "Error saving user location";
+      res.redirect(`/errors?message=${message}`);
     }
   } else {
     res.send("User not logged in");
@@ -518,7 +527,10 @@ app.post("/saveLocation", async function (req, res) {
       }
       res.status(201).send("Location saved");
     } catch (error) {
-      res.status(500).send("Error saving location");
+      //res.status(500).send("Error saving location");
+      let message = "Error saving location";
+      res.redirect(`/errors?message=${message}`);
+      
     }
   } else {
     res.send("User not logged in");
@@ -543,7 +555,9 @@ app.get("/getCurrentSearchLocation", async function (req, res) {
       }
       res.send(data);
     } catch (error) {
-      res.status(500).send("Unable to save location");
+      //res.status(500).send("Unable to save location");
+      let message = "Error saving user current search location";
+      res.redirect(`/errors?message=${message}`);
     }
   } else {
     res.send("User not logged in");
@@ -598,7 +612,7 @@ app.get("/deletePopup", (req, res) => {
   try {
     res.render("savedLocations/deletePopup");
   } catch (error) {
-    console.error("Error rendering EJS template:", error);
+    //console.error("Error rendering EJS template:", error);
     res.status(500).send("Error rendering template.");
   }
 });
@@ -625,7 +639,8 @@ app.get("/displaySavedLocations", async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error displaying saved location: ", error);
+    //console.error("Error displaying saved location: ", error);
+    res.status(500).send("Error displaying saved location.");
   }
 });
 
@@ -672,7 +687,9 @@ app.post("/deleteLocation", async (req, res) => {
       res.status(200).send("Location deleted from savedLocation");
     }
   } catch (error) {
-    res.status(500).send("Error deleting saved location: " + error);
+    //res.status(500).send("Error deleting saved location: " + error);
+    let message = "Error deleting saved location";
+    res.redirect(`/errors?message=${message}`);
   }
 });
 
@@ -737,11 +754,15 @@ app.post("/updateAlert", async (req, res) => {
         await alertLocationsCollection.deleteOne({ _id: docID });
         res.status(200).send("alert location updated");
       } else {
-        res.status(500).send("error updating alertLocation database");
+        //res.status(500).send("error updating alertLocation database");
+        let message = "Error updating alert location database";
+        res.redirect(`/errors?message=${message}`);
       }
     }
   } catch (error) {
-    res.status(500).send("error updating savedLocations alert: " + error);
+    //res.status(500).send("error updating savedLocations alert: " + error);
+    let message = "Error updating saved location alerts."
+    res.redirect(`/errors?message=${message}`);
   }
 });
 
@@ -774,11 +795,14 @@ app.post("/profileUpdate", async function (req, res) {
   }
 });
 
-//for floodAdaptation.html
-app.get("/floodAdaptation", function (req, res) {
-  let doc = fs.readFileSync("./app/html/floodAdaptation.html", "utf8");
-  res.send(doc);
-});
+app.get("/floodAdapt", (req, res) => {
+     let categories = [{name: "protect", heading: "Protect Your Home and Property"}, 
+     {name: "plan", heading: "Make an Emergency Plan"}, 
+     {name: "bag", heading: "Make Grab-and-Go Bags"}, 
+     {name: "insurance", heading: "Research insurance options"},]
+    res.render("floodAdapt", {categories: categories})
+})
+
 
 app.get("/flood/:content", function (req, res) {
   switch (req.params.content) {
@@ -800,10 +824,17 @@ app.get("/flood/:content", function (req, res) {
   }
 });
 
-//for heatAdaptation.html
-app.get("/heatAdaptation", function (req, res) {
-  let doc = fs.readFileSync("./app/html/heatAdaptation.html", "utf8");
-  res.send(doc);
+//for heatAdapt.html
+app.get("/heatAdapt", function (req, res) {
+  let categories = [{name: "atRisk", heading: "Who is most at risk"}, 
+     {name: "buddy", heading: "Pick a heat buddy"}, 
+     {name: "prepare", heading: "Prepare your home"}, 
+     {name: "indoors", heading: "How to stay cool indoors"}, 
+     {name: "outdoors", heading: "How to stay cool outdoors"}, 
+     {name: "overheat", heading: "Overheating"}, 
+     {name: "wildfire", heading: "Extreme Heat and Wildfires"}, 
+     {name: "drought", heading: "Extreme Heat and Drought"}]
+  res.render("heatAdapt", {categories: categories});
 });
 
 app.get("/heat/:content", function (req, res) {
@@ -853,7 +884,12 @@ app.get("/stories", function (req, res) {
 
 //
 app.get("/savedLocation", function (req, res) {
-  res.render("savedLocation");
+    if (req.session.authenticated) {
+        res.render("savedLocation");
+    } else {
+        res.redirect("/login");
+    }
+  
 });
 
 app.get("/authenticated", function (req, res) {
@@ -1052,6 +1088,16 @@ app.get("/layers", (req, res) => {
   let doc = fs.readFileSync("./app/html/layers.html", "utf8");
   res.send(doc);
 });
+
+app.get("/errors", (req, res) => {
+    let message = req.query.message;
+    if (message) {
+        res.render("errors", {message: message});
+    } else {
+        res.render("errors", {message: ""})
+    }
+    
+})
 
 app.use(function (req, res) {
   res.status(404);

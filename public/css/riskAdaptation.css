@@ -1,7 +1,12 @@
 main {
   padding-top: 20px;
+  padding-bottom: 20px;
   margin: 0 auto;
+  margin-bottom: 20px;
   width: 50%;
+  border: 2px solid rgb(105, 29, 29);
+  border-radius: 10px;
+  background-color: beige;
 }
 
 #mainHeading {
@@ -15,6 +20,7 @@ main {
   font-size: 1.4em;
 }
 
+
 #mainHeading h1 {
   font-size: 2.2em;
 }
@@ -27,20 +33,43 @@ main {
 .contentHeading {
   display: flex;
   align-items: center;
-  padding: 0 2% 0 2%;
+  padding: 10px 2% 10px 2%;
   justify-content: space-between;
   cursor: pointer;
-  border: solid 1px white;
+  border: solid 1px rgb(222, 219, 212);
   border-radius: 5px;
+  
+}
+
+.shadingRed {
+  background-color: rgb(240, 200, 194);
+}
+
+.shadingBlue {
+  background-color: rgb(206, 217, 227);
 }
 
 .content {
   width: 95%;
   margin: 0 auto;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+#title {
+  padding-top: 10px;
 }
 
 #credits {
   padding: 50px 2% 0 2%;
+}
+
+.red {
+  background-color: rgb(213, 113, 93);
+}
+
+.blue {
+  background-color: rgb(89, 151, 186);
 }
 
 @media (max-width: 1000px) and (min-width: 599px) {

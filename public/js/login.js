@@ -1,9 +1,9 @@
-const createNewButton = document.getElementById("create-new-button");
+// const createNewButton = document.getElementById("create-new-button");
 
-createNewButton.addEventListener("click", function () {
-    window.location.href = "/signup";
-}
-);
+// createNewButton.addEventListener("click", function () {
+//     window.location.href = "/signup";
+// }
+// );
 
 
 
