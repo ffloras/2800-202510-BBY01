@@ -53,6 +53,33 @@ async function setupMapbox() {
     newSearch(searchBar);
     getRisks(searchCoordinate || getCoordinateFromSessionStorage());
 
+    map.on('load', () => {
+
+      // layer toggling
+
+      let isSatellite = false;
+
+      document.getElementById('toggleSatellite').addEventListener('click', () => {
+        if (!isSatellite) {
+          map.setStyle('mapbox://styles/mapbox/satellite-v9');
+          isSatellite = true;
+        } else {
+          map.setStyle('mapbox://styles/mapbox/outdoors-v12');
+          isSatellite = false;
+        }
+      });
+
+      document.getElementById('toggleWildfires').addEventListener('click', () => {
+        const visibility = map.getLayoutProperty('wildfires', 'visibility');
+        map.setLayoutProperty('wildfires', 'visibility', visibility === 'visible' ? 'none' : 'visible');
+      });
+
+      document.getElementById('togglePrecipitation').addEventListener('click', () => {
+        const visibility = map.getLayoutProperty('precipitation', 'visibility');
+        map.setLayoutProperty('precipitation', 'visibility', visibility === 'visible' ? 'none' : 'visible');
+      });
+
+    });
   }
 }
 
