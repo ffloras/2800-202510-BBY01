@@ -37,7 +37,7 @@ function ajaxGET(url, callback) {
       } else {
           console.log(this.status);
       }
-  }
+  };
   xhr.open("GET", url);
   xhr.send();
 }
@@ -53,7 +53,7 @@ function ajaxPOST(url, callback, data) {
         } else {
             console.log(this.status);
         }
-    }
+    };
     xhr.open("POST", url);
     // make it clear that our call is an AJAX call
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');

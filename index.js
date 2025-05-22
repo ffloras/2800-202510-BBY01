@@ -1,9 +1,10 @@
 require("dotenv").config();
 const express = require("express");
+const axios = require("axios");
 
 const fs = require("fs");
 const session = require("express-session");
-const emailjs = require("@emailjs/nodejs")
+const emailjs = require("@emailjs/nodejs");
 const path = require("path");
 const MongoStore = require("connect-mongo");
 const { ObjectId } = require("mongodb");
@@ -91,7 +92,7 @@ const interval = 300000; // (840000 14mins, 300000 5mins)
 //Reloader Function
 //https://dev.to/harshgit98/solution-for-rendercom-web-services-spin-down-due-to-inactivity-2h8i
 function reloadWebsite() {
-  fetch(url)
+  axios.get(url)
     .then((response) => {
       console.log(
         `Reloaded at ${new Date().toISOString()}: Status Code ${
@@ -312,9 +313,9 @@ function getAlerts(long, lat) {
       let results = [];
       let alreadyAlertedFlood = false;
       let alreadyAlertedHeat = false;
-      const response = await fetch(url);
+      const response = await axios.get(url);
       const alertsJson = await response.json();
-      alertsArray = alertsJson.alerts.alert;
+      let alertsArray = alertsJson.alerts.alert;
       alertsArray.forEach((alert) => {
         if (!alreadyAlertedFlood) {
           floodWords.forEach((keyword) => {
@@ -763,7 +764,7 @@ app.post("/updateAlert", async (req, res) => {
     }
   } catch (error) {
     //res.status(500).send("error updating savedLocations alert: " + error);
-    let message = "Error updating saved location alerts."
+    let message = "Error updating saved location alerts.";
     res.redirect(`/errors?message=${message}`);
   }
 });
@@ -835,9 +836,9 @@ app.get("/floodAdapt", (req, res) => {
      let categories = [{name: "protect", heading: "Protect Your Home and Property"}, 
      {name: "plan", heading: "Make an Emergency Plan"}, 
      {name: "bag", heading: "Make Grab-and-Go Bags"}, 
-     {name: "insurance", heading: "Research insurance options"},]
-    res.render("floodAdapt", {categories: categories})
-})
+     {name: "insurance", heading: "Research insurance options"},];
+    res.render("floodAdapt", {categories: categories});
+});
 
 
 app.get("/flood/:content", function (req, res) {
@@ -869,7 +870,7 @@ app.get("/heatAdapt", function (req, res) {
      {name: "outdoors", heading: "How to stay cool outdoors"}, 
      {name: "overheat", heading: "Overheating"}, 
      {name: "wildfire", heading: "Extreme Heat and Wildfires"}, 
-     {name: "drought", heading: "Extreme Heat and Drought"}]
+     {name: "drought", heading: "Extreme Heat and Drought"}];
   res.render("heatAdapt", {categories: categories});
 });
 
@@ -1134,10 +1135,10 @@ app.get("/errors", (req, res) => {
     if (message) {
         res.render("errors", {message: message});
     } else {
-        res.render("errors", {message: ""})
+        res.render("errors", {message: ""});
     }
     
-})
+});
 
 app.get('/proxy-viirs', async (req, res) => {
   try {
