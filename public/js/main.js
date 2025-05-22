@@ -67,29 +67,36 @@ async function setupMapbox() {
         id: 'wms-layer-2',
         type: 'raster',
         source: 'wms-source-2',
+        layout: {visibility: "none"},
         paint: {} // OFF by default
       });
 
       // Satellite toggle
       let isSatellite = false;
       document.getElementById('toggleSatellite').addEventListener('click', () => {
+        $("#toggleWildFires").removeClass("active");
+        $("#togglePrecipitation").removeClass("active");
+        $(this).toggleClass("active");
         if (!isSatellite) {
           map.setStyle('mapbox://styles/mapbox/satellite-v9');
           isSatellite = true;
         } else {
           map.setStyle('mapbox://styles/mapbox/outdoors-v12');
+          
           isSatellite = false;
         }
       });
 
       // Wildfires toggle
       document.getElementById('toggleWildFires').addEventListener('click', () => {
+        $(this).toggleClass("active");
         const visibility = map.getLayoutProperty('wildfires-layer', 'visibility');
         map.setLayoutProperty('wildfires-layer', 'visibility', visibility === 'visible' ? 'none' : 'visible');
       });
 
       // Precipitation toggle
       document.getElementById('togglePrecipitation').addEventListener('click', () => {
+        $(this).toggleClass("active");
         const visibility = map.getLayoutProperty('wms-layer-2', 'visibility');
         map.setLayoutProperty('wms-layer-2', 'visibility', visibility === 'visible' ? 'none' : 'visible');
       });
