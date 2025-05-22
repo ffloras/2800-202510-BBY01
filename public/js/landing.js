@@ -36,7 +36,7 @@ async function setupSearch() {
     // wait for the Mapbox Search JS script to load before using it
     script.onload = async function () {
 
-        searchBar = new MapboxGeocoder();
+        let searchBar = new MapboxGeocoder();
         searchBar.accessToken = await getMapboxToken();
         // set the options property
         // searchBar.options = {
@@ -60,10 +60,10 @@ async function setupSearch() {
             });
 
             //stores coordinate in sessionStorage
-            sessionStorage.setItem("coor", feature.geometry.coordinates)
+            sessionStorage.setItem("coor", feature.geometry.coordinates);
             window.location.replace(`/main`); 
         });
-    }
+    };
 
     console.log(await isLoggedIn());
 }
