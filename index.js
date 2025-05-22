@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const axios = require("axios");
 
 const fs = require("fs");
 const session = require("express-session");
@@ -91,7 +90,7 @@ const interval = 300000; // (840000 14mins, 300000 5mins)
 //Reloader Function
 //https://dev.to/harshgit98/solution-for-rendercom-web-services-spin-down-due-to-inactivity-2h8i
 function reloadWebsite() {
-  axios.get(url)
+  fetch(url)
     .then((response) => {
       console.log(
         `Reloaded at ${new Date().toISOString()}: Status Code ${
@@ -312,7 +311,7 @@ function getAlerts(long, lat) {
       let results = [];
       let alreadyAlertedFlood = false;
       let alreadyAlertedHeat = false;
-      const response = await axios.get(url);
+      const response = await fetch(url);
       const alertsJson = await response.json();
       let alertsArray = alertsJson.alerts.alert;
       alertsArray.forEach((alert) => {
