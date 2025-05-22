@@ -8,7 +8,6 @@ const emailjs = require("@emailjs/nodejs")
 const path = require("path");
 const MongoStore = require("connect-mongo");
 const { ObjectId } = require("mongodb");
-const fetch = require('node-fetch'); // At the top of your file
 
 const port = process.env.PORT || 3001;
 
@@ -1139,35 +1138,6 @@ app.get("/errors", (req, res) => {
     }
     
 })
-
-app.get('/proxy-viirs', async (req, res) => {
-  try {
-    const params = new URLSearchParams(req.query).toString();
-    const wmsUrl = `https://firms.modaps.eosdis.nasa.gov/mapserver/wms/fires/6705fa78c315b9bd7f90adac13abcb37/fires_viirs_24/?${params}`;
-
-    // Add a User-Agent header
-    const response = await fetch(wmsUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' }
-    });
-
-    if (!response.ok) {
-      console.error('WMS fetch error:', response.status, await response.text());
-      res.status(response.status).send('Error fetching WMS');
-      return;
-    }
-
-    res.set('Content-Type', response.headers.get('content-type'));
-    if (response.body.pipe) {
-      response.body.pipe(res);
-    } else {
-      const buffer = await response.buffer();
-      res.end(buffer);
-    }
-  } catch (err) {
-    console.error('Proxy error:', err);
-    res.status(500).send('Proxy error');
-  }
-});
 
 app.use(function (req, res) {
   res.status(404);

@@ -8,7 +8,7 @@ async function displaySavedLocations() {
   try {
     //display list of saved locations
     let response = await fetch("/displaySavedLocations");
-    
+
     let html = await response.text();
 
     if (!response.ok) {
@@ -44,23 +44,23 @@ async function displaySavedLocations() {
                 }
               })
               .catch((error) => {
-                console.error("Unable to delete location: ", error)
-              })
+                console.error("Unable to delete location: ", error);
+              });
             popup.style.display = "none";
             popup.innerHTML = "";
-          })
+          });
 
           //removes popup if "no" is selected
           document.getElementById("no-delete").addEventListener("click", (e) => {
             popup.style.display = "none";
             popup.innerHTML = "";
-          })
+          });
         }
 
         //updates alert if alert button is selected
         if (type == "alert") {
           let newAlert = !e.target.classList.contains("alert-on");
-          
+
           fetch("/updateAlert", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -72,11 +72,11 @@ async function displaySavedLocations() {
               }
             })
             .catch((error) => {
-              console.error("Unable to update alert location: ", error)
+              console.error("Unable to update alert location: ", error);
             });
         }
       });
-    })
+    });
   } catch (error) {
     window.location.href = `/errors?message=${error}`;
   }

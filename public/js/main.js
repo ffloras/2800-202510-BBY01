@@ -2,7 +2,7 @@ setupMapbox();
 setLocationSavedStatus();
 setLocationName();
 setSaveLocationButton();
-setupAI()
+setupAI();
 
 //sets up mapbox search bar and map
 async function setupMapbox() {
@@ -14,7 +14,7 @@ async function setupMapbox() {
     let token = await getMapboxToken();
 
     let searchBar = new MapboxGeocoder();
-    searchBar.accessToken = token
+    searchBar.accessToken = token;
     // set the options property
     // searchBar.options = {
     //   language: 'en',
@@ -44,11 +44,11 @@ async function setupMapbox() {
     }));
 
     // set the mapboxgl library to use for markers and enable the marker functionality
-    searchBar.mapboxgl = mapboxgl
-    searchBar.marker = true
+    searchBar.mapboxgl = mapboxgl;
+    searchBar.marker = true;
 
     // bind the search box instance to the map instance
-    searchBar.bindMap(map)
+    searchBar.bindMap(map);
 
     newSearch(searchBar);
     getRisks(searchCoordinate || getCoordinateFromSessionStorage());
@@ -117,7 +117,7 @@ async function setupMapbox() {
         addWildfireLayer(map);
       });
     });
-  }
+  };
 }
 
 //return coordinate array from browser's session storage consisting of longitude and latitude
@@ -204,9 +204,9 @@ function setSaveLocationButton() {
           popup.innerHTML = "";
         });
       }
-    })
+    });
 
-  })
+  });
 }
 
 //save current searched location into savedLocation in database
@@ -232,9 +232,9 @@ async function saveLocation(alert) {
 function getCurrentSearchLocation() {
   return new Promise((resolve, reject) => {
     fetch('/getCurrentSearchLocation')
-      .then((response) => { return response.json() })
-      .then((response) => { resolve(response) })
-      .catch(() => resolve(null))
+      .then((response) => { return response.json(); })
+      .then((response) => { resolve(response); })
+      .catch(() => resolve(null));
     // ajaxGET('/getCurrentSearchLocation', (response) => {
     //   try {
 
@@ -290,7 +290,7 @@ async function setupAI() {
       let coor = {
         long: coorArray[0],
         lat: coorArray[1]
-      }
+      };
 
       fetch("/ai", {
         method: "POST",
@@ -307,7 +307,7 @@ async function setupAI() {
           console.error(error);
         });
     } else {
-      let html = "Unable to get location information. Please search the location again."
+      let html = "Unable to get location information. Please search the location again.";
       document.getElementById("ai-message").innerHTML = html;
     }
   });
@@ -323,14 +323,14 @@ function getRisks(coor) {
       },
       body: JSON.stringify(coor),
     })
-      .then((response) => { return response.text() })
+      .then((response) => { return response.text(); })
       .then((response) => {
         //console.log(response)
         document.getElementById("riskContent").innerHTML = response;
       })
       .catch((err) => {
-        console.error("Error obtaining risk information")
-      })
+        console.error("Error obtaining risk information");
+      });
   } else {
     let message = "<h6 class='alertHeading'>No Location Selected.</h6>";
     document.getElementById("riskContent").innerHTML = message;
