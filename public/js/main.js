@@ -94,7 +94,14 @@ async function setupMapbox() {
         map.setLayoutProperty('wms-layer-2', 'visibility', visibility === 'visible' ? 'none' : 'visible');
       });
 
+      // Temperature toggle
+      document.getElementById('toggleTemperature').addEventListener('click', () => {
+        const visibility = map.getLayoutProperty('temperature-layer', 'visibility');
+        map.setLayoutProperty('temperature-layer', 'visibility', visibility === 'visible' ? 'none' : 'visible');
+      });
+
       addWildfireLayer(map);
+      addTemperatureLayer(map);
       map.on('style.load', () => {
         // Re-add precipitation source and layer
         map.addSource('wms-source-2', {
@@ -115,6 +122,7 @@ async function setupMapbox() {
 
         // Re-add wildfire layer
         addWildfireLayer(map);
+        addTemperatureLayer(map);
       });
     });
   }
@@ -417,6 +425,84 @@ function addWildfireLayer(map) {
         'circle-radius': 6,
         'circle-color': '#ff6600',
         'circle-opacity': 0.7
+      },
+      layout: { visibility: 'none' } // OFF by default
+    });
+  }
+}
+
+function addTemperatureLayer(map) {
+  if (!map.getSource('temperature')) {
+    map.addSource('temperature', {
+      type: 'geojson',
+      data: {
+        "type": "FeatureCollection",
+        "features": [
+          // Southwest BC (Vancouver area)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-123.1, 49.3] },
+            "properties": { "temperature": 18 }
+          },
+          // Central BC (Kamloops)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-120.3, 50.7] },
+            "properties": { "temperature": 22 }
+          },
+          // Southeast BC (Cranbrook)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-115.8, 49.5] },
+            "properties": { "temperature": 25 }
+          },
+          // North BC (Prince George)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-122.8, 53.9] },
+            "properties": { "temperature": 15 }
+          },
+          // Northwest BC (Terrace)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-128.6, 54.5] },
+            "properties": { "temperature": 12 }
+          },
+          // Okanagan (Kelowna)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-119.5, 49.9] },
+            "properties": { "temperature": 28 }
+          },
+          // Cariboo (Williams Lake)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-122.1, 52.1] },
+            "properties": { "temperature": 17 }
+          }
+        ]
+      }
+    });
+  }
+  if (!map.getLayer('temperature-layer')) {
+    map.addLayer({
+      id: 'temperature-layer',
+      type: 'circle',
+      source: 'temperature',
+      paint: {
+        'circle-radius': 18,
+        'circle-blur': 0.7,
+        'circle-opacity': 0.6,
+        'circle-color': [
+          'interpolate',
+          ['linear'],
+          ['get', 'temperature'],
+          10, '#2c7bb6',   // cold (blue)
+          15, '#abd9e9',
+          20, '#ffffbf',   // mild (yellow)
+          25, '#fdae61',
+          30, '#d7191c'    // hot (red)
+        ]
       },
       layout: { visibility: 'none' } // OFF by default
     });
