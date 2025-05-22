@@ -76,6 +76,7 @@ async function setupMapbox() {
       document.getElementById('toggleSatellite').addEventListener('click', () => {
         $("#toggleWildFires").removeClass("active");
         $("#togglePrecipitation").removeClass("active");
+        $("#toggleTemperature").removeClass("active");
         $(this).toggleClass("active");
         if (!isSatellite) {
           map.setStyle('mapbox://styles/mapbox/satellite-v9');
@@ -89,7 +90,7 @@ async function setupMapbox() {
 
       // Wildfires toggle
       document.getElementById('toggleWildFires').addEventListener('click', () => {
-        $(this).toggleClass("active");
+        $(this).toggleClass("none");
         const visibility = map.getLayoutProperty('wildfires-layer', 'visibility');
         map.setLayoutProperty('wildfires-layer', 'visibility', visibility === 'visible' ? 'none' : 'visible');
       });
