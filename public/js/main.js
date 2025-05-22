@@ -53,6 +53,70 @@ async function setupMapbox() {
     newSearch(searchBar);
     getRisks(searchCoordinate || getCoordinateFromSessionStorage());
 
+    map.on('load', () => {
+
+      map.addSource('wms-source-2', {
+        type: 'raster',
+        tiles: [
+          'https://openmaps.gov.bc.ca/geo/pub/WHSE_LAND_AND_NATURAL_RESOURCE.PROT_DANGER_RATING_SP/ows?service=WMS&request=GetMap&version=1.3.0&layers=pub:WHSE_LAND_AND_NATURAL_RESOURCE.PROT_DANGER_RATING_SP&styles=&format=image/png&transparent=true&width=256&height=256&crs=EPSG:3857&bbox={bbox-epsg-3857}'
+        ],
+        tileSize: 256
+      });
+
+      map.addLayer({
+        id: 'wms-layer-2',
+        type: 'raster',
+        source: 'wms-source-2',
+        paint: {} // OFF by default
+      });
+
+      // Satellite toggle
+      let isSatellite = false;
+      document.getElementById('toggleSatellite').addEventListener('click', () => {
+        if (!isSatellite) {
+          map.setStyle('mapbox://styles/mapbox/satellite-v9');
+          isSatellite = true;
+        } else {
+          map.setStyle('mapbox://styles/mapbox/outdoors-v12');
+          isSatellite = false;
+        }
+      });
+
+      // Wildfires toggle
+      document.getElementById('toggleWildFires').addEventListener('click', () => {
+        const visibility = map.getLayoutProperty('wildfires-layer', 'visibility');
+        map.setLayoutProperty('wildfires-layer', 'visibility', visibility === 'visible' ? 'none' : 'visible');
+      });
+
+      // Precipitation toggle
+      document.getElementById('togglePrecipitation').addEventListener('click', () => {
+        const visibility = map.getLayoutProperty('wms-layer-2', 'visibility');
+        map.setLayoutProperty('wms-layer-2', 'visibility', visibility === 'visible' ? 'none' : 'visible');
+      });
+
+      addWildfireLayer(map);
+      map.on('style.load', () => {
+        // Re-add precipitation source and layer
+        map.addSource('wms-source-2', {
+          type: 'raster',
+          tiles: [
+            'https://openmaps.gov.bc.ca/geo/pub/WHSE_LAND_AND_NATURAL_RESOURCE.PROT_DANGER_RATING_SP/ows?service=WMS&request=GetMap&version=1.3.0&layers=pub:WHSE_LAND_AND_NATURAL_RESOURCE.PROT_DANGER_RATING_SP&styles=&format=image/png&transparent=true&width=256&height=256&crs=EPSG:3857&bbox={bbox-epsg-3857}'
+          ],
+          tileSize: 256
+        });
+
+        map.addLayer({
+          id: 'wms-layer-2',
+          type: 'raster',
+          source: 'wms-source-2',
+          paint: {},
+          layout: { visibility: 'none' }
+        });
+
+        // Re-add wildfire layer
+        addWildfireLayer(map);
+      });
+    });
   }
 }
 
@@ -271,6 +335,90 @@ function getRisks(coor) {
     let message = "<h6 class='alertHeading'>No Location Selected.</h6>";
     document.getElementById("riskContent").innerHTML = message;
   }
+}
 
-
+function addWildfireLayer(map) {
+  if (!map.getSource('wildfires')) {
+    map.addSource('wildfires', {
+      type: 'geojson',
+      data: {
+        "type": "FeatureCollection",
+        "features": [
+          // Garibaldi Provincial Park
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-122.85, 49.95] },
+            "properties": { "name": "Garibaldi Fire" }
+          },
+          // Near Whistler
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-122.98, 50.12] },
+            "properties": { "name": "Whistler Fire" }
+          },
+          // Tantalus Range
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-123.25, 49.85] },
+            "properties": { "name": "Tantalus Fire" }
+          },
+          // Coast Mountains (north of Pemberton)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-122.75, 50.45] },
+            "properties": { "name": "Coast Mountains Fire" }
+          },
+          // Golden Ears Provincial Park
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-122.45, 49.45] },
+            "properties": { "name": "Golden Ears Fire" }
+          },
+          // Manning Park
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-120.85, 49.07] },
+            "properties": { "name": "Manning Park Fire" }
+          },
+          // Purcell Mountains (near Invermere)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-116.25, 50.5] },
+            "properties": { "name": "Purcell Fire" }
+          },
+          // Selkirk Mountains (near Revelstoke)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-118.2, 51.0] },
+            "properties": { "name": "Selkirk Fire" }
+          },
+          // Kootenay National Park
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-116.0, 50.9] },
+            "properties": { "name": "Kootenay Fire" }
+          },
+          // Mount Robson Provincial Park (Rockies)
+          {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [-119.15, 53.1] },
+            "properties": { "name": "Mount Robson Fire" }
+          }
+        ]
+      }
+    });
+  }
+  if (!map.getLayer('wildfires-layer')) {
+    map.addLayer({
+      id: 'wildfires-layer',
+      type: 'circle',
+      source: 'wildfires',
+      paint: {
+        'circle-radius': 6,
+        'circle-color': '#ff6600',
+        'circle-opacity': 0.7
+      },
+      layout: { visibility: 'none' } // OFF by default
+    });
+  }
 }

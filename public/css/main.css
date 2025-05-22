@@ -1,5 +1,6 @@
 body {
-  background-color: #f4f8f2; /* a very light greenish off-white */
+  background-color: #f4f8f2;
+  /* a very light greenish off-white */
 }
 
 main {
@@ -43,11 +44,13 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent background */
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it appears above other elements */
+  z-index: 1000;
+  /* Ensure it appears above other elements */
 }
 
 #popup-content {
@@ -128,11 +131,12 @@ main {
 .alertHeading {
   text-align: center;
 }
+
 .alertContainer {
   display: flex;
   align-items: center;
   justify-content: center;
- 
+
 }
 
 .alertList {
@@ -156,15 +160,42 @@ li:first-child {
 #toggleTemperature {
   margin: 0.5%;
 }
+
 #togglePrecipitation {
   margin: 0.5%;
 }
+
 #toggleWildFires {
   margin: 0.5%;
 }
+
 #toggleSatellite {
   margin: 0.5%;
 }
+
+#layerButtons {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#layerButtons .btn {
+  min-width: 120px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  #layerButtons {
+    flex-direction: column !important;
+    align-items: stretch;
+  }
+
+  #layerButtons .btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 @media (max-width: 1000px) and (min-width: 599px) {
   main {
     width: 80%;
@@ -192,5 +223,18 @@ li:first-child {
   #save {
     padding: 10px 0 10px 1.5%;
   }
+
+  /* #toggleTemperature {
+  
+}
+#togglePrecipitation {
+  
+}
+#toggleWildFires {
+  
+}
+#toggleSatellite {
+  
+} */
 
 }
