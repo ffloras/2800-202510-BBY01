@@ -1,7 +1,6 @@
 <% let stylesheets=["/css/main.css", "https://api.mapbox.com/mapbox-gl-js/v3.11.1/mapbox-gl.css" ]; %>
-    <% let scripts=[{ script: "/js/common.js" }, { script: "/js/main.js" }, {
-        script: "https://api.mapbox.com/search-js/v1.0.0/web.js" , id: "search-js" },
-        {script: "https://api.mapbox.com/mapbox-gl-js/v3.11.1/mapbox-gl.js" }]; %>
+<% let scripts=[{ script: "/js/common.js" }, { script: "/js/main.js" }, {script: "https://api.mapbox.com/search-js/v1.0.0/web.js" , id: "search-js" },
+    {script: "https://api.mapbox.com/mapbox-gl-js/v3.11.1/mapbox-gl.js" }]; %>
 
         <%- include("templates/header", { stylesheets: stylesheets }) %>
 
@@ -48,7 +47,7 @@
 
                 <div id="risks">
                     <div class="riskHeading"><strong>Environmental Risks at this Location</strong></div>
-                    <div id="riskContent"></div>
+                    <div id="riskContent" class="text-center"></div>
                 </div>
 
                 <div class="container border rounded-3 py-2 my-3">

@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const axios = require("axios");
 
 const fs = require("fs");
 const session = require("express-session");
@@ -8,7 +7,6 @@ const emailjs = require("@emailjs/nodejs");
 const path = require("path");
 const MongoStore = require("connect-mongo");
 const { ObjectId } = require("mongodb");
-const fetch = require('node-fetch'); // At the top of your file
 
 const port = process.env.PORT || 3001;
 
@@ -92,7 +90,7 @@ const interval = 300000; // (840000 14mins, 300000 5mins)
 //Reloader Function
 //https://dev.to/harshgit98/solution-for-rendercom-web-services-spin-down-due-to-inactivity-2h8i
 function reloadWebsite() {
-  axios.get(url)
+  fetch(url)
     .then((response) => {
       console.log(
         `Reloaded at ${new Date().toISOString()}: Status Code ${
@@ -313,7 +311,7 @@ function getAlerts(long, lat) {
       let results = [];
       let alreadyAlertedFlood = false;
       let alreadyAlertedHeat = false;
-      const response = await axios.get(url);
+      const response = await fetch(url);
       const alertsJson = await response.json();
       let alertsArray = alertsJson.alerts.alert;
       alertsArray.forEach((alert) => {
@@ -1138,35 +1136,6 @@ app.get("/errors", (req, res) => {
         res.render("errors", {message: ""});
     }
     
-});
-
-app.get('/proxy-viirs', async (req, res) => {
-  try {
-    const params = new URLSearchParams(req.query).toString();
-    const wmsUrl = `https://firms.modaps.eosdis.nasa.gov/mapserver/wms/fires/6705fa78c315b9bd7f90adac13abcb37/fires_viirs_24/?${params}`;
-
-    // Add a User-Agent header
-    const response = await fetch(wmsUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' }
-    });
-
-    if (!response.ok) {
-      console.error('WMS fetch error:', response.status, await response.text());
-      res.status(response.status).send('Error fetching WMS');
-      return;
-    }
-
-    res.set('Content-Type', response.headers.get('content-type'));
-    if (response.body.pipe) {
-      response.body.pipe(res);
-    } else {
-      const buffer = await response.buffer();
-      res.end(buffer);
-    }
-  } catch (err) {
-    console.error('Proxy error:', err);
-    res.status(500).send('Proxy error');
-  }
 });
 
 app.use(function (req, res) {
