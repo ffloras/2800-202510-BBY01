@@ -35,8 +35,6 @@ The platform also empowers community storytelling by allowing users to share the
 5. **Check Tips**: Get customized advice on how to prepare for local risks.
 6. **Tell Your Story**: Submit your experience and view stories from others affected by climate change.
 
-## Project Structure
-
 ## Contributors
 
 - **Justin Yu** – Set 1D, BCIT CST Student  
@@ -67,4 +65,3 @@ The platform also empowers community storytelling by allowing users to share the
 - **Expanded Dataset Integration**: Include air quality, drought, and other relevant environmental factors.
 - **User Profiles**: Enable users to manage saved locations, preferences, and story history.
 - **Multilingual Support**: Add French and other languages for wider accessibility.
-
