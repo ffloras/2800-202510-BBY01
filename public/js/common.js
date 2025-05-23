@@ -53,9 +53,7 @@ function ajaxPOST(url, callback, data) {
         }
     };
     xhr.open("POST", url);
-    // make it clear that our call is an AJAX call
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    // we are sending form data, we must inform the server of this
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(data);
   }
