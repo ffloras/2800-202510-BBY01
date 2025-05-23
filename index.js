@@ -427,7 +427,7 @@ async function sendAlerts(alert, locationName, users) {
         type: alert.type,
         severity: alert.severity,
         description: alert.description,
-        link: "https://two800-202510-bby01-6ko8.onrender.com/policy"
+        link: "https://riskmapper.onrender.com/policy"
       };
       emailjs.send(process.env.EMAILJS_SERVICE_ID, process.env.EMAILJS_TEMPLATE_ID, templateParams).then(
         (response) => {
