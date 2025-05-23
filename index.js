@@ -58,11 +58,10 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 let { database } = require("./databaseConnection.js");
 const { error } = require("console");
 
+//database collections
 const userCollection = database.db(mongodb_database).collection("users");
 const storiesCollection = database.db(mongodb_database).collection("stories");
-const alertLocationsCollection = database
-  .db(mongodb_database)
-  .collection("alertLocations");
+const alertLocationsCollection = database.db(mongodb_database).collection("alertLocations");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -84,17 +83,16 @@ app.use(
   })
 );
 
-const url = `https://two800-202510-bby01-6ko8.onrender.com`; // Replace with your Render URL
+const url = `https://two800-202510-bby01-6ko8.onrender.com`; // Replace with Render URL
 const interval = 300000; // (840000 14mins, 300000 5mins)
 
-//Reloader Function
-//https://dev.to/harshgit98/solution-for-rendercom-web-services-spin-down-due-to-inactivity-2h8i
+//Reloader Function to ping server on regular basis
+//code modified from: https://dev.to/harshgit98/solution-for-rendercom-web-services-spin-down-due-to-inactivity-2h8i
 function reloadWebsite() {
   fetch(url)
     .then((response) => {
       console.log(
-        `Reloaded at ${new Date().toISOString()}: Status Code ${
-          response.status
+        `Reloaded at ${new Date().toISOString()}: Status Code ${response.status
         }`
       );
     })
@@ -105,22 +103,23 @@ function reloadWebsite() {
       );
     });
 }
+const reloader = setInterval(reloadWebsite, interval);
 
-setInterval(reloadWebsite, interval);
-
+//sets up climate alert monitoring
 const alertTime = 10800000; //3 hours 10800000
 const alertInterval = setInterval(monitorAlerts, alertTime);
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.locals.authenticated = req.session.authenticated;
   next();
 });
 
-// this is the home page of the
+// route for landing page
 app.get("/", function (req, res) {
   res.render("index");
 });
 
+//route for home page
 app.get("/main", function (req, res) {
   res.render("main");
 });
@@ -133,6 +132,7 @@ app.get("/login", function (req, res) {
     res.redirect("/main");
   }
 });
+
 // this will submit the login data to the database to check if the user exists
 app.post("/login", async (req, res) => {
   const username = req.body.username.trim();
@@ -209,7 +209,7 @@ app.post("/signup", async (req, res) => {
     username: Joi.string().alphanum().max(20).required(),
     email: Joi.string()
       .max(30)
-      .email({ minDomainSegments: 2})
+      .email({ minDomainSegments: 2 })
       .required(),
     password: Joi.string().min(8).max(20).required(),
   });
@@ -282,6 +282,8 @@ app.get("/logout", (req, res) => {
   });
 });
 
+//recieves coordinates array of an location
+//sends back ai response created using cordinates of the location
 app.post("/ai", async (req, res) => {
   try {
     let { long, lat } = req.body;
@@ -300,22 +302,29 @@ app.post("/ai", async (req, res) => {
   }
 });
 
+//climate alert keywords used to detect alerts
 const floodWords = ["flood", "rainfall"];
 const heatWords = ["heat", "fire"];
+
 //get alerts from weather api based on coordinates
-//sends an array of alert objects with properties: id, type (flood/heat), severity, description, img and link (to adaptation page)
+//returns an array of alert objects with properties: id, type (flood/heat), severity, description, img and link (to adaptation page)
 function getAlerts(long, lat) {
   return new Promise(async (resolve, reject) => {
     try {
-      const url = `http://api.weatherapi.com/v1/alerts.json?key=${process.env.WEATHER_API_KEY}&q=${lat},${long}`;
       let results = [];
       let alreadyAlertedFlood = false;
       let alreadyAlertedHeat = false;
+
+      //gets climate alerts from weather api back as an array of alert objects
+      const url = `http://api.weatherapi.com/v1/alerts.json?key=${process.env.WEATHER_API_KEY}&q=${lat},${long}`;
       const response = await fetch(url);
       const alertsJson = await response.json();
       let alertsArray = alertsJson.alerts.alert;
+
+      //iterate through each alert
       alertsArray.forEach((alert) => {
         if (!alreadyAlertedFlood) {
+          //check if alert content matchs with the flood alert keywords
           floodWords.forEach((keyword) => {
             if (
               !alreadyAlertedFlood &&
@@ -323,7 +332,8 @@ function getAlerts(long, lat) {
                 alert.category.includes(keyword) ||
                 alert.event.includes(keyword) ||
                 alert.desc.includes(keyword))
-            ) {
+            ) { 
+              //add alert to list of screened alerts if alert content matches with keywords
               results.push({
                 id:
                   alert.event +
@@ -341,6 +351,7 @@ function getAlerts(long, lat) {
           });
         }
         if (!alreadyAlertedHeat) {
+          //check if alert content matchs with the heat alert keywords
           heatWords.forEach((keyword) => {
             if (
               !alreadyAlertedHeat &&
@@ -349,6 +360,7 @@ function getAlerts(long, lat) {
                 alert.event.includes(keyword) ||
                 alert.desc.includes(keyword))
             ) {
+              //add alert to list of screened alerts if alert content matches with keywords
               results.push({
                 id:
                   alert.event +
@@ -366,7 +378,6 @@ function getAlerts(long, lat) {
           });
         }
       });
-      //console.log(alertsArray)
       resolve(results);
     } catch (err) {
       reject(err);
@@ -374,10 +385,12 @@ function getAlerts(long, lat) {
   });
 }
 
+//check if locations saved in alertLocations collection has climate alerts
+//and sends alerts to users
 async function monitorAlerts() {
   try {
     let alertLocations = await alertLocationsCollection.find({}).toArray();
-    //console.log(alertLocations);
+
     alertLocations.forEach(async (alertLocation) => {
       let [long, lat] = alertLocation.location.geometry.coordinates;
       let locationName = alertLocation.location.properties.name_preferred;
@@ -395,31 +408,31 @@ async function monitorAlerts() {
   }
 }
 
+//send email alerts
 //params: alert(object), locationName(name of alert location), users(array of user _id)
 async function sendAlerts(alert, locationName, users) {
   for (let i = 0; i < users.length; i++) {
+    //checks if user has previously recieved this alert
     let userID = new ObjectId(users[i]);
     let alertedObject = await userCollection.findOne(
       { _id: userID },
       { projection: { alreadyAlerted: 1, email: 1, name: 1 } }
     );
     if (!alertedObject.hasOwnProperty("alreadyAlerted")) {
-        console.log("unable to find user: " + users[i]);
-        return;
+      console.log("unable to find user: " + users[i]);
+      return;
     }
     let alreadyAlerted = alertedObject.alreadyAlerted;
+
+    //if alert is new, add this alert to the user's alreadyAlerted field
     if (!alreadyAlerted.includes(alert.id)) {
       let userEmail = alertedObject.email;
       let userName = alertedObject.name;
-      console.log(
-        `userid: ${users[i]}, email: ${userEmail}, name: ${userName}
-         alertid: ${alert.id}, location: ${locationName}, alert: ${alert.description}, severity: ${alert.severity}`
-      );
       await userCollection.updateOne(
         { _id: userID },
         { $push: { alreadyAlerted: alert.id } }
       );
-      // email alerts
+      // send email alert
       let templateParams = {
         name: userName,
         email: userEmail,
@@ -450,7 +463,6 @@ app.post("/getRisks", async (req, res) => {
     try {
       let alerts = await getAlerts(long, lat);
       if (alerts.length > 0) {
-        //console.log(alerts[0])
         res.render("main/risks", { alerts: alerts, message: "" });
       } else {
         let message =
@@ -466,11 +478,11 @@ app.post("/getRisks", async (req, res) => {
   }
 });
 
-//for updating user's current search location
+//recieves user's current search location (Geojson object) and updates it in the database
 app.post("/recordCurrentLocation", async function (req, res) {
   if (req.session.authenticated) {
     try {
-      const { currentLocation } = req.body; // Get data from the client
+      const { currentLocation } = req.body; 
 
       await userCollection.updateOne(
         { _id: new ObjectId(req.session.userID) },
@@ -480,8 +492,6 @@ app.post("/recordCurrentLocation", async function (req, res) {
       );
       res.status(201).send("Location saved successfully");
     } catch (error) {
-      //console.error("Error saving user location:", error);
-      //res.status(500).send("Internal Server Error");
       let message = "Error saving user location";
       res.redirect(`/errors?message=${message}`);
     }
@@ -490,16 +500,21 @@ app.post("/recordCurrentLocation", async function (req, res) {
   }
 });
 
-//saves currentSearchLocation into savedLocation array
+//recieves alert notification status, saves the alert status and current search location in database
 app.post("/saveLocation", async function (req, res) {
+  //gets the alert notification status (whether user wants to recieve alerts for the location)
   let { alert } = req.body;
+  
   if (req.session.authenticated) {
     try {
+      //gets the user's current search location
       let userID = new ObjectId(req.session.userID);
       const result = await userCollection.findOne(
         { _id: userID },
         { projection: { currentSearchLocation: 1 } }
       );
+
+      //updates user's saved location with the current search location and alert status 
       let savedLocation = {
         location: result.currentSearchLocation,
         alert: alert,
@@ -508,16 +523,23 @@ app.post("/saveLocation", async function (req, res) {
         { _id: userID },
         { $push: { savedLocation } }
       );
+
+      //if user wants to recieve alerts for the location add it to the alertsLocation collection
       if (alert) {
+        //checks if location is aleady in the alertsLocation collection
         const alertResult = await alertLocationsCollection.findOne(
           { location: result.currentSearchLocation },
           { projection: { _id: 1 } }
         );
+
+        //if location alerady exists, add user to existing location
         if (alertResult && alertResult.hasOwnProperty("_id")) {
           await alertLocationsCollection.updateOne(
             { _id: new ObjectId(alertResult._id) },
             { $push: { users: userID } }
           );
+
+        //if location doesn't exist add new location document into alertsLocation collection
         } else {
           let alertLocation = {
             location: result.currentSearchLocation,
@@ -528,17 +550,16 @@ app.post("/saveLocation", async function (req, res) {
       }
       res.status(201).send("Location saved");
     } catch (error) {
-      //res.status(500).send("Error saving location");
       let message = "Error saving location";
       res.redirect(`/errors?message=${message}`);
-      
     }
   } else {
     res.send("User not logged in");
   }
 });
 
-//sends user's current search location as a json with coordinate and name properities
+//sends user's current search location as object with coordinate and name properties
+//sends null if current search location is not found
 app.get("/getCurrentSearchLocation", async function (req, res) {
   if (req.session.authenticated) {
     try {
@@ -556,8 +577,7 @@ app.get("/getCurrentSearchLocation", async function (req, res) {
       }
       res.send(data);
     } catch (error) {
-      //res.status(500).send("Unable to save location");
-      let message = "Error saving user current search location";
+      let message = "Error getting user's current search location";
       res.redirect(`/errors?message=${message}`);
     }
   } else {
@@ -565,21 +585,26 @@ app.get("/getCurrentSearchLocation", async function (req, res) {
   }
 });
 
-//middleware to store if current search location is already in saved location
+//middleware to check if current search location is already in saved location
+//saves results in req.session
 async function locationSaved(req, res, next) {
   let isSaved = "false";
+
   if (req.session.authenticated) {
+    //gets user's current search location and saved locations from database
     let userID = new ObjectId(req.session.userID);
     const result = await userCollection.findOne(
       { _id: userID },
       { projection: { savedLocation: 1, currentSearchLocation: 1 } }
     );
 
+    //gets address of current search location
     if (result.currentSearchLocation) {
       let currentLocationProperties = result.currentSearchLocation.properties;
       let currentAddress = currentLocationProperties.full_address;
+      
+      //compares address of current search location with that of each location in saved locations
       let locationArray = result.savedLocation;
-
       locationArray.forEach((saved) => {
         let address = saved.location.properties.full_address;
         if (address === currentAddress) {
@@ -588,27 +613,35 @@ async function locationSaved(req, res, next) {
       });
     }
   }
+  //stores if location is saved in req.session
   req.session.isLocationSaved = isSaved;
   next();
 }
 
-//checks if currently searched location is already saved in database
+//uses locationSaved middleware to send if currently searched location is already saved in database
 app.get("/checkLocationSaved", locationSaved, function (req, res) {
   res.send(req.session.isLocationSaved);
   return;
 });
 
-//sends popup on main page based on if user is logged in, or if location has previously been saved
+//sends 'save location' popup on main page
 app.get("/popup", locationSaved, (req, res) => {
+
+  //if location has previously saved
   if (req.session.isLocationSaved == "true") {
     res.render("main/savedPopup");
+
+  //if location has not previously been saved
   } else if (req.session.authenticated) {
     res.render("main/alertPopup");
+
+  //if user is not logged in
   } else {
     res.render("main/loginPopup");
   }
 });
 
+//sends popup for delete confirmation
 app.get("/deletePopup", (req, res) => {
   try {
     res.render("savedLocations/deletePopup");
@@ -620,6 +653,8 @@ app.get("/deletePopup", (req, res) => {
 
 //display list of saved locations
 app.get("/displaySavedLocations", async (req, res) => {
+
+  //gets user's saved locations array from the database
   let userID = new ObjectId(req.session.userID);
   try {
     let result = await userCollection.findOne(
@@ -627,7 +662,8 @@ app.get("/displaySavedLocations", async (req, res) => {
       { projection: { savedLocation: 1 } }
     );
     let locationArray = result.savedLocation;
-    //console.log(result);
+    
+    //renders list of saved locations
     if (locationArray.length == 0) {
       res.render("savedLocations/location", {
         locationArray: [],
@@ -640,47 +676,54 @@ app.get("/displaySavedLocations", async (req, res) => {
       });
     }
   } catch (error) {
-    //console.error("Error displaying saved location: ", error);
     res.status(500).send("Error displaying saved location.");
   }
 });
 
-//deletes saved location from the database
+//recieves location id and alert notification status
+//deletes location from saved location and alerts location in the database
 app.post("/deleteLocation", async (req, res) => {
   let { locationId, alertOn } = req.body;
+
   let userID = new ObjectId(req.session.userID);
   try {
-    //remove location from saved location
+    //gets user's saved locations from the database
     let result = await userCollection.findOne(
       { _id: userID },
       { projection: { savedLocation: 1 } }
     );
+
+    //remove location from user's saved location in th database
     await userCollection.updateOne(
       { _id: userID },
       { $pull: { savedLocation: { "location.id": locationId } } }
     );
+
+    //removes location/user from alert location in database
     if (alertOn) {
-      //removes location/user from alert locations
+      //finds location in alert locations collection and gets list of associated users
       const alertResult = await alertLocationsCollection.findOne(
         { "location.id": locationId },
         { projection: { _id: 1, users: 1 } }
       );
 
       if (
-        alertResult &&
-        alertResult.hasOwnProperty("_id") &&
-        alertResult.users.length > 1
-      ) {
+        //if location is in alerts location and there is more than 1 user associated with the location,
+        //remove this user from the users list
+        alertResult && alertResult.hasOwnProperty("_id") && alertResult.users.length > 1) {
         let docID = new ObjectId(alertResult._id);
         await alertLocationsCollection.updateOne(
           { _id: docID },
           { $pull: { users: userID } }
         );
         res.status(200).send("User removed from alert location");
+
+        //if there is only one user associated with the location, delete location document from alert locations collection
       } else if (alertResult && alertResult.hasOwnProperty("_id")) {
         let docID = new ObjectId(alertResult._id);
         await alertLocationsCollection.deleteOne({ _id: docID });
         res.status(200).send("Alert location deleted");
+
       } else {
         res.status(200).send("Location not in alertLocation");
       }
@@ -688,17 +731,20 @@ app.post("/deleteLocation", async (req, res) => {
       res.status(200).send("Location deleted from savedLocation");
     }
   } catch (error) {
-    //res.status(500).send("Error deleting saved location: " + error);
     let message = "Error deleting saved location";
     res.redirect(`/errors?message=${message}`);
   }
 });
 
+//recieves location id and alert notification status
+//updates alert status in saved locations and adds/delete location/user in alerts location collection in the database
 app.post("/updateAlert", async (req, res) => {
+
   let { locationId, newAlert } = req.body;
+
   let userID = new ObjectId(req.session.userID);
   try {
-    //updates alerts in savedLocations
+    //updates alerts notification status in savedLocations
     await userCollection.updateOne(
       {
         _id: userID,
@@ -707,7 +753,7 @@ app.post("/updateAlert", async (req, res) => {
       { $set: { "savedLocation.$.alert": newAlert } }
     );
 
-    //updates alerts in alertsLocation
+    //finds location object from user's saved locations using location id
     let locationResult = await userCollection.findOne(
       {
         _id: userID,
@@ -715,21 +761,24 @@ app.post("/updateAlert", async (req, res) => {
       },
       { projection: { "savedLocation.$": 1 } }
     );
-    //geojson object of location
     let location = locationResult.savedLocation[0].location;
 
+    //finds location in the alerts location database and gets its id and list of users
     const alertResult = await alertLocationsCollection.findOne(
       { "location.id": locationId },
       { projection: { _id: 1, users: 1 } }
     );
 
+    //if the location's alert notification is toggled on
     if (newAlert) {
+      //if location already exists in alerts Location collection, add user to its list of users
       if (alertResult && alertResult.hasOwnProperty("_id")) {
         let docID = new ObjectId(alertResult._id);
         await alertLocationsCollection.updateOne(
           { _id: docID },
           { $push: { users: userID } }
         );
+      //if location is not in alerts location collection, add new location document
       } else {
         let alertLocation = {
           location: location,
@@ -738,30 +787,32 @@ app.post("/updateAlert", async (req, res) => {
         await alertLocationsCollection.insertOne(alertLocation);
       }
       res.status(200).send("alert location updated");
+
+    //if the location's alert notification is toggled off
     } else {
-      if (
-        alertResult &&
-        alertResult.hasOwnProperty("_id") &&
-        alertResult.users.length > 1
-      ) {
+      //if location alerady exists in alerts location collection, and there is more than 1 user
+      //in it's associated user's list, remove this user from the list
+      if (alertResult && alertResult.hasOwnProperty("_id") && alertResult.users.length > 1) {
         let docID = new ObjectId(alertResult._id);
         await alertLocationsCollection.updateOne(
           { _id: docID },
           { $pull: { users: userID } }
         );
         res.status(200).send("alert location updated");
+      
+      //if location already exists in alerts location collection, and there is only 1 associated user,
+      //remove location document from collection
       } else if (alertResult && alertResult.hasOwnProperty("_id")) {
         let docID = new ObjectId(alertResult._id);
         await alertLocationsCollection.deleteOne({ _id: docID });
         res.status(200).send("alert location updated");
+
       } else {
-        //res.status(500).send("error updating alertLocation database");
         let message = "Error updating alert location database";
         res.redirect(`/errors?message=${message}`);
       }
     }
   } catch (error) {
-    //res.status(500).send("error updating savedLocations alert: " + error);
     let message = "Error updating saved location alerts.";
     res.redirect(`/errors?message=${message}`);
   }
@@ -790,7 +841,7 @@ app.post("/profileUpdate", async function (req, res) {
       name: Joi.string().alphanum().max(20).required(),
       email: Joi.string()
         .max(30)
-        .email({ minDomainSegments: 2})
+        .email({ minDomainSegments: 2 })
         .required()
     });
 
@@ -805,10 +856,10 @@ app.post("/profileUpdate", async function (req, res) {
     }
     // will check if the username or email already exists in the database
     // have to make it understand which value is changed and check that one
-    const existingEmail = await userCollection.findOne({ 
+    const existingEmail = await userCollection.findOne({
       $and: [
-        {username: { $not: {$eq: req.session.username}}},
-        {email: email} 
+        { username: { $not: { $eq: req.session.username } } },
+        { email: email }
       ]
     });
     if (existingEmail && email.length > 0) {
@@ -824,21 +875,24 @@ app.post("/profileUpdate", async function (req, res) {
         }
       );
     }
-    
+
   } else {
     res.redirect("/main");
   }
 });
 
+//renders the flood adaptation tips page
 app.get("/floodAdapt", (req, res) => {
-     let categories = [{name: "protect", heading: "Protect Your Home and Property"}, 
-     {name: "plan", heading: "Make an Emergency Plan"}, 
-     {name: "bag", heading: "Make Grab-and-Go Bags"}, 
-     {name: "insurance", heading: "Research insurance options"},];
-    res.render("floodAdapt", {categories: categories});
+  let categories = [
+    { name: "protect", heading: "Protect Your Home and Property" },
+    { name: "plan", heading: "Make an Emergency Plan" },
+    { name: "bag", heading: "Make Grab-and-Go Bags" },
+    { name: "insurance", heading: "Research insurance options" },
+  ];
+  res.render("floodAdapt", { categories: categories });
 });
 
-
+//renders the expandable content in flood adaptation tips page
 app.get("/flood/:content", function (req, res) {
   switch (req.params.content) {
     case "protect":
@@ -859,19 +913,22 @@ app.get("/flood/:content", function (req, res) {
   }
 });
 
-//for heatAdapt.html
+//renders the heat adaptation tips page
 app.get("/heatAdapt", function (req, res) {
-  let categories = [{name: "atRisk", heading: "Who is most at risk"}, 
-     {name: "buddy", heading: "Pick a heat buddy"}, 
-     {name: "prepare", heading: "Prepare your home"}, 
-     {name: "indoors", heading: "How to stay cool indoors"}, 
-     {name: "outdoors", heading: "How to stay cool outdoors"}, 
-     {name: "overheat", heading: "Overheating"}, 
-     {name: "wildfire", heading: "Extreme Heat and Wildfires"}, 
-     {name: "drought", heading: "Extreme Heat and Drought"}];
-  res.render("heatAdapt", {categories: categories});
+  let categories = [
+    { name: "atRisk", heading: "Who is most at risk" },
+    { name: "buddy", heading: "Pick a heat buddy" },
+    { name: "prepare", heading: "Prepare your home" },
+    { name: "indoors", heading: "How to stay cool indoors" },
+    { name: "outdoors", heading: "How to stay cool outdoors" },
+    { name: "overheat", heading: "Overheating" },
+    { name: "wildfire", heading: "Extreme Heat and Wildfires" },
+    { name: "drought", heading: "Extreme Heat and Drought" }
+  ];
+  res.render("heatAdapt", { categories: categories });
 });
 
+//renders the expandable content in heat adaptation tips page
 app.get("/heat/:content", function (req, res) {
   switch (req.params.content) {
     case "atRisk":
@@ -904,6 +961,7 @@ app.get("/heat/:content", function (req, res) {
   }
 });
 
+//sends the mapbox access token
 app.get("/mapboxToken", function (req, res) {
   res.send({ token: process.env.MAPBOX_ACCESS_TOKEN });
 });
@@ -917,16 +975,17 @@ app.get("/stories", function (req, res) {
   res.render("stories");
 });
 
-//
+//renders the saved locations page, redirects to login if user is not logged in
 app.get("/savedLocation", function (req, res) {
-    if (req.session.authenticated) {
-        res.render("savedLocation");
-    } else {
-        res.redirect("/login");
-    }
-  
+  if (req.session.authenticated) {
+    res.render("savedLocation");
+  } else {
+    res.redirect("/login");
+  }
+
 });
 
+//sends user's authentication status
 app.get("/authenticated", function (req, res) {
   if (req.session.authenticated) {
     res.send("true");
@@ -1128,19 +1187,21 @@ app.get("/layers", (req, res) => {
   res.send(doc);
 });
 
+//renders the errors page
 app.get("/errors", (req, res) => {
-    let message = req.query.message;
-    if (message) {
-        res.render("errors", {message: message});
-    } else {
-        res.render("errors", {message: ""});
-    }
-    
+  let message = req.query.message;
+  if (message) {
+    res.render("errors", { message: message });
+  } else {
+    res.render("errors", { message: "" });
+  }
+
 });
 
+//renders the 404 page not found for all invalid routes
 app.use(function (req, res) {
   res.status(404);
-  res.render("404", {message: "Oops, this page doesn't exist."});
+  res.render("404", { message: "Oops, this page doesn't exist." });
 });
 
 app.listen(port, () => {

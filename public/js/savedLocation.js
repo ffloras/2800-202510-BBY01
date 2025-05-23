@@ -1,20 +1,19 @@
 displaySavedLocations();
 
+//displays list of saved locations read from database
 async function displaySavedLocations() {
+  //sets up popup (for delete locations feature)
   let popup = document.getElementById("popup-overlay");
   popup.style.display = "none";
   popup.innerHTML = "";
 
   try {
-    //display list of saved locations
+    //retrieves list of saved locations
     let response = await fetch("/displaySavedLocations");
-
     let html = await response.text();
-
     if (!response.ok) {
       throw new Error(html);
     }
-
     document.getElementById("save-container").innerHTML = html;
 
     //add event listeners to alert/delete buttons

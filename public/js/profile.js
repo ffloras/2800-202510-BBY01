@@ -24,11 +24,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
-//     // Handle delete
-//     deleteBtn.addEventListener('click', () => {
-//         if (confirm("Are you sure you want to delete your profile?")) {
-//             alert("Profile deleted.");
-//             // Optional: send delete request to server
-//         }
-//     });
-// });

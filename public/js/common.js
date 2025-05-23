@@ -27,7 +27,6 @@ async function isLoggedIn() {
 }
 
 function ajaxGET(url, callback) {
-
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
       if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
@@ -44,7 +43,6 @@ function ajaxGET(url, callback) {
 
 
 function ajaxPOST(url, callback, data) {
-
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {

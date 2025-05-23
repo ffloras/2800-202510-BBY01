@@ -4,7 +4,7 @@ setLocationName();
 setSaveLocationButton();
 setupAI();
 
-//sets up mapbox search bar and map
+//sets up mapbox search bar, map, maplayers and environmental risks
 async function setupMapbox() {
   const script = document.getElementById('search-js');
   // wait for the Mapbox Search JS script to load before using it
@@ -15,19 +15,16 @@ async function setupMapbox() {
 
     let searchBar = new MapboxGeocoder();
     searchBar.accessToken = token;
-    // set the options property
-    // searchBar.options = {
-    //   language: 'en',
-    //   country: 'CA'
-    // }
 
     document.getElementById('search-bar').appendChild(searchBar);
 
     mapboxgl.accessToken = token;
 
+    //gets most current searched location from either database or session storage
     let searchLocation = await getCurrentSearchLocation();
     let searchCoordinate = searchLocation ? searchLocation.coordinate : null;
 
+    //sets up mapbox map
     let map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/mapbox/streets-v12', // style URL
@@ -50,7 +47,10 @@ async function setupMapbox() {
     // bind the search box instance to the map instance
     searchBar.bindMap(map);
 
+    //sets up for new location searches
     newSearch(searchBar);
+
+    //gets environmental risks of a location using either most current searched location saved in database or session storage
     getRisks(searchCoordinate || getCoordinateFromSessionStorage());
 
     map.on('load', () => {
@@ -152,6 +152,7 @@ function getCoordinateFromSessionStorage() {
 }
 
 //updates the current searched location in the database, updates location save status and name on main page
+//when new location is searched
 function newSearch(searchBar) {
   // add an event listener to retrieve coordinates of searched location
   searchBar.addEventListener('retrieve', async (e) => {
@@ -166,13 +167,17 @@ function newSearch(searchBar) {
       body: JSON.stringify({ currentLocation: feature }),
     });
 
+    //saves location to session storage
     let coordinate = feature.geometry.coordinates;
     sessionStorage.setItem("coor", coordinate);
 
     document.getElementById("ai-message").innerHTML = "Explore what this location's climate would be like in the next few decades.";
+    
+    //sets saved status and name of new location
     setLocationSavedStatus();
     setLocationName();
 
+    //gets risks of new location
     getRisks(coordinate);
 
   });
@@ -189,7 +194,7 @@ function setSaveLocationButton() {
       popup.style.display = "flex";
       popup.innerHTML = data;
 
-      //set alert popup buttons
+      //set 'save location' popup buttons
       if (document.getElementById("alert")) {
         document.getElementById("alert-cancel").addEventListener("click", (e) => {
           popup.style.display = "none";
@@ -205,7 +210,7 @@ function setSaveLocationButton() {
         });
       }
 
-      //set already-saved popup button
+      //set "already-saved" popup for locations already saved in database
       else if (document.getElementById("already-saved")) {
         document.getElementById("saved-back").addEventListener("click", (e) => {
           popup.style.display = "none";
@@ -213,7 +218,7 @@ function setSaveLocationButton() {
         });
       }
 
-      //set login popup button
+      //set login popup for users not logged in
       else {
         document.getElementById("login").addEventListener("click", (e) => {
           popup.style.display = "none";
@@ -251,15 +256,6 @@ function getCurrentSearchLocation() {
       .then((response) => { return response.json(); })
       .then((response) => { resolve(response); })
       .catch(() => resolve(null));
-    // ajaxGET('/getCurrentSearchLocation', (response) => {
-    //   try {
-
-    //     resolve(JSON.parse(response));
-
-    //   } catch (error) {
-    //     resolve(null);
-    //   }
-    // });
   });
 
 }
@@ -297,6 +293,7 @@ async function setLocationName() {
   }
 }
 
+//sets up climate prediction button that uses AI responses
 async function setupAI() {
   document.getElementById("ai-button").addEventListener("click", async (e) => {
     let searchLocation = await getCurrentSearchLocation();
@@ -308,6 +305,7 @@ async function setupAI() {
         lat: coorArray[1]
       };
 
+      //requests response from AI using coordinates of current location
       fetch("/ai", {
         method: "POST",
         headers: {
@@ -329,7 +327,8 @@ async function setupAI() {
   });
 }
 
-
+//gets the climate alerts
+//param: coor = location coordinates array in the format [long, lat]
 function getRisks(coor) {
   if (coor) {
     fetch("/getRisks", {
@@ -341,7 +340,6 @@ function getRisks(coor) {
     })
       .then((response) => { return response.text(); })
       .then((response) => {
-        //console.log(response)
         document.getElementById("riskContent").innerHTML = response;
       })
       .catch((err) => {
