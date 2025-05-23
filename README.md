@@ -6,14 +6,6 @@ RiskMapper is a climate risk visualization web application that enables users to
 
 The platform also empowers community storytelling by allowing users to share their personal experiences with climate events. Developed as part of the BCIT CST Program, this project follows Agile methodologies and user-centered design principles, integrating a robust backend with a responsive, data-rich frontend.
 
-## Features
-
-- **Search Location**: Quickly find your city or neighborhood to view local environmental risks.
-- **Dynamic Map Layers**: Toggle between climate hazard layers (e.g., flooding, heatwaves, wildfire).
-- **Save Location**: Save your preferred location to receive relevant climate alerts.
-- **Adaptation Tips**: Access practical, region-specific advice for mitigating environmental risks.
-- **Community Stories**: Share your experiences and learn how others are affected by climate change.
-
 ## Technologies Used
 
 - **Frontend**: EJS, JavaScript, CSS
@@ -26,6 +18,106 @@ The platform also empowers community storytelling by allowing users to share the
   - [MSC GeoMet API](https://www.canada.ca/en/environment-climate-change/services/weather-general-tools-resources/weather-tools-specialized-data/msc-geomet-api-geospatial-web-services.html) – for accessing Environment Canada climate data
   - [WeatherAPI](https://www.weatherapi.com/) – for real-time weather conditions and forecasts
 
+## File Structure
+```
+2008-202510-BBY01
+├─ databaseConnection.js            # used for connection with mogodb database
+├─ index.js                         # server side code
+├─ package-lock.json
+├─ package.json
+├─ public                           # contains css, js and img folders
+│  ├─ css
+│  │  ├─ detailStory.css
+│  │  ├─ landing.css
+│  │  ├─ load.css
+│  │  ├─ login.css
+│  │  ├─ main.css
+│  │  ├─ myStories.css
+│  │  ├─ postStory.css
+│  │  ├─ profile.css
+│  │  ├─ riskAdaptation.css
+│  │  ├─ savedLocation.css
+│  │  └─ stories.css
+│  ├─ img
+│  │  ├─ alertOffIcon.png
+│  │  ├─ alertOnIcon.png
+│  │  ├─ deleteIcon.png
+│  │  ├─ floodRiskIcon.png
+│  │  ├─ heatRiskIcon.png
+│  │  ├─ lightbulb.png
+│  │  ├─ minusIcon.png
+│  │  ├─ plusIcon.png
+│  │  ├─ RiskMapper.png
+│  │  ├─ saveIconChecked.png
+│  │  └─ saveIconUnchecked.png
+│  └─ js
+│     ├─ common.js
+│     ├─ detailStory.js
+│     ├─ floodAdaptation.js
+│     ├─ heatAdaptation.js
+│     ├─ landing.js
+│     ├─ load.js
+│     ├─ main.js
+│     ├─ myStories.js
+│     ├─ postStory.js
+│     ├─ profile.js
+│     ├─ savedLocation.js
+│     └─ stories.js
+├─ README.md
+├─ uploads                          # For multer images
+└─ views                            # Contains ejs files
+   ├─ 404.ejs
+   ├─ detailStory.ejs
+   ├─ errors.ejs
+   ├─ flood                        
+   │  ├─ floodBag.ejs
+   │  ├─ floodInsurance.ejs
+   │  ├─ floodPlan.ejs
+   │  └─ floodProtect.ejs
+   ├─ floodAdapt.ejs
+   ├─ heat
+   │  ├─ heatAtRisk.ejs
+   │  ├─ heatBuddy.ejs
+   │  ├─ heatDrought.ejs
+   │  ├─ heatIndoors.ejs
+   │  ├─ heatOutdoors.ejs
+   │  ├─ heatOverheating.ejs
+   │  ├─ heatPrepare.ejs
+   │  └─ heatWildfire.ejs
+   ├─ heatAdapt.ejs
+   ├─ index.ejs
+   ├─ login.ejs
+   ├─ main
+   │  ├─ alertPopup.ejs
+   │  ├─ loginPopup.ejs
+   │  ├─ risks.ejs
+   │  └─ savedPopup.ejs
+   ├─ main.ejs
+   ├─ myStories.ejs
+   ├─ policy.ejs
+   ├─ postStory.ejs
+   ├─ profile.ejs
+   ├─ savedLocation.ejs
+   ├─ savedLocations
+   │  ├─ deletePopup.ejs
+   │  └─ location.ejs
+   ├─ signup.ejs
+   ├─ stories.ejs
+   └─ templates
+      ├─ footer.ejs
+      └─ header.ejs
+
+```
+
+## Features
+
+- **Search Location**: Quickly find your city or neighborhood to view local environmental risks.
+- **Dynamic Map Layers**: Toggle between climate hazard layers (e.g., flooding, heatwaves, wildfire).
+- **Save Location**: Save your preferred location to receive relevant climate alerts.
+- **Adaptation Tips**: Access practical, region-specific advice for mitigating environmental risks.
+- **Community Stories**: Share your experiences and learn how others are affected by climate change.
+
+
 ## Usage
 
 1. **Visit the Web App**: Open the RiskMapper app hosted on Render.
@@ -34,6 +126,29 @@ The platform also empowers community storytelling by allowing users to share the
 4. **Save Location**: Bookmark your area to receive climate alerts.
 5. **Check Tips**: Get customized advice on how to prepare for local risks.
 6. **Tell Your Story**: Submit your experience and view stories from others affected by climate change.
+
+
+## How to Install and Run the Project
+
+**Softwares to install**
+- NodeJS
+- Visual Studio Code, or another IDE
+- MongoDB
+**3rd party API and frameworks**
+- None
+**API keys**
+- Mapbox
+- GenAI
+- Weather API
+- EmailJS
+**Order to install**
+- Can be installed in any order
+**Configuration Instructions**
+- Run command “npm i” in the source folder to install modules/packages
+- Setup .env file containing database and session info, and api keys
+**Testing Plan**
+https://docs.google.com/spreadsheets/d/1pb2PikBKqRC3UPss8Myp8aDfC0KF7-BGoHHHOs5u-2M/edit?usp=sharing
+
 
 ## Contributors
 
@@ -65,3 +180,4 @@ The platform also empowers community storytelling by allowing users to share the
 - **Expanded Dataset Integration**: Include air quality, drought, and other relevant environmental factors.
 - **User Profiles**: Enable users to manage saved locations, preferences, and story history.
 - **Multilingual Support**: Add French and other languages for wider accessibility.
+

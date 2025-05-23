@@ -83,7 +83,7 @@ app.use(
   })
 );
 
-const url = `https://two800-202510-bby01-6ko8.onrender.com`; // Replace with Render URL
+const url = `https://riskmapper.onrender.com/`; // Replace with Render URL
 const interval = 300000; // (840000 14mins, 300000 5mins)
 
 //Reloader Function to ping server on regular basis
