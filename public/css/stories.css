@@ -1,16 +1,22 @@
+body {
+    background-color: #f4f8f2;
+    /* a very light greenish off-white */
+}
+
 .stories-top {
     display: flex;
     width: 80%;
     margin: 20px auto 0;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 10px 0;
+    flex-wrap: wrap;
 }
 
 .post-button-container {
     display: flex;
-    width: 30%;
     justify-content: flex-end;
+    margin-left: 10px;
 
 }
 
@@ -23,14 +29,53 @@
 
 .post-button {
     text-decoration: none;
-    font-size: 1.2rem;
     display: flex;
     justify-content: center;
-    width: 85px;
     border-radius: 10px;
     padding: 5px;
     border: solid 2px black;
     color: black;
+    font-size: 1rem;
+    box-sizing: content-box;
+}
+
+.view-button-container {
+    display: flex;
+    width: 90%;
+    justify-content: flex-end;
+
+}
+
+.view-button-container svg {
+    width: 24px;
+    position: relative;
+    top: 1px;
+    margin-right: 3px;
+}
+
+.view-button {
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    border-radius: 10px;
+    padding: 5px;
+
+    border: solid 2px black;
+    color: black;
+    box-sizing: content-box;
+}
+
+.post-button:hover, .view-button:hover {
+    border: solid 2px #4b873c;
+    color: white;
+    background-color: #4b873c;
+}
+
+.post-button:hover svg {
+    fill: white;
 }
 
 #stories-container {
@@ -44,9 +89,24 @@
     padding: 20px 25px;
     border: solid 2px black;
     margin-top: 30px;
-    border-radius: 5px;
+    border-radius: 7px;
     display: flex;
     flex-direction: column;
+}
+
+.story-block a {
+    color: #4b873c;
+    width: fit-content;
+    align-self: flex-end;
+    text-decoration: none;
+}
+
+.story-block a:hover {
+    text-decoration: underline;
+}
+
+.story-block a:active {
+    color: #43413C;
 }
 
 .story-block p {
@@ -59,4 +119,20 @@
 
 .button-read-more {
     text-align: end;
+}
+
+@media only screen and (min-width: 768px) {
+    .view-button, .post-button {
+        font-size: 1.2rem;
+    }
+
+    .stories-top {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        width: 60%;
+    }
+
+    #stories-container {
+        width: 60%;
+    }
 }

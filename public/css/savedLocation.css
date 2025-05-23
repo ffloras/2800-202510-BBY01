@@ -1,3 +1,7 @@
+body {
+    background-color: #f4f8f2; /* a very light greenish off-white */
+  }
+  
 .save-location-title {
     margin: 20px auto;
     width: 80%;
@@ -91,8 +95,6 @@
         width: 80%;
         padding: 20px 70px 20px 70px;
     }
-
-
 }
 
 @media (max-width: 700px) {

@@ -9,7 +9,7 @@ function ajaxGET(url, callback) {
     } else {
       console.log(this.status);
     }
-  }
+  };
   xhr.open("GET", url);
   xhr.send();
 }
@@ -40,7 +40,7 @@ droughtExpanded = setContentEventListener('droughtHeading', '/heat/drought', 'dr
 
 //sets event listener for expanding/minimizing content
 //Params: headingElement = element id of content heading; route = ajaxGET route; iconElement = element id of +/- icon associated with content
-//contentElement = element id of content (for inserting ejs); expanded = boolean variable for status of content (expanded = true)
+//contentElement = element id of content (for inserting ejs); expanded = boolean status of content (true if expanded))
 //Returns: boolean status of content
 function setContentEventListener(headingElement, route, iconElement, contentElement, expanded) {
   document.getElementById(headingElement).addEventListener("click", (e) => {

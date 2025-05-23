@@ -1,14 +1,19 @@
 displaySavedLocations();
 
+//displays list of saved locations read from database
 async function displaySavedLocations() {
+  //sets up popup (for delete locations feature)
   let popup = document.getElementById("popup-overlay");
   popup.style.display = "none";
   popup.innerHTML = "";
 
   try {
-    //display list of saved locations
+    //retrieves list of saved locations
     let response = await fetch("/displaySavedLocations");
     let html = await response.text();
+    if (!response.ok) {
+      throw new Error(html);
+    }
     document.getElementById("save-container").innerHTML = html;
 
     //add event listeners to alert/delete buttons
@@ -38,23 +43,23 @@ async function displaySavedLocations() {
                 }
               })
               .catch((error) => {
-                console.error("Unable to delete location: ", error)
-              })
+                console.error("Unable to delete location: ", error);
+              });
             popup.style.display = "none";
             popup.innerHTML = "";
-          })
+          });
 
           //removes popup if "no" is selected
           document.getElementById("no-delete").addEventListener("click", (e) => {
             popup.style.display = "none";
             popup.innerHTML = "";
-          })
+          });
         }
 
         //updates alert if alert button is selected
         if (type == "alert") {
           let newAlert = !e.target.classList.contains("alert-on");
-          
+
           fetch("/updateAlert", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -66,12 +71,12 @@ async function displaySavedLocations() {
               }
             })
             .catch((error) => {
-              console.error("Unable to update alert location: ", error)
+              console.error("Unable to update alert location: ", error);
             });
         }
       });
-    })
+    });
   } catch (error) {
-    console.error("Error fetching saved locations: ", error);
+    window.location.href = `/errors?message=${error}`;
   }
 }

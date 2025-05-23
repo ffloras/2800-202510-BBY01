@@ -1,0 +1,18 @@
+<% let stylesheets=["/css/myStories.css"]; %> <% let scripts=[{ script:
+"/js/myStories.js" }]; %> <%- include("templates/header", { stylesheets:
+stylesheets }) %>
+
+<div class="d-flex myStories-top " style="margin-top:10%">
+  <h1>My Stories</h1>
+</div>
+<div id="myStories-container"></div>
+
+<!-- template here -->
+<template id="story-template">
+  <div class="story-block">
+    <h4 class="story-title">title here</h4>
+    <p class="story-text">story text here</p>
+  </div>
+</template>
+
+<%- include("templates/footer", { scripts: scripts }) %>

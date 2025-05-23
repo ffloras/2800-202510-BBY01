@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background-color: #f7f9fa;
+    background-color: #f4f8f2; /* a very light greenish off-white */
 }
 
 #landingPage {
@@ -16,10 +16,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 20px; 
+    padding: 4px 20px;
     background-color: #c3d4b7;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    height: 70px; 
+    height: 70px;
 }
 
 .logo {
@@ -39,53 +39,20 @@ body {
     font-weight: bold;
 }
 
-
-
-/* Search Bar */
-/* .search-container {
-    display: flex;
-    justify-content: center;
-    margin: 20px;
-}
-
-#addressInput {
-    padding: 12px;
+/* Main Content */
+main {
+    padding: 0 20px 20px;
+    flex: 1;
     width: 60%;
-    max-width: 400px;
-    border: 1px solid #ace170;
-    border-radius: 6px 0 0 6px;
-}
-
-.search-btn {
-    padding: 12px 16px;
-    border: 1px solid #09d990;
-    background-color: rgb(76, 135, 61);
-    color: white;
-    font-size: 18px;
-    border-radius: 0 6px 6px 0;
-    cursor: pointer;
-}
-
-.search-btn:hover {
-    background-color: #06b23f;
-} */
-
-#search-bar {
-    width: 50%;
     margin: 0 auto;
 }
 
-/* Main Content */
-main {
-    text-align: center;
-    padding: 0 20px 20px;
-    flex: 1;
-}
-
 main h1 {
-    margin-top: 60px; /* push it down */
+    margin-top: 30px;
+    /* push it down */
     font-size: 28px;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .hero-icon img {
@@ -95,28 +62,35 @@ main h1 {
     margin-bottom: 20px;
 }
 
+.search-info {
+    font-weight: bold;
+}
+
 .description {
     font-size: 16px;
-    padding: 0 20px;
-    margin-bottom: 30px;
+}
+
+
+.description-container {
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
 }
 
 /* About section */
 .about-container {
     display: flex;
-    justify-content: center;
-    padding: 20px 0;
-    background-color: #f7f9fa; 
+    align-items: center;
+    background-color: #f7f9fa;
 }
 
 .about {
-    text-align: center;
-    max-width: 600px;
     width: 100%;
 }
 
-.about h2 {
-    font-size: 24px;
+.about-container h2 {
+    text-align: center;
+    font-size: 28px;
     color: #4b873c;
     margin-bottom: 10px;
 }
@@ -161,11 +135,10 @@ footer {
 
 .modern-btn:hover {
     background-color: #0056b3;
-} */
+}
 
-.description {
+*/ .description {
     font-size: 16px;
-    padding: 0 20px;
     margin-bottom: 30px;
 }
 
@@ -193,7 +166,8 @@ footer {
 /* Modern Button */
 .modern-btn {
     padding: 10px 20px;
-    background-color: rgb(76, 135, 61);;
+    background-color: rgb(76, 135, 61);
+    ;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -206,7 +180,19 @@ footer {
     background-color: #06b23f;
 }
 
-@media (max-width: 1000px) and (min-width: 599px) {
+@media (max-width: 1300px) and (min-width: 1001px) {
+    main {
+        margin: 0 auto;
+        padding: 0;
+        width: 75%;
+    }
+
+    #search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1000px) and (min-width: 601px) {
     main {
         margin: 0 auto;
         padding: 0;
@@ -214,18 +200,32 @@ footer {
     }
 
     #search-bar {
-        width: 90%;
+        width: 100%;
     }
-  }
+}
 
 @media (max-width: 600px) {
     main {
         margin: 0 auto;
         padding: 0;
-        width: 95%;
+        width: 100%;
+    }
+
+    .description-container {
+        flex-direction: column;
+        padding-bottom: 30px;
+    }
+
+    .about-container {
+        flex-direction: column;
     }
 
     #search-bar {
         width: 100%;
+    }
+
+    .center {
+        display: flex;
+        justify-content: center;
     }
 }

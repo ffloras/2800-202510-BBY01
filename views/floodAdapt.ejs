@@ -1,0 +1,26 @@
+<% let stylesheets=["/css/riskAdaptation.css"]; %>
+  <% let scripts=[{ script: "/js/floodAdaptation.js" }]; %>
+
+    <%- include("templates/header", { stylesheets: stylesheets }) %>
+      <main>
+        <div id="mainHeading">
+          <img src="/img/floodRiskIcon.png" alt="flood icon" width="120px">
+          <div>
+            <p>How to prepare for</p>
+            <h1><strong>Flooding</strong></h1>
+          </div>
+        </div>
+
+        <% for (let i=0; i < categories.length; i++) { %>
+          <div class="contentContainer">
+            <div id="<%= categories[i].name %>Heading" class="contentHeading blue">
+              <h3><%= categories[i].heading %></h3>
+              <img id="<%= categories[i].name %>Icon" src="/img/plusIcon.png" alt="expand/minimize">
+            </div>
+            <div class="shadingBlue">
+              <div id="<%= categories[i].name %>" class="content"></div>
+            </div>
+          </div>
+        <% } %>
+
+<%- include("templates/footer", { scripts: scripts }) %>

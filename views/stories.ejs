@@ -4,8 +4,12 @@
 <%- include("templates/header", { stylesheets: stylesheets }) %>
 <div class="stories-top">
     <h2>Stories</h2>
+    <div class="view-button-container"></div>
+        <a class="view-button btn" href="/myStories">
+            View My Stories
+        </a>
     <div class="post-button-container">
-        <a class="post-button" href="/postStory">
+        <a class="post-button btn" href="/postStory">
             <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"
                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -14,8 +18,8 @@
             </svg>
             Post
         </a>
-    </div>
-</div>
+        </div>
+    </div>     
 <div id="stories-container"></div>
 
 <!-- template here -->

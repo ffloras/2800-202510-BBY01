@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RiskMapper - Climate Risk Dashboard</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/img/RiskMapper.png">
     <!-- Bootstrap, JQuery, FontAwesome... -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -27,15 +28,19 @@
     <div id="navbarPlaceholder">
         <div class="header">
             <a href="/">
-                <img id="header-logo" src="img/EcoRiskView.png" alt="logo">
+                <img id="header-logo" src="img/RiskMapper.png" alt="logo">
             </a>
-            <a href="/main">Home</a>
-            <a href="/profile" class="mobile-hidden">Profile</a>
-            <a href="/heatAdaptation" class="mobile-hidden">Heat Adaptations</a>
-            <a href="/floodAdaptation" class="mobile-hidden">Flood Adaptations</a>
-            <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
-            <a href="/stories">Stories</a>
-            <a href="<%- locals.loggedIn === false ? "/login" : "/logout" %>" id="login-button-nav" class="mobile-hidden"><%- locals.loggedIn===false ? "Login" : "Logout" %></a>
+            <a href="/main" class="mobile-link">Home</a>
+            <% if (authenticated) {%>
+                <a href="/profile" class="mobile-hidden">Profile</a>
+                <% }%>
+            <a href="/heatAdapt" class="mobile-hidden">Heat Adaptations</a>
+            <a href="/floodAdapt" class="mobile-hidden">Flood Adaptations</a>
+            <% if (authenticated) {%>
+                <a href="/savedLocation" class="mobile-hidden">Saved Locations</a>
+            <% }%>
+            <a href="/stories" class="mobile-link">Stories</a>
+            <a href="<%- authenticated ? "/logout" : "/login" %>" id="login-button-nav" class="mobile-hidden"><%- authenticated ? "Logout" : "Login" %></a>
             <div class="hamburger-container">
                 <div class="hamburger untoggle"></div>
             </div>
@@ -43,16 +48,18 @@
         <div class="header-navigation-bg untoggle"></div>
         <nav class="header-navigation">
             <ul class="header-navigation-links untoggle">
-                <li><a href="/index">Landing</a></li>
-                <li><a href="/main">Home/Main</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/savedLocation">Saved Locations</a></li>
-                <li><a href="/layers">Layers</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/signup">Signup</a></li>
-                <li><a href="/heatAdaptation">heatAdaptions</a></li>
-                <li><a href="/floodAdaptation">Flood Adaptions</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li></li>
+                <% if (authenticated) {%>
+                    <li><a href="/profile">Profile</a></li>
+                <% }%>
+                <li><a href="/heatAdaptation">Heat Adaptations</a></li>
+                <li><a href="/floodAdaptation">Flood Adaptations</a></li>
+                <% if (authenticated) {%>
+                    <li><a href="/savedLocation">Saved Locations</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                <% } else {%>
+                    <li><a href="/login">Login</a></li>
+                <% }%>
             </ul>
         </nav>
     </div>

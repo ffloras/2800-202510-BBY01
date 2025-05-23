@@ -1,8 +1,7 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f2f8f0;
+  background-color: #f4f8f2; /* a very light greenish off-white */
   margin: 0;
-  padding: 2rem;
   color: #333;
 }
 
@@ -114,3 +113,8 @@ button[type="button"]:hover {
 #storyCountError.valid {
   color: #2e7d32; /* Green for valid count */
 }
+.required-asterisk {
+  color: red;
+  margin-left: 0.2rem;
+}
+

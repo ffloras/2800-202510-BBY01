@@ -27,7 +27,6 @@ async function isLoggedIn() {
 }
 
 function ajaxGET(url, callback) {
-
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
       if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
@@ -37,14 +36,13 @@ function ajaxGET(url, callback) {
       } else {
           console.log(this.status);
       }
-  }
+  };
   xhr.open("GET", url);
   xhr.send();
 }
 
 
 function ajaxPOST(url, callback, data) {
-
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
@@ -53,11 +51,9 @@ function ajaxPOST(url, callback, data) {
         } else {
             console.log(this.status);
         }
-    }
+    };
     xhr.open("POST", url);
-    // make it clear that our call is an AJAX call
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    // we are sending form data, we must inform the server of this
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(data);
   }

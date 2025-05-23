@@ -16,5 +16,6 @@ function navOpenClose() {
 
 function hamburgerMenu() {
     $("#navbarPlaceholder").on("click", ".header .hamburger-container", navOpenClose);
+    $("#navbarPlaceholder").on("click", ".header-navigation-bg", navOpenClose);
 }
 hamburgerMenu();
