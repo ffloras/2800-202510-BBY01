@@ -148,7 +148,6 @@ function getCoordinateFromSessionStorage() {
   } else {
     return null;
   }
-
 }
 
 //updates the current searched location in the database, updates location save status and name on main page

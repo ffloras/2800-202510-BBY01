@@ -291,6 +291,7 @@ app.post("/ai", async (req, res) => {
       model: "gemini-2.0-flash",
       contents: `Present a speculative vision summary of the climate of area  with longitude ${long} and latitude ${lat} in the 
                 next 10, 20, or 50 years based on available scientific data. Do not mention the coordinates.
+
                 Mention the general location. Keep it within 50 words.`,
     });
     let text = response.text;
