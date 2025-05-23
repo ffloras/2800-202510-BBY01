@@ -23,7 +23,7 @@ The platform also empowers community storytelling by allowing users to share the
 - **Hosting**: Render
 - **Mapping & Data APIs**:
   - [Mapbox](https://www.mapbox.com/) – for rendering dynamic, interactive maps
-  - [MSC GeoMet API](https://eccc-msc.github.io/open-data/msc-geomet/) – for accessing Environment Canada climate data
+  - [MSC GeoMet API](https://www.canada.ca/en/environment-climate-change/services/weather-general-tools-resources/weather-tools-specialized-data/msc-geomet-api-geospatial-web-services.html) – for accessing Environment Canada climate data
   - [WeatherAPI](https://www.weatherapi.com/) – for real-time weather conditions and forecasts
 
 ## Usage
