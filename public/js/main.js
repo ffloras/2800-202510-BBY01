@@ -67,8 +67,8 @@ async function setupMapbox() {
         id: 'wms-layer-2',
         type: 'raster',
         source: 'wms-source-2',
-        layout: {visibility: "none"},
-        paint: {} // OFF by default
+        layout: { visibility: "none" },
+        paint: {} 
       });
 
       // Satellite toggle
@@ -83,7 +83,7 @@ async function setupMapbox() {
           isSatellite = true;
         } else {
           map.setStyle('mapbox://styles/mapbox/outdoors-v12');
-          
+
           isSatellite = false;
         }
       });
@@ -353,6 +353,7 @@ function getRisks(coor) {
   }
 }
 
+//Function to add wildfire layer to mapbox
 function addWildfireLayer(map) {
   if (!map.getSource('wildfires')) {
     map.addSource('wildfires', {
@@ -360,61 +361,61 @@ function addWildfireLayer(map) {
       data: {
         "type": "FeatureCollection",
         "features": [
-          // Garibaldi Provincial Park
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-122.85, 49.95] },
             "properties": { "name": "Garibaldi Fire" }
           },
-          // Near Whistler
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-122.98, 50.12] },
             "properties": { "name": "Whistler Fire" }
           },
-          // Tantalus Range
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-123.25, 49.85] },
             "properties": { "name": "Tantalus Fire" }
           },
-          // Coast Mountains (north of Pemberton)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-122.75, 50.45] },
             "properties": { "name": "Coast Mountains Fire" }
           },
-          // Golden Ears Provincial Park
+         
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-122.45, 49.45] },
             "properties": { "name": "Golden Ears Fire" }
           },
-          // Manning Park
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-120.85, 49.07] },
             "properties": { "name": "Manning Park Fire" }
           },
-          // Purcell Mountains (near Invermere)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-116.25, 50.5] },
             "properties": { "name": "Purcell Fire" }
           },
-          // Selkirk Mountains (near Revelstoke)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-118.2, 51.0] },
             "properties": { "name": "Selkirk Fire" }
           },
-          // Kootenay National Park
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-116.0, 50.9] },
             "properties": { "name": "Kootenay Fire" }
           },
-          // Mount Robson Provincial Park (Rockies)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-119.15, 53.1] },
@@ -439,6 +440,7 @@ function addWildfireLayer(map) {
   }
 }
 
+//Adds temperature hotspots to mapbox
 function addTemperatureLayer(map) {
   if (!map.getSource('temperature')) {
     map.addSource('temperature', {
@@ -446,43 +448,43 @@ function addTemperatureLayer(map) {
       data: {
         "type": "FeatureCollection",
         "features": [
-          // Southwest BC (Vancouver area)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-123.1, 49.3] },
             "properties": { "temperature": 18 }
           },
-          // Central BC (Kamloops)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-120.3, 50.7] },
             "properties": { "temperature": 22 }
           },
-          // Southeast BC (Cranbrook)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-115.8, 49.5] },
             "properties": { "temperature": 25 }
           },
-          // North BC (Prince George)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-122.8, 53.9] },
             "properties": { "temperature": 15 }
           },
-          // Northwest BC (Terrace)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-128.6, 54.5] },
             "properties": { "temperature": 12 }
           },
-          // Okanagan (Kelowna)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-119.5, 49.9] },
             "properties": { "temperature": 28 }
           },
-          // Cariboo (Williams Lake)
+          
           {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-122.1, 52.1] },
