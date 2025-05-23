@@ -1,35 +1,7 @@
-//document.addEventListener("DOMContentLoaded", () => {
-// const searchBtn = document.getElementById("searchBtn");
-// const loginBtn = document.getElementById("loginBtn");
-//const storiesBtn = document.getElementById("storiesBtn");
-
-
-// Handle address search
-// searchBtn.addEventListener("click", () => {
-//     const address = document.getElementById("addressInput").value.trim();
-//     if (address) {
-//         const encodedAddress = encodeURIComponent(address);
-//         window.location.href = `main.html?address=${encodedAddress}`;
-//     } else {
-//         alert("Please enter a valid address.");
-//     }
-// });
-
-// Handle login navigation
-// loginBtn.addEventListener("click", () => {
-//     window.location.href = "login.html";
-// });
-
-// Handle stories navigation
-//     storiesBtn.addEventListener("click", () => {
-//         window.location.href = "stories.html";
-//     });
-// });
-
-
+//sets up Mapbox searchbar
 setupSearch();
 
-//sets up Mapbox search bar
+//sets up Mapbox search bar and saves search location
 async function setupSearch() {
     const script = document.getElementById('search-js');
 
@@ -38,11 +10,6 @@ async function setupSearch() {
 
         let searchBar = new MapboxGeocoder();
         searchBar.accessToken = await getMapboxToken();
-        // set the options property
-        // searchBar.options = {
-        //   language: 'en',
-        //   country: 'CA'
-        // }
 
         document.getElementById('search-bar').appendChild(searchBar);
 
@@ -50,7 +17,7 @@ async function setupSearch() {
         searchBar.addEventListener('retrieve', async (e) => {
             const feature = e.detail; // geojson object representing the selected item
 
-            //if user is logged in, save search location in db
+            //save search location in db
             const response = await fetch('/recordCurrentLocation', {
                 method: 'POST',
                 headers: {
@@ -64,8 +31,6 @@ async function setupSearch() {
             window.location.replace(`/main`); 
         });
     };
-
-    console.log(await isLoggedIn());
 }
 
 
